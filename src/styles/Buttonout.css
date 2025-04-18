@@ -1,0 +1,25 @@
+.btnout {
+  border: unset;
+  z-index: 1;
+  position: relative;
+  font-weight: 1000;
+  transition: all 250ms;
+  overflow: hidden;
+}
+
+.btnout::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: #1B2021;
+  z-index: -1;
+  transition: all 250ms;
+}
+
+
+.btnout:hover::before {
+  width: 100%;
+}

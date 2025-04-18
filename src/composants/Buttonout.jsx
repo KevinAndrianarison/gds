@@ -1,10 +1,11 @@
 
 import React from 'react'
+import '../styles/Buttonout.css'
 
 export default function Buttonout() {
   return (
     <div>
-        <button className='bg-blue-400 text-white w-48 py-4 rounded-3xl text-sm'>Connexion</button>
+        <button className='btnout py-4 w-60 text-sm text-white rounded-3xl bg-blue-400'>Connexion</button>
     </div>
   )
 }
