@@ -1,0 +1,40 @@
+.inputlogin {
+    background-color: #222222;
+    border-radius: 5px;
+    transition: background-color 0.1s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  
+  .inputlogin--input {
+    height: 50px;
+    border: 2px solid #222222;
+    border-radius: 5px;
+    padding: 0 20px;
+    color: #222222;
+    background-color: white;
+    font-size: 15px;
+    font-weight: bold;
+    transition:
+      transform 0.1s cubic-bezier(0.33, 1, 0.68, 1),
+      border-color 0.1s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  
+  .inputlogin--input:focus {
+    outline: none;
+    transform: translateY(-3px);
+  }
+  
+  .inputlogin--input::placeholder {
+    color: #646464;
+    font-size: 15px;
+    font-weight: bold;
+  }
+ 
+  .error {
+    font-size: 11px;
+    color: #e8e8e8;
+    margin-top: 3px;
+    user-select: none;
+    transition: color 0.1s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  
+  
