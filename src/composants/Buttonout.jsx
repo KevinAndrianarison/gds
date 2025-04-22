@@ -2,10 +2,10 @@
 import React from 'react'
 import '../styles/Buttonout.css'
 
-export default function Buttonout() {
+export default function Buttonout({label, onClick}) {
   return (
     <div>
-        <button className='btnout py-4 w-60 text-sm text-white rounded-3xl bg-blue-400'>Connexion</button>
+        <button onClick={onClick} className='cursor-pointer btnout py-4 w-64 text-sm text-white rounded-3xl bg-blue-400'>{label}</button>
     </div>
   )
 }

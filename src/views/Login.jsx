@@ -1,28 +1,29 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import "@fontsource/nunito";
 import "@fontsource/knewave";
 import '../styles/Login.css'
-import Inputtext from '../composants/Inputtext'
-import Inputpassword from '../composants/Inputpassword'
-import Buttonout from '../composants/Buttonout'
+import { ShowContext } from '../contexte/useShow';
+import LoginComponent from '@/composants/LoginComponent';
+import ForgotPassword from '@/composants/ForgotPassword';
 
 
 
 export default function Login() {
+    const { isConnexion, isForgotPassword } = useContext(ShowContext);
+
     return (
-        <div className='h-[100vh] flex items-center justify-center bg-gray-50 p-10'>
-            <div className='bg-white rounded-3xl p-16 flex flex-col items-center'>
+        <div className='h-[100vh]  flex items-center justify-center bg-gray-50 p-10'>
+            <div className='bg-white rounded-3xl p-16 py-10 flex flex-col items-center'>
                 <div className='flex items-center'>
                     <div className='logoLogin h-20 w-20'></div>
                     <h6 className='text-gray-800'> gds</h6>
                 </div>
-                <p className='font-medium text-lg text-gray-700'>Bienvenue, connectez-vous !</p>
-                <Inputtext />
-                <Inputpassword />
-                <Buttonout />
-                <p className="text-gray-500 cursor-pointer text-sm hover:underline hover:text-blue-400">
-                    Mot de passe oublié ?
-                </p>
+                {isConnexion && (
+                    <LoginComponent />
+                )}
+                {isForgotPassword && (
+                    <ForgotPassword />
+                )}
             </div>
         </div>
     )
