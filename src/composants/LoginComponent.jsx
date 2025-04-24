@@ -6,7 +6,7 @@ import { ShowContext } from '../contexte/useShow';
 
 
 export default function LoginComponent() {
-    const { setIsConnexion, setIsForgotPassword, setIsLogin, setIsSpinnerView } = useContext(ShowContext);
+    const { setIsConnexion, setIsForgotPassword, setIsLogin, setIsDash } = useContext(ShowContext);
 
     function switchtoforgotpassword() {
         setIsConnexion(false)
@@ -22,7 +22,7 @@ export default function LoginComponent() {
             </div>
             <div className='mt-4'>
                 <Buttonout label='CONNEXION' onClick={() => {
-                    setIsSpinnerView(true)
+                    setIsDash(true)
                     setIsLogin(false)
                 }} />
                 <p onClick={switchtoforgotpassword} className="text-gray-500 cursor-pointer text-sm text-center mt-2 hover:underline hover:text-blue-400">

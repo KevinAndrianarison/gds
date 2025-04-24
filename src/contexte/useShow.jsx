@@ -7,6 +7,7 @@ export function ShowContextProvider({ children }) {
   const [isConnexion, setIsConnexion] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isSpinnerView, setIsSpinnerView] = useState(false);
+  const [isDash, setIsDash] = useState(false);
 
   return (
     <ShowContext.Provider
@@ -15,10 +16,12 @@ export function ShowContextProvider({ children }) {
         isSpinnerView,
         isConnexion,
         isForgotPassword,
+        isDash,
         setIsLogin,
         setIsForgotPassword,
         setIsConnexion,
-        setIsSpinnerView
+        setIsSpinnerView,
+        setIsDash
       }}
     >
       {children}

@@ -1,6 +1,34 @@
-.logoLogin{
-    background-image: url("../images/liste-de-controle.png");
+.logoLogin {
+  background-image: url("../images/liste-de-controle.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.logoGS {
+  background-image: url("../images/rotation-des-stocks.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.logoGV {
+  background-image: url("../images/voiture.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.logoGSP {
+  background-image: url("../images/organisation.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.logoUser {
+    background-image: url("../images/utilisateur.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-}
+  }
