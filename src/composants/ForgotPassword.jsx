@@ -14,11 +14,11 @@ export default function ForgotPassword() {
     }
     return (
         <div>
-            <p className='font-medium text-sm text-gray-700 mt-4 text-center mx-auto w-[400px]'>Veuillez entrer votre adresse e-mail afin que nous puissions vous envoyer un lien pour réinitialiser votre mot de passe</p>
-            <div className='flex flex-col gap-2 mt-4'>
+            <p className='font-medium text-sm text-gray-700 mt-4 text-center max-sm:w-[350px] mx-auto w-[400px]'>Veuillez entrer votre adresse e-mail afin que nous puissions vous envoyer un lien pour réinitialiser votre mot de passe</p>
+            <div className='flex flex-col  gap-2 mt-4'>
                 <InputemailForgot />
             </div>
-            <div className='mt-4 gap-2 flex'>
+            <div className='mt-4 gap-2 flex flex-wrap justify-center'>
                 <Buttonout label='ENVOYER' />
                 <ButtonBackout back={backTologin} />
             </div>

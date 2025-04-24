@@ -11,11 +11,11 @@ export default function Inputpassword() {
   };
 
   return (
-    <div className="wrapper flex items-center">
+    <div className="wrapper flex items-center ">
       <div className="inputlogin relative">
         <input
           placeholder="Mot de passe"
-          className="inputlogin--input w-64 pr-10"
+          className="inputlogin--input w-64 pr-10 max-sm:w-80"
           type={showPassword ? 'text' : 'password'}
         />
         <FontAwesomeIcon

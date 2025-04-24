@@ -118,6 +118,7 @@ h6 {
   font-size: 72px
 }
 
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
