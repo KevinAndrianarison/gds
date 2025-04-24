@@ -42,7 +42,7 @@ export default function UserSection({ toggleMenu, isOpen }) {
             <div className='flex items-center gap-4'>
                 <div className="md:hidden">
                     <button onClick={toggleMenu} className="text-gray-800 text-xl">
-                        <FontAwesomeIcon icon={isOpen ? faXmark : faBars} />
+                        <FontAwesomeIcon icon={isOpen ? faXmark : faBars} className={isOpen ? 'max-md:text-gray-500 max-md:bg-gray-200 max-md:rounded-full max-md:py-0.5 max-md:px-1': ''} />
                     </button>
                 </div>
                 <button onClick={goSetting} className="cursor-pointer focus:outline-none">

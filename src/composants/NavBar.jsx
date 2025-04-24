@@ -11,7 +11,7 @@ export default function NavBar() {
         <nav className="bg-white sticky border-b-5 border-blue-400 top-0 z-50">
             <div className="max-w-7xl mx-auto px-6  flex items-center justify-between">
                 <LogoTitle />
-                <NavMenu isOpen={isOpen} />
+                <NavMenu isOpen={isOpen} setIsOpen={setIsOpen} />
                 <div className="flex items-center space-x-6">
                     <UserSection toggleMenu={toggleMenu} isOpen={isOpen}/>
                 </div>
