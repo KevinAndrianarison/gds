@@ -10,7 +10,7 @@ import Parametre from '@/views/Parametre';
 
 export default function RouterView() {
   return (
-    <div className='text-sm p-2'>
+    <div className='text-sm p-2 h-full'>
       <Routes>
         <Route path="/gestion-de-stock" element={<GestionDeStock />} />
         <Route path="/gestion-supply" element={<GestionSupply />} />

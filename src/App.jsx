@@ -8,6 +8,7 @@ import Notiflix from 'notiflix';
 Notiflix.Confirm.init({
   titleColor: '#3b82f6',
   okButtonBackground: '#3b82f6',
+
 });
 
 

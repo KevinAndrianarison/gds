@@ -2,6 +2,8 @@ import React from 'react'
 
 export default function Parametre() {
   return (
-    <div>Parametre</div>
+    <div>
+      <h1>Param</h1>
+    </div>
   )
 }
