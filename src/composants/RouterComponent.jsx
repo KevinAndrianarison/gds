@@ -4,8 +4,9 @@ import GestionSupply from '../views/GestionSupply'
 import GestionDeVehicule from '../views/GestionDeVehicule'
 import { Routes, Route } from 'react-router-dom';
 import Profil from '@/views/Profil';
-import Parametre from '@/views/Parametre';
-
+import Region from '@/views/Region';
+import User from '@/views/User';
+import Application from '@/views/Application';
 
 
 export default function RouterView() {
@@ -16,7 +17,9 @@ export default function RouterView() {
         <Route path="/gestion-supply" element={<GestionSupply />} />
         <Route path="/gestion-de-vehicule" element={<GestionDeVehicule />} />
         <Route path="/profil" element={<Profil />} />
-        <Route path="/parametre" element={<Parametre />} />
+        <Route path="/regions" element={<Region />} />
+        <Route path="/utilisateurs" element={<User />} />
+        <Route path="/application" element={<Application />} />
       </Routes>
     </div>)
 }
