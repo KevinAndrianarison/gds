@@ -64,12 +64,12 @@ export default function UserSection({ toggleMenu, isOpen }) {
                                     <div className="logoLogin h-10 w-10"></div>
                                     <h5 className="hidden md:inline text-gray-800 text-md">gds</h5>
                                 </div>
-                                <p className='mt-2 text-xs border-b py-2'><FontAwesomeIcon icon={faFolderTree} /> GESTION DES :</p>
+                                <p className='mt-2 text-xs py-2'><FontAwesomeIcon icon={faFolderTree} /> GESTION DES </p>
                                 <div className='mt-2 font-light text-md flex flex-col gap-1'>
                                     <SideMenuLink to="/regions" icon={faGlobe} onClick={() => setSheetOpen(false)}>Régions</SideMenuLink>
                                     <SideMenuLink to="/utilisateurs" icon={faUsers} onClick={() => setSheetOpen(false)}>Utilisateurs</SideMenuLink>
                                 </div>
-                                <p className='mt-4 text-xs border-b py-2'><FontAwesomeIcon icon={faScrewdriverWrench} /> CONFIGURATION :</p>
+                                <p className='mt-4 text-xs py-2'><FontAwesomeIcon icon={faScrewdriverWrench} /> CONFIGURATION </p>
                                 <div className='mt-2 font-light text-md flex flex-col gap-1'>
                                     <SideMenuLink to="/profil" icon={faCircleUser} onClick={() => setSheetOpen(false)}>Profil</SideMenuLink>
                                     <SideMenuLink to="/application" icon={faComputer} onClick={() => setSheetOpen(false)}>Application</SideMenuLink>
