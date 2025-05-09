@@ -1,18 +1,16 @@
-import React from 'react'
+import React from 'react';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-
-export default function SelectComponent({width}) {
+export default function SelectComponent({ width, value, onChange }) {
     return (
-        <Select>
-            <SelectTrigger className={`focus:outline-none border-2 border-blue-200 rounded p-2 ${width}`}
-            >
+        <Select value={value} onValueChange={onChange}>
+            <SelectTrigger className={`focus:outline-none border-2 border-blue-200 rounded p-2 ${width}`}>
                 <SelectValue placeholder="Choisissez ici" />
             </SelectTrigger>
             <SelectContent>
@@ -20,5 +18,5 @@ export default function SelectComponent({width}) {
                 <SelectItem value="user">Utilisateur</SelectItem>
             </SelectContent>
         </Select>
-    )
+    );
 }

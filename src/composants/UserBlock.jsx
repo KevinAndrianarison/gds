@@ -7,21 +7,25 @@ import {
 import { faEnvelope, faPhone, faCrown, faCircleCheck, faTrash, faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function UserBlock() {
+export default function UserBlock({ user }) {
     return (
         <Popover>
             <PopoverTrigger>
-                <div className='flex gap-2 items-center justify-center bg-blue-50 w-72 py-5 hover:bg-blue-300/20 cursor-pointer rounded-3xl'>
+                <div className='flex gap-2 items-center  justify-between bg-blue-50 w-68 p-5 hover:bg-blue-300/20 cursor-pointer rounded-3xl'>
                     <p className=' logoUtilisateur w-10 h-10 rounded-full'></p>
-                    <div className=' text-xs'>
-                        <p className='font-bold text-gray-700 truncate'>ANDRIANARISON Steeve Kevin</p>
-                        <p className='text-blue-400 font-bold flex items-center gap-2'>
-                            <FontAwesomeIcon icon={faCrown} className='text-yellow-500' />
-                            <FontAwesomeIcon icon={faCircleCheck} className=' text-green-500' />
-                            ACL</p>
+                    <div className=' text-xs w-40'>
+                        <p className='font-bold text-gray-700 truncate text-left'>{user.name}</p>
+                        <p className='text-blue-400 font-bold flex items-center gap-2 '>
+                            {user.role === 'acl' && (
+                                <FontAwesomeIcon icon={faCrown} className='text-yellow-500' />
+                            )}
+                            {user.role === 'user' && (
+                                <FontAwesomeIcon icon={faCircleCheck} className=' text-green-500' />
+                            )}
+                            {user.role === 'user' ? 'Utilisateur' : 'ACL'}</p>
                         <div className='mt-4'>
-                            <p className='underline truncate flex items-center gap-2 cursor-pointer hover:!text-blue-400'><FontAwesomeIcon icon={faEnvelope} />kevinandrianarison25@gmail.com</p>
-                            <p className='  flex items-center gap-2 cursor-pointer'><FontAwesomeIcon icon={faPhone} />034 18 622 19</p>
+                            <p className='underline truncate flex items-center gap-2 cursor-pointer hover:!text-blue-400'><FontAwesomeIcon icon={faEnvelope} />{user.email}</p>
+                            <p className='  flex items-center gap-2 cursor-pointer'><FontAwesomeIcon icon={faPhone} />{user.numeros}</p>
 
                         </div>
                     </div>

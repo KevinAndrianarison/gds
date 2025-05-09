@@ -4,6 +4,8 @@ import SpinnerView from './views/SpinnerView';
 import { ShowContext } from './contexte/useShow';
 import Dashboard from './views/Dashboard';
 import Notiflix from 'notiflix';
+import 'nprogress/nprogress.css';
+
 
 Notiflix.Confirm.init({
   titleColor: '#3b82f6',

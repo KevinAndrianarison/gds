@@ -4,14 +4,19 @@ import './index.css';
 import App from './App.jsx';
 import { ShowContextProvider } from './contexte/useShow.jsx';
 import { BrowserRouter } from "react-router-dom";
-
+import { UrlContextProvider } from './contexte/useUrl';
+import { UserContextProvider } from './contexte/useUser';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <ShowContextProvider>
-        <App />
-      </ShowContextProvider>
+      <UrlContextProvider>
+        <ShowContextProvider>
+          <UserContextProvider>
+          <App />
+          </UserContextProvider>
+        </ShowContextProvider>
+      </UrlContextProvider>
     </BrowserRouter>
   </StrictMode>
 );
