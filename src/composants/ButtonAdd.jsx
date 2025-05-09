@@ -11,5 +11,6 @@ export default function ButtonAdd({ width, label, isLoad = false }) {
             {isLoad && (
                 <FontAwesomeIcon icon={faSpinner} pulse />
             )}
-            {label}</button>)
+            {label}</button>
+            )
 }
