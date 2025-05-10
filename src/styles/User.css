@@ -1,0 +1,20 @@
+.logoACL{
+    background-image: url('../images/securite-personnelle.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.logoUtilisateur{
+    background-image: url('../images/utilisateur.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.emptyUtilisateur{
+    background-image: url('../images/boite-vide.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
