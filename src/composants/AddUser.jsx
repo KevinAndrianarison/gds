@@ -37,43 +37,55 @@ export default function AddUser({ onSuccess }) {
         setContact('');
     };
 
-    const handleSubmit = () => {
-        const formData = {
-            role,
-            name: nomComplet,
-            email,
-            numeros: Number(contact),
-            ...(role === 'acl' && { region }),
-            ...(role !== 'user' && { password: generateRandomString(10) })
-        };
-        nProgress.start();
-        setIsPost(true);
-        axios
-            .post(`${url}/api/register`, formData)
-            .then((response) => {
-                getAlluser()
-                Notiflix.Report.success(
-                    'Succès',
-                    'Utilisateur enregistré avec succès!',
-                    'OK'
-                );
+const handleSubmit = () => {
+    if (!role || !nomComplet || !email || !contact) {
+        Notiflix.Notify.warning('Veuillez remplir tous les champs.');
+        return;
+    }
 
-            })
-            .catch((err) => {
-                console.error(err);
-                Notiflix.Report.failure(
-                    'Erreur',
-                    'Erreur lors de l\'enregistrement de l\'utilisateur.',
-                    'OK'
-                );
-            })
-            .finally(() => {
-                setIsPost(false);
-                resetForm();
-                onSuccess();
-                nProgress.done();
-            });
+    if (role === 'acl' && !region) {
+        Notiflix.Notify.warning('Veuillez sélectionner une région.');
+        return;
+    }
+
+    const formData = {
+        role,
+        name: nomComplet,
+        email,
+        numeros: Number(contact),
+        ...(role === 'acl' && { region }),
+        ...(role !== 'user' && { password: generateRandomString(10) })
     };
+
+    nProgress.start();
+    setIsPost(true);
+    axios
+        .post(`${url}/api/register`, formData)
+        .then(() => {
+            getAlluser();
+            Notiflix.Report.success(
+                'Succès',
+                'Utilisateur enregistré avec succès!',
+                'OK'
+            );
+        })
+        .catch((err) => {
+            console.error(err);
+            Notiflix.Report.failure(
+                'Erreur',
+                'Erreur lors de l\'enregistrement de l\'utilisateur.',
+                'OK'
+            );
+        })
+        .finally(() => {
+            setIsPost(false);
+            resetForm();
+            onSuccess();
+            nProgress.done();
+        });
+};
+
+
 
     return (
         <div>
@@ -91,15 +103,15 @@ export default function AddUser({ onSuccess }) {
             </div>
             <div className='flex flex-col gap-2 mt-4'>
                 <TitreLabel titre='Nom complet' />
-                <InputOn width="w-full" value={nomComplet} onChange={setNomComplet} placeholder="Nom complet" />
+                <InputOn width="w-full" value={nomComplet} onChange={setNomComplet} />
             </div>
             <div className='flex flex-col gap-2 mt-4'>
                 <TitreLabel titre='Adresse email' />
-                <InputOn width="w-full" value={email} onChange={setEmail} placeholder="Adresse email" />
+                <InputOn width="w-full" value={email} onChange={setEmail} />
             </div>
             <div className='flex flex-col gap-2 mt-4'>
                 <TitreLabel titre='Contact téléphonique' />
-                <InputOn type='number' width="w-full" value={contact} onChange={setContact} placeholder="Contact téléphonique" />
+                <InputOn type='number' width="w-full" value={contact} onChange={setContact} />
             </div>
             <div className='mt-4 flex justify-end'>
                 <ButtonAdd isLoad={isPost} label='ENREGISTRER' onClick={handleSubmit} />

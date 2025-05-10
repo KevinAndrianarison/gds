@@ -2,7 +2,7 @@ import ButtonAdd from '@/composants/ButtonAdd';
 import Effectifs from '@/composants/Effectifs';
 import Entete from '@/composants/Entete';
 import InputSearch from '@/composants/InputSearch';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ListUser from '@/composants/ListUser';
 import {
   Dialog,
@@ -16,6 +16,7 @@ import { UserContext } from '@/contexte/useUser';
 
 export default function User() {
   const { getAlluser, isModalOpen, setIsModalOpen, closeModal } = useContext(UserContext);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     getAlluser();
@@ -39,8 +40,8 @@ export default function User() {
       </Dialog>
       <Effectifs />
       <div className='flex mt-8 flex-col gap-2'>
-        <InputSearch />
-        <ListUser />
+        <InputSearch value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <ListUser searchTerm={searchTerm} />
       </div>
     </div>
   );
