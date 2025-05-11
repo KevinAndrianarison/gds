@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import TitreLabel from './TitreLabel';
 import InputOn from './InputOn';
 import SelectComponent from './SelectComponent';
@@ -19,6 +19,9 @@ export default function AddUser({ onSuccess }) {
     const [isPost, setIsPost] = useState(false);
     const { url } = useContext(UrlContext);
     const { getAlluser } = useContext(UserContext);
+
+    useEffect(() => {
+    }, [region]);
 
     const generateRandomString = (length) => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -53,9 +56,10 @@ const handleSubmit = () => {
         name: nomComplet,
         email,
         numeros: Number(contact),
-        ...(role === 'acl' && { region }),
+        ...(role === 'acl' && { region_id: region }),
         ...(role !== 'user' && { password: generateRandomString(10) })
     };
+    
 
     nProgress.start();
     setIsPost(true);
@@ -97,7 +101,11 @@ const handleSubmit = () => {
                 {role === 'acl' && (
                     <div className='flex flex-col gap-2 mt-4'>
                         <TitreLabel titre='Région' />
-                        <ComboboxComponent width="w-52" value={region} onChange={setRegion} />
+                        <ComboboxComponent 
+                            width="w-52" 
+                            onChange={setRegion} 
+                            value={region}
+                        />
                     </div>
                 )}
             </div>
