@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import { UrlContextProvider } from "./contexte/useUrl";
 import { UserContextProvider } from "./contexte/useUser";
 import { RegionContextProvider } from "./contexte/useRegion";
+import { AuthContextProvider } from "./contexte/AuthContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -15,7 +16,9 @@ createRoot(document.getElementById("root")).render(
         <ShowContextProvider>
           <RegionContextProvider>
             <UserContextProvider>
-              <App />
+              <AuthContextProvider>
+                <App />
+              </AuthContextProvider>
             </UserContextProvider>
           </RegionContextProvider>
         </ShowContextProvider>

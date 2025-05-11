@@ -1,7 +1,7 @@
 import React from 'react'
 
-export default function TitreLabel({ titre }) {
+export default function TitreLabel({ titre, as: Component = 'h1' }) {
     return (
-        <h1 className='font-bold text-gray-900/50 uppercase text-xs'>{titre}</h1>
+        <Component className='font-bold text-gray-900/50 uppercase text-xs'>{titre}</Component>
     )
 }

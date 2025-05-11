@@ -1,0 +1,144 @@
+import { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { UrlContext } from './useUrl';
+import Notiflix from 'notiflix';
+import NProgress from 'nprogress';
+
+export const AuthContext = createContext({});
+
+export function AuthContextProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { url } = useContext(UrlContext);
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  // Configure Axios interceptors
+  useEffect(() => {
+    const requestInterceptor = axios.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+
+    const responseInterceptor = axios.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUser(null);
+          setIsAuthenticated(false);
+          navigate('/login');
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.request.eject(requestInterceptor);
+      axios.interceptors.response.eject(responseInterceptor);
+    };
+  }, [navigate]);
+
+  const login = async (email, password) => {
+    try {
+      NProgress.start();
+      const response = await axios.post(`${url}/api/login`, {
+        email,
+        password,
+      });
+
+      const { access_token, user } = response.data;
+      
+      localStorage.setItem('token', `Bearer ${access_token}`);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      setUser(user);
+      setIsAuthenticated(true);
+      
+      Notiflix.Notify.success('Connexion réussie !');
+      navigate('/gestion-de-stock');
+    } catch (error) {
+      console.error('Erreur de connexion:', error.response?.data);
+      if (error.response?.status === 500) {
+        Notiflix.Notify.failure('Erreur serveur: Vérifiez la configuration JWT du backend');
+      } else if (error.response?.status === 401) {
+        Notiflix.Notify.failure('Email ou mot de passe incorrect');
+      } else if (error.response?.data?.message) {
+        Notiflix.Notify.failure(error.response.data.message);
+      } else {
+        Notiflix.Notify.failure('Erreur de connexion. Veuillez réessayer.');
+      }
+    } finally {
+      NProgress.done();
+    }
+  };
+
+  const logout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await axios.post(`${url}/api/logout`, {}, {
+          headers: { Authorization: token }
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+      setIsAuthenticated(false);
+      navigate('/login');
+      Notiflix.Notify.success('Déconnexion réussie !');
+    }
+  };
+
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+
+      if (token && storedUser) {
+        setUser(JSON.parse(storedUser));
+        setIsAuthenticated(true);
+        const currentPath = window.location.pathname;
+        if (currentPath === '/login') {
+          navigate('/gestion-de-stock');
+        }
+      }
+    } catch (error) {
+      console.error('Error checking auth:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        loading,
+        login,
+        logout,
+        checkAuth
+      }}
+    >
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+}

@@ -13,13 +13,14 @@ export default function RouterView() {
   return (
     <div className='text-sm p-2 h-full'>
       <Routes>
-        <Route path="/gestion-de-stock" element={<GestionDeStock />} />
-        <Route path="/gestion-supply" element={<GestionSupply />} />
-        <Route path="/gestion-de-vehicule" element={<GestionDeVehicule />} />
-        <Route path="/profil" element={<Profil />} />
-        <Route path="/regions" element={<Region />} />
-        <Route path="/utilisateurs" element={<User />} />
-        <Route path="/application" element={<Application />} />
+        <Route path="/dashboard/gestion-de-stock" element={<GestionDeStock />} />
+        <Route path="/dashboard/gestion-supply" element={<GestionSupply />} />
+        <Route path="/dashboard/gestion-de-vehicule" element={<GestionDeVehicule />} />
+        <Route path="/dashboard/profil" element={<Profil />} />
+        <Route path="/dashboard/regions" element={<Region />} />
+        <Route path="/dashboard/utilisateurs" element={<User />} />
+        <Route path="/dashboard/application" element={<Application />} />
+        <Route path="/dashboard" element={<Application />} />
       </Routes>
     </div>)
 }

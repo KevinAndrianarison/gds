@@ -1,13 +1,14 @@
 import NavBar from '@/composants/NavBar'
-import RouterComponent from '@/composants/RouterComponent'
 import React from 'react'
-
+import Application from './Application'
 
 export default function Dashboard() {
     return (
         <div className='h-[100vh]'>
             <NavBar />
-            <RouterComponent/>
+            <div className='text-sm p-2 h-full'>
+                <Application />
+            </div>
         </div>
     )
 }
