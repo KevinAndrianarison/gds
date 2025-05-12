@@ -2,9 +2,10 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-export default function ButtonAdd({ width, label, isLoad = false, onClick }) {
+export default function ButtonAdd({ width, label, isLoad = false, onClick, type = "button" }) {
     return (
         <button
+            type={type}
             onClick={onClick}
             disabled={isLoad}
             className={`bg-yellow-500 py-2 px-4 flex items-center gap-2 text-white font-bold cursor-pointer rounded-xs ${width}`}

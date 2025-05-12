@@ -15,6 +15,11 @@ import NavBar from './composants/NavBar';
 import Notiflix from 'notiflix';
 import 'nprogress/nprogress.css';
 
+import { TypeProvider } from './contexte/useType';
+import { CategorieProvider } from './contexte/useCategorie';
+import { UserContextProvider } from './contexte/useUser';
+import { SourceProvider } from './contexte/useSource';
+import { ReferenceProvider } from './contexte/useReference';
 
 Notiflix.Confirm.init({
   titleColor: '#3b82f6',
@@ -37,17 +42,27 @@ const MainLayout = ({ children }) => (
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-      <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route path="/" element={<Navigate to="/gestion-de-stock" />} />
-      <Route path="/gestion-de-stock" element={<ProtectedRoute><MainLayout><GestionDeStock /></MainLayout></ProtectedRoute>} />
-      <Route path="/gestion-supply" element={<ProtectedRoute><MainLayout><GestionSupply /></MainLayout></ProtectedRoute>} />
-      <Route path="/gestion-de-vehicule" element={<ProtectedRoute><MainLayout><GestionDeVehicule /></MainLayout></ProtectedRoute>} />
-      <Route path="/profil" element={<ProtectedRoute><MainLayout><Profil /></MainLayout></ProtectedRoute>} />
-      <Route path="/regions" element={<ProtectedRoute><MainLayout><Region /></MainLayout></ProtectedRoute>} />
-      <Route path="/utilisateurs" element={<ProtectedRoute><MainLayout><User /></MainLayout></ProtectedRoute>} />
-      <Route path="/application" element={<ProtectedRoute><MainLayout><Application /></MainLayout></ProtectedRoute>} />
-    </Routes>
+    <UserContextProvider>
+      <CategorieProvider>
+        <TypeProvider>
+          <SourceProvider>
+            <ReferenceProvider>
+              <Routes>
+                <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
+                <Route path="/" element={<Navigate to="/gestion-de-stock" />} />
+                <Route path="/gestion-de-stock" element={<ProtectedRoute><MainLayout><GestionDeStock /></MainLayout></ProtectedRoute>} />
+                <Route path="/gestion-supply" element={<ProtectedRoute><MainLayout><GestionSupply /></MainLayout></ProtectedRoute>} />
+                <Route path="/gestion-de-vehicule" element={<ProtectedRoute><MainLayout><GestionDeVehicule /></MainLayout></ProtectedRoute>} />
+                <Route path="/profil" element={<ProtectedRoute><MainLayout><Profil /></MainLayout></ProtectedRoute>} />
+                <Route path="/regions" element={<ProtectedRoute><MainLayout><Region /></MainLayout></ProtectedRoute>} />
+                <Route path="/utilisateurs" element={<ProtectedRoute><MainLayout><User /></MainLayout></ProtectedRoute>} />
+                <Route path="/application" element={<ProtectedRoute><MainLayout><Application /></MainLayout></ProtectedRoute>} />
+              </Routes>
+            </ReferenceProvider>
+          </SourceProvider>
+        </TypeProvider>
+      </CategorieProvider>
+    </UserContextProvider>
   );
 }
