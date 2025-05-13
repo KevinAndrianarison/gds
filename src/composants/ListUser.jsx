@@ -7,6 +7,7 @@ export default function ListUser({ searchTerm }) {
     const { isLoading, users } = useContext(UserContext);
 
     const filteredUsers = users.filter(user =>
+        user.role !== 'admin' && // Exclure les admins
         user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 

@@ -46,7 +46,7 @@ export default function TypeCombobox({ value, onChange, error }) {
             aria-expanded={open}
             disabled={isLoading}
             className={cn(
-              error ? "border-red-500" : ""
+              error ? "border-red-500" : "border-2 rounded"
             )}
           >
             {isLoading
@@ -72,7 +72,7 @@ export default function TypeCombobox({ value, onChange, error }) {
                 >
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4",
+                      "h-4 w-4",
                       value === type.id ? "opacity-100" : "opacity-0"
                     )}
                   />

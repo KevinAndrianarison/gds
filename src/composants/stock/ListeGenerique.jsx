@@ -19,7 +19,9 @@ export default function ListeGenerique({
   isLoading = false,
   itemName = "élément",
   searchTerm = "",
-  nameField = "nom" // champ à utiliser pour le nom de l'élément
+  nameField = "nom", // champ à utiliser pour le nom de l'élément
+  ExtraField = null, // composant supplémentaire à afficher dans le formulaire
+  onExtraFieldChange = null // fonction pour gérer le changement du composant supplémentaire
 }) {
   const [editingId, setEditingId] = useState(null);
   const [editedItems, setEditedItems] = useState({});
@@ -107,8 +109,12 @@ export default function ListeGenerique({
       try {
         setIsAdding(true);
         NProgress.start();
-        await onAdd({ [nameField]: newItemValue.trim() });
-        setNewItemValue("");
+        const result = await onAdd({ [nameField]: newItemValue.trim() });
+        if (result) { // Ne réinitialiser que si l'ajout a réussi
+          setNewItemValue("");
+        }
+      } catch (error) {
+        // Ne rien faire en cas d'erreur, garder les valeurs
       } finally {
         setIsAdding(false);
         NProgress.done();
@@ -119,17 +125,24 @@ export default function ListeGenerique({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 items-center">
-        <Input
-          type="text"
-          value={newItemValue}
-          onChange={(e) => setNewItemValue(e.target.value)}
-          placeholder={`Nouveau ${itemName}`}
-          className="flex-grow"
-        />
+        <div className="flex-grow items-end flex gap-2">
+          <Input
+            type="text"
+            value={newItemValue}
+            onChange={(e) => setNewItemValue(e.target.value)}
+            placeholder={`Nouveau ${itemName}`}
+            className="flex-grow"
+          />
+          {ExtraField && (
+            <div className="w-64">
+              {ExtraField}
+            </div>
+          )}
+        </div>
         <Button
           onClick={handleAddItem}
           variant="add"
-          className='rounded-full'
+          className='rounded-xl'
           disabled={!newItemValue.trim() || isAdding}
         >
           {isAdding ? (

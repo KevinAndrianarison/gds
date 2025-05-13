@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react";
 import { UrlContext } from "./useUrl";
 import nProgress from "nprogress";
 import axios from "axios";
+import Notiflix from "notiflix";
 
 export const RegionContext = createContext({});
 
@@ -10,24 +11,26 @@ export function RegionContextProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const { url } = useContext(UrlContext);
 
-  function getAllRegion() {
-    nProgress.start();
-    setIsLoading(true);
-    setRegions([]);
-    axios
-      .get(`${url}/api/regions`)
-      .then((response) => {
-        // Vérifier si c'est un objet unique ou un tableau
-        const regionData = Array.isArray(response.data) ? response.data : [response.data];
-        setRegions(regionData);
-        setIsLoading(false);
-        nProgress.done();
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsLoading(false);
-        nProgress.done();
-      });
+  async function getAllRegion() {
+    try {
+      nProgress.start();
+      setIsLoading(true);
+      setRegions([]);
+      
+      const response = await axios.get(`${url}/api/regions`);
+      const regionData = Array.isArray(response.data) ? response.data : [response.data];
+      setRegions(regionData);
+    } catch (error) {
+      console.error(error);
+      Notiflix.Report.failure(
+        'Erreur',
+        'Impossible de charger les régions',
+        'OK'
+      );
+    } finally {
+      setIsLoading(false);
+      nProgress.done();
+    }
   }
 
   return (

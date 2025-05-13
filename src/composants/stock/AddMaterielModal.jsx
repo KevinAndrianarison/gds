@@ -132,7 +132,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
           <DialogTitle>Ajouter un matériel</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-4 max-h-[50vh] overflow-y-auto">
+        <div className="space-y-4 max-h-[50vh] overflow-y-auto">
           <div className="space-y-2">
             <TitreLabel titre="Numéro" required />
             <InputOn width="w-full" value={numero} onChange={setNumero} />
@@ -281,7 +281,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
             </div>
           </div>
         </div>
-        <div className="flex justify-end pt-4">
+        <div className="flex justify-end pt-2">
           <ButtonAdd onClick={handleSubmit} label="AJOUTER" isLoad={isSubmitting} />
         </div>
       </DialogContent>

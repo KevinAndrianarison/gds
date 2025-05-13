@@ -24,7 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-export default function CategorieCombobox({ value, onChange, error }) {
+export default function CategorieCombobox({ value, onChange, error, showAddButton = true }) {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,7 +49,7 @@ export default function CategorieCombobox({ value, onChange, error }) {
             aria-expanded={open}
             disabled={isLoading}
             className={cn(
-              error ? "border-red-500" : ""
+              error ? "border-red-500" : "border-2 rounded"
             )}
           >
             {isLoading
@@ -75,7 +75,7 @@ export default function CategorieCombobox({ value, onChange, error }) {
                 >
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4 ",
+                      "h-4 w-4 ",
                       value === categorie.id ? "opacity-100" : "opacity-0"
                     )}
                   />
@@ -86,7 +86,7 @@ export default function CategorieCombobox({ value, onChange, error }) {
           </Command>
         </PopoverContent>
       </Popover>
-      {!isLoading && (
+      {!isLoading && showAddButton && (
         <Button
           type="button"
           variant="addIcon"

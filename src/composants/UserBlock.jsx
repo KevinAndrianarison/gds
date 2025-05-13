@@ -52,7 +52,15 @@ export default function UserBlock({ user }) {
     <Popover>
       <PopoverTrigger>
         <div className="flex gap-2 items-center  justify-between bg-blue-50 w-68 p-5 hover:bg-blue-300/20 cursor-pointer rounded-3xl">
-          <p className=" logoUtilisateur w-10 h-10 rounded-full"></p>
+          {user.photo_url ? (
+            <img
+              src={`${url}/storage/${user.photo_url}`}
+              alt={user.name}
+              className="w-20 h-20 rounded-full object-cover"
+            />
+          ) : (
+            <div className="logoUtilisateur w-20 h-20 rounded-full"></div>
+          )}
           <div className=" text-xs w-40">
             <p className="font-bold text-gray-700 truncate text-left">
               {user.name}

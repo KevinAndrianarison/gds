@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { faGear, faRightFromBracket, faBars, faXmark, faGlobe, faUsers, faCircleUser, faScrewdriverWrench, faComputer, faFolderTree } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Login.css';
 import { useNavigate } from 'react-router-dom';
 import Notiflix from 'notiflix';
 import { ShowContext } from '@/contexte/useShow';
 import { AuthContext } from '@/contexte/AuthContext';
+import { UrlContext } from '@/contexte/useUrl';
 import {
     Sheet,
     SheetContent,
@@ -18,7 +19,16 @@ import SideMenuLink from './SideMenuLink';
 export default function UserSection({ toggleMenu, isOpen }) {
     const navigate = useNavigate();
     const { setIsConnexion, setIsLogin, setIsDash } = useContext(ShowContext);
-    const { user, logout: authLogout } = useContext(AuthContext);
+    const { user, logout: authLogout, checkAuth } = useContext(AuthContext);
+
+    // Recharger les données du user une seule fois au montage
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            checkAuth();
+        }
+    }, []); // Dépendances vides pour n'exécuter qu'au montage
+    const { url } = useContext(UrlContext);
     const [sheetOpen, setSheetOpen] = useState(false);
 
     function goProfil() {
@@ -44,7 +54,15 @@ export default function UserSection({ toggleMenu, isOpen }) {
     return (
         <div className='flex flex-wrap gap-10 justify-end'>
             <div onClick={goProfil} className="flex items-center space-x-2 cursor-pointer">
-                <div className="logoUser h-10 w-10"></div>
+                {user?.photo_url ? (
+                    <img
+                        src={`${url}/storage/${user.photo_url}`}
+                        alt={user.name}
+                        className='h-10 w-10 rounded-full object-cover'
+                    />
+                ) : (
+                    <div className='logoUtilisateur h-10 w-10 rounded-full'></div>
+                )}
                 <span className="font-medium">{user?.name || 'Utilisateur'}</span>
             </div>
             <div className='flex items-center gap-4'>

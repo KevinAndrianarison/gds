@@ -55,6 +55,7 @@ export default function FormRegion() {
                             onChange={setRegionName}
                         />
                         <ButtonAdd 
+                            type="submit"
                             label='AJOUTER'
                             isLoad={isSubmitting}
                         />

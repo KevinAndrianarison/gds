@@ -110,11 +110,20 @@ export function AuthContextProvider({ children }) {
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem('token');
-      const storedUser = localStorage.getItem('user');
-
-      if (token && storedUser) {
-        setUser(JSON.parse(storedUser));
+      
+      if (token) {
+        // Récupérer les dernières données du serveur
+        const response = await axios.get(`${url}/api/user`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        const userData = response.data;
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
         setIsAuthenticated(true);
+        
         const currentPath = window.location.pathname;
         if (currentPath === '/login') {
           navigate('/gestion-de-stock');
@@ -131,6 +140,7 @@ export function AuthContextProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         isAuthenticated,
         loading,
         login,
