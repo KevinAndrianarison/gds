@@ -53,7 +53,7 @@ export default function CategorieCombobox({ value, onChange, error, disabled = f
               disabled && "opacity-50 cursor-not-allowed"
             )}
           >
-            {disabled ? "Catégorie" : "Sélectionner une catégorie"}
+            {disabled ? (selectedCategorie ? selectedCategorie.nom : "Catégorie") : (selectedCategorie ? selectedCategorie.nom : "Sélectionner une catégorie")}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
