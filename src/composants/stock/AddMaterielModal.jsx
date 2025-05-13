@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { materielService } from "@/services/materielService";
 import { notify } from "@/utils/notify";
 import {
@@ -23,6 +23,7 @@ import UserCombobox from "@/composants/users/UserCombobox";
 import SourceCombobox from "@/composants/stock/SourceCombobox";
 import ReferenceCombobox from "@/composants/stock/ReferenceCombobox";
 import ButtonAdd from "@/composants/ButtonAdd";
+import { TypeContext } from "@/contexte/useType";
 
 export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
   const [numero, setNumero] = useState("");
@@ -43,6 +44,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [error, setError] = useState(null);
+  const { types, filterTypesByCategorie } = useContext(TypeContext);
 
   const validateForm = () => {
     const formData = {
@@ -139,21 +141,35 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
           </div>
 
           <div className="flex flex-wrap gap-4">
-            <div className="space-y-2 w-80">
+            <div className="space-y-2">
               <TitreLabel titre="Catégorie" required />
               <CategorieCombobox
                 width="w-full"
                 value={categorie_id}
-                onChange={setCategorieId}
+                disabled={true}
+                onChange={(categorieId) => {
+                  setCategorieId(categorieId);
+                  filterTypesByCategorie(categorieId);
+                  // Réinitialiser le type quand une nouvelle catégorie est sélectionnée
+                  setTypeId('');
+                }}
+                onTypeFilterChange={filterTypesByCategorie}
               />
             </div>
 
-            <div className="space-y-2 w-80">
+            <div className="space-y-2">
               <TitreLabel titre="Type" required />
               <TypeCombobox
                 width="w-full"
                 value={type_id}
-                onChange={setTypeId}
+                onChange={(typeId) => {
+                  setTypeId(typeId);
+                  // Trouver et définir la catégorie associée au type
+                  const selectedType = types.find(type => type.id === typeId);
+                  if (selectedType) {
+                    setCategorieId(selectedType.categorie_id);
+                  }
+                }}
               />
             </div>
           </div>

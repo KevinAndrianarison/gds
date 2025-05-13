@@ -6,6 +6,7 @@ export const TypeContext = createContext();
 
 export function TypeProvider({ children }) {
     const [types, setTypes] = useState([]);
+    const [allTypes, setAllTypes] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const { url } = useContext(UrlContext);
 
@@ -13,11 +14,26 @@ export function TypeProvider({ children }) {
         setIsLoading(true);
         try {
             const response = await axios.get(`${url}/api/types-materiels`);
+            setAllTypes(response.data);
             setTypes(response.data);
         } catch (error) {
             console.error('Erreur lors de la récupération des types:', error);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const filterTypesByCategorie = (categorieId) => {
+        if (!categorieId) {
+            // Si pas de catégorie, réinitialiser à tous les types
+            setTypes(allTypes);
+        } else {
+            // Filtrer strictement par l'ID de catégorie
+            const filteredTypes = allTypes.filter(type => 
+                type.categorie_id === parseInt(categorieId)
+            );
+            // Mettre à jour les types disponibles
+            setTypes(filteredTypes);
         }
     };
 

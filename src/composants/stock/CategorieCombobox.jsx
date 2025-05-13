@@ -24,7 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-export default function CategorieCombobox({ value, onChange, error, showAddButton = true }) {
+export default function CategorieCombobox({ value, onChange, error, disabled = false, showAddButton = true }) {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,27 +40,24 @@ export default function CategorieCombobox({ value, onChange, error, showAddButto
   );
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 w-60">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="select"
             role="combobox"
             aria-expanded={open}
-            disabled={isLoading}
+            disabled={isLoading || disabled}
             className={cn(
-              error ? "border-red-500" : "border-2 rounded"
+              error ? "border-red-500" : "border-2 rounded",
+              disabled && "opacity-50 cursor-not-allowed"
             )}
           >
-            {isLoading
-              ? "Chargement..."
-              : selectedCategorie
-              ? selectedCategorie.nom
-              : "Sélectionner une catégorie"}
+            {disabled ? "Catégorie" : "Sélectionner une catégorie"}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-0">
+        <PopoverContent className="w-60 p-0">
           <Command>
             <CommandInput placeholder="Rechercher une catégorie" />
             <CommandEmpty>Aucune catégorie trouvée.</CommandEmpty>
