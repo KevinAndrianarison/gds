@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { materielService } from "@/services/materielService";
-import { notify } from "@/utils/notify";
+import { MaterielContext } from "@/contexte/useMateriel";
 import Notiflix from 'notiflix';
 import {
   Dialog,
@@ -46,6 +46,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
 
   const [error, setError] = useState(null);
   const { types, filterTypesByCategorie } = useContext(TypeContext);
+  const { getAllMateriels } = useContext(MaterielContext);
 
   const validateForm = () => {
     const formData = {
@@ -86,7 +87,8 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
     return true;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!validateForm()) {
       return;
     }
@@ -114,13 +116,13 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
       };
 
       await materielService.createMateriel(materielData);
-      notify.success("Matériel ajouté avec succès");
-      onSuccess?.();
+      onClose();
+      await getAllMateriels();
     } catch (err) {
       if (err.response?.data?.message) {
-        notify.error(err.response.data.message);
+        Notiflix.Notify.failure(err.response.data.message);
       } else {
-        notify.error(error);
+        Notiflix.Notify.failure('Erreur lors de la création du matériel');
       }
       console.error(err);
     } finally {

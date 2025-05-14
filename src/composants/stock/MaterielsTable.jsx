@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import TitreLabel from '@/composants/TitreLabel'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
-import { materielService } from '@/services/materielService'
-import { notify } from '@/utils/notify'
+import { MaterielContext } from '@/contexte/useMateriel'
 import Notiflix from 'notiflix'
 import NProgress from 'nprogress'
 
 export default function MaterielsTable({ materiels }) {
+  const { deleteMateriel, updateMateriel } = useContext(MaterielContext);
   const [editingMaterielId, setEditingMaterielId] = useState(null);
   const [editedMateriel, setEditedMateriel] = useState({});
   const [originalMateriel, setOriginalMateriel] = useState({});
@@ -27,8 +27,7 @@ export default function MaterielsTable({ materiels }) {
       async () => {
         try {
           NProgress.start();
-          await materielService.deleteMateriel(id);
-          Notiflix.Notify.success('Matériel supprimé avec succès');
+          await deleteMateriel(id);
         } catch (error) {
           Notiflix.Notify.warning('Erreur lors de la suppression du matériel');
         } finally {
@@ -47,7 +46,7 @@ export default function MaterielsTable({ materiels }) {
 
       if (hasChanged) {
         const updateData = { [field]: editedMateriel[field] };
-        await materielService.updateMateriel(id, updateData);
+        await updateMateriel(id, updateData);
         
         // Mettre à jour l'original avec la nouvelle valeur
         setOriginalMateriel(prev => ({
@@ -56,13 +55,12 @@ export default function MaterielsTable({ materiels }) {
         }));
       }
     } catch (error) {
-      // Restaurer les valeurs originales en cas d'erreur
+      Notiflix.Notify.warning('Erreur lors de la mise à jour');
+      // Restaurer la valeur originale
       setEditedMateriel(prev => ({
         ...prev,
         [field]: originalMateriel[field]
       }));
-      notify.error('Erreur lors de la mise à jour');
-      console.error(error);
     }
   };
 

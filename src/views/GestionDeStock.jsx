@@ -5,41 +5,35 @@ import SearchFilters from '@/composants/stock/SearchFilters'
 import MaterielsTable from '@/composants/stock/MaterielsTable'
 import AddMaterielModal from '@/composants/stock/AddMaterielModal'
 import Empty from '@/composants/Empty'
-import { materielService } from '@/services/materielService'
+import { MaterielContextProvider, useMateriel } from '@/contexte/useMateriel'
 
 export default function GestionDeStock() {
-  const [materiels, setMateriels] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [searchValue, setSearchValue] = useState('')
-  const [showFilters, setShowFilters] = useState(false)
-  const [categorie, setCategorie] = useState('')
-  const [region, setRegion] = useState('')
-  const [etat, setEtat] = useState('')
-  const [showAddModal, setShowAddModal] = useState(false)
+  return (
+    <MaterielContextProvider>
+      <GestionDeStockContent />
+    </MaterielContextProvider>
+  )
+}
+
+function GestionDeStockContent() {
+  const { materiels, getAllMateriels, isLoading, deleteMateriel } = useMateriel();
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [categorie, setCategorie] = useState('');
+  const [region, setRegion] = useState('');
+  const [etat, setEtat] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadMateriels()
-  }, [])
-
-  const loadMateriels = async () => {
-    try {
-      const data = await materielService.getAllMateriels()
-      setMateriels(data)
-      setError(null)
-    } catch (err) {
-      setError('Erreur lors du chargement des matériels')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
+    getAllMateriels()
+  }, []);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')) return
     try {
-      await materielService.deleteMateriel(id)
-      await loadMateriels()
+      await deleteMateriel(id)
+      await getAllMateriels()
     } catch (err) {
       setError('Erreur lors de la suppression du matériel')
       console.error(err)
@@ -74,7 +68,7 @@ export default function GestionDeStock() {
         </div>
       )}
 
-      {loading ? (
+      {isLoading ? (
         <div className="mt-6">
           {[...Array(5)].map((_, index) => (
             <div key={index} className=" rounded mb-4 p-4">
