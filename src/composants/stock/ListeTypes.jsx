@@ -5,6 +5,7 @@ import { TypeContext } from "@/contexte/useType";
 import axios from "@/api/axios";
 import CategorieCombobox from "./CategorieCombobox";
 import { notify } from "@/utils/notify";
+import Notiflix from 'notiflix';
 
 export default function ListeTypes({ searchTerm = "" }) {
   const { types, isLoading, getAllTypes } = useContext(TypeContext);
@@ -13,7 +14,7 @@ export default function ListeTypes({ searchTerm = "" }) {
 
   const handleAdd = async (data) => {
     if (!selectedCategorieId) {
-      notify.error('Veuillez sélectionner une catégorie');
+      Notiflix.Notify.warning('Veuillez sélectionner une catégorie');
       // Ne pas réinitialiser les champs si la validation échoue
       throw new Error('Catégorie requise');
     }

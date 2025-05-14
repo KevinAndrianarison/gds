@@ -95,25 +95,23 @@ export const materielService = {
         }
     },
 
-    updateMateriel: async (id, materiel) => {
+    updateMateriel: async (id, updateData) => {
         try {
-            if (!materielService.validateMateriel(materiel)) {
+            // Filtrer les champs pour n'envoyer que les champs définis
+            const filteredData = Object.keys(updateData).reduce((acc, key) => {
+                if (updateData[key] !== null && updateData[key] !== '') {
+                    acc[key] = updateData[key];
+                }
+                return acc;
+            }, {});
+
+            // Ne pas faire de requête si aucun champ valide
+            if (Object.keys(filteredData).length === 0) {
                 return null;
             }
 
-            const formData = new FormData();
-            Object.keys(materiel).forEach(key => {
-                if (materiel[key] !== '') {
-                    formData.append(key, materiel[key]);
-                }
-            });
-
-            const response = await axios.put(`${API_URL}/materiels/${id}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                }
-            });
-            Notify.success('Matériel modifié avec succès');
+            const response = await axios.put(`${API_URL}/materiels/${id}`, filteredData);
+            Notify.success('Champ mis à jour');
             return response.data;
         } catch (error) {
             if (error.response?.status === 422) {
@@ -123,7 +121,7 @@ export const materielService = {
                     Notify.warning(message);
                 });
             } else {
-                Notify.failure('Erreur lors de la modification du matériel');
+                Notify.failure('Erreur lors de la mise à jour');
             }
             throw error;
         }

@@ -1,33 +1,117 @@
-import React from 'react'
+import React, { useState } from 'react'
 import TitreLabel from '@/composants/TitreLabel'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
+import { materielService } from '@/services/materielService'
+import { notify } from '@/utils/notify'
+import Notiflix from 'notiflix'
+import NProgress from 'nprogress'
 
-export default function MaterielsTable({ materiels, onDelete, onEdit }) {
+export default function MaterielsTable({ materiels }) {
+  const [editingMaterielId, setEditingMaterielId] = useState(null);
+  const [editedMateriel, setEditedMateriel] = useState({});
+  const [originalMateriel, setOriginalMateriel] = useState({});
+
+  const handleEditMateriel = (materiel) => {
+    setEditingMaterielId(materiel.id);
+    setEditedMateriel({ ...materiel });
+    setOriginalMateriel({ ...materiel });
+  };
+
+  const handleDeleteMateriel = (id) => {
+    Notiflix.Confirm.show(
+      'Confirmation de suppression',
+      'Êtes-vous sûr de vouloir supprimer ce matériel ?',
+      'Oui',
+      'Non',
+      async () => {
+        try {
+          NProgress.start();
+          await materielService.deleteMateriel(id);
+          Notiflix.Notify.success('Matériel supprimé avec succès');
+        } catch (error) {
+          Notiflix.Notify.warning('Erreur lors de la suppression du matériel');
+        } finally {
+          NProgress.done();
+        }
+      }
+    );
+  };
+
+  const handleSaveMateriel = async (id, field) => {
+    try {
+      const hasChanged = 
+        editedMateriel[field] !== originalMateriel[field] && 
+        editedMateriel[field] !== null && 
+        editedMateriel[field] !== '';
+
+      if (hasChanged) {
+        const updateData = { [field]: editedMateriel[field] };
+        await materielService.updateMateriel(id, updateData);
+        
+        // Mettre à jour l'original avec la nouvelle valeur
+        setOriginalMateriel(prev => ({
+          ...prev,
+          [field]: editedMateriel[field]
+        }));
+      }
+    } catch (error) {
+      // Restaurer les valeurs originales en cas d'erreur
+      setEditedMateriel(prev => ({
+        ...prev,
+        [field]: originalMateriel[field]
+      }));
+      notify.error('Erreur lors de la mise à jour');
+      console.error(error);
+    }
+  };
+
+  const handleInputChange = (field, value) => {
+    setEditedMateriel(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
   return (
-    <div className="mt-6 overflow-hidden border rounded">
+    <div className="mt-6 overflow-x-auto border border-gray-200 rounded">
       <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+        <thead className="bg-gray-50 whitespace-nowrap">
           <tr>
-            <th className="px-4 py-3 text-left"><TitreLabel titre="N°" /></th>
-            <th className="px-4 py-3 text-left"><TitreLabel titre="Catégorie" /></th>
-            <th className="px-4 py-3 text-left"><TitreLabel titre="Type" /></th>
-            <th className="px-4 py-3 text-left"><TitreLabel titre="Marque" /></th>
-            <th className="px-4 py-3 text-left"><TitreLabel titre="Caractéristiques" /></th>
-            <th className="px-4 py-3 text-left"><TitreLabel titre="État" /></th>
-            <th className="px-4 py-3 text-left"><TitreLabel titre="Ville" /></th>
-            <th className="px-4 py-3 text-left"><TitreLabel titre="Responsable" /></th>
-            <th className="px-4 py-3 text-left"><TitreLabel titre="Actions" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N°" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Catégorie" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Type" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Marque" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Caractéristiques" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="État" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Montant" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° Série" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° IMEI" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Région" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Responsable" /></th>
+            <th className="px-4 py-3 text-center"><TitreLabel titre="Actions" /></th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-white divide-y cursor-pointer divide-gray-200">
           {materiels.map((materiel) => (
-            <tr key={materiel.id} className="hover:bg-gray-50">
-              <td className="px-4 py-3 text-sm text-gray-900">{materiel.numero}</td>
-              <td className="px-4 py-3 text-sm text-gray-900">{materiel.categorie}</td>
-              <td className="px-4 py-3 text-sm text-gray-900">{materiel.type}</td>
-              <td className="px-4 py-3 text-sm text-gray-900">{materiel.marque}</td>
-              <td className="px-4 py-3 text-sm text-gray-900">{materiel.caracteristiques}</td>
+            <tr key={materiel.id}>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {editingMaterielId === materiel.id ? (
+                  <input
+                    type="text"
+                    value={editedMateriel.numero}
+                    onChange={(e) => handleInputChange('numero', e.target.value)}
+                    className="p-2 text-black flex-grow border rounded w-full"
+                    onBlur={() => handleSaveMateriel(materiel.id, 'numero')}
+                    autoFocus
+                  />
+                ) : (
+                  materiel.numero
+                )}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.categorie?.nom || '...'}</td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.type?.nom || '...'}</td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.marque || '...'}</td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.caracteristiques || '...'}</td>
               <td className="px-4 py-3">
                 <span className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${
                   materiel.etat === 'Bon état' 
@@ -39,21 +123,62 @@ export default function MaterielsTable({ materiels, onDelete, onEdit }) {
                   {materiel.etat}
                 </span>
               </td>
-              <td className="px-4 py-3 text-sm text-gray-900">{materiel.ville}</td>
-              <td className="px-4 py-3 text-sm text-gray-900">{materiel.responsable}</td>
-              <td className="px-4 py-3 text-sm space-x-2">
-                <button
-                  onClick={() => onEdit(materiel.id)}
-                  className="text-blue-600 hover:text-blue-800"
-                >
-                  <FontAwesomeIcon icon={faPencilAlt} />
-                </button>
-                <button
-                  onClick={() => onDelete(materiel.id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {editingMaterielId === materiel.id ? (
+                  <input
+                    type="number"
+                    value={editedMateriel.montant || ''}
+                    onChange={(e) => handleInputChange('montant', e.target.value)}
+                    className="p-2 text-black flex-grow border rounded w-full"
+                    onBlur={() => handleSaveMateriel(materiel.id, 'montant')}
+                  />
+                ) : (
+                  materiel.montant || '...'
+                )}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {editingMaterielId === materiel.id ? (
+                  <input
+                    type="text"
+                    value={editedMateriel.numero_serie || ''}
+                    onChange={(e) => handleInputChange('numero_serie', e.target.value)}
+                    className="p-2 text-black flex-grow border rounded w-full"
+                    onBlur={() => handleSaveMateriel(materiel.id, 'numero_serie')}
+                  />
+                ) : (
+                  materiel.numero_serie || '...'
+                )}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {editingMaterielId === materiel.id ? (
+                  <input
+                    type="text"
+                    value={editedMateriel.numero_imei || ''}
+                    onChange={(e) => handleInputChange('numero_imei', e.target.value)}
+                    className="p-2 text-black flex-grow border rounded w-full"
+                    onBlur={() => handleSaveMateriel(materiel.id, 'numero_imei')}
+                  />
+                ) : (
+                  materiel.numero_imei || '...'
+                )}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.region?.nom || '...'}</td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.responsable?.name || 'Non assigné'}</td>
+              <td className="px-4 py-3 text-sm flex items-center justify-center">
+                <div className="flex items-center gap-2 cursor-pointer">
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    className="text-red-500 bg-red-200 p-2 rounded-full cursor-pointer"
+                    onClick={() => handleDeleteMateriel(materiel.id)}
+                  />
+                  {editingMaterielId !== materiel.id && (
+                    <FontAwesomeIcon
+                      icon={faPen}
+                      className="text-blue-500 bg-blue-200 p-2 rounded-full cursor-pointer"
+                      onClick={() => handleEditMateriel(materiel)}
+                    />
+                  )}
+                </div>
               </td>
             </tr>
           ))}

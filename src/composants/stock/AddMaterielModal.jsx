@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { materielService } from "@/services/materielService";
 import { notify } from "@/utils/notify";
+import Notiflix from 'notiflix';
 import {
   Dialog,
   DialogContent,
@@ -73,12 +74,12 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
     });
 
     if (missingFields.length > 0) {
-      notify.error({
-        message: `Veuillez remplir tous les champs obligatoires : ${missingFields.join(
+      Notiflix.Notify.warning(
+        `Veuillez remplir tous les champs obligatoires : ${missingFields.join(
           ", "
         )}`,
-        timeout: 5000,
-      });
+        { timeout: 5000 }
+      );
       return false;
     }
 

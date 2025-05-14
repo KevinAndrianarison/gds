@@ -126,6 +126,12 @@ export default function Profil() {
   const handleInputBlur = async (field) => {
     if (!isEditingProfile) return
 
+    // Vérifier si la valeur a changé
+    const originalValue = JSON.parse(localStorage.getItem('user'))[field];
+    const currentValue = userData[field];
+
+    if (originalValue === currentValue) return;
+
     try {
       const token = localStorage.getItem('token')
       if (!token) return

@@ -79,9 +79,17 @@ export default function ListeGenerique({
   };
 
   const handleSaveItem = async (itemId) => {
+    const originalItem = items.find(item => item.id === itemId);
+    const newName = editedItems[itemId];
+
+    // Ne faire la requête que si le nom a changé
+    if (newName === originalItem[nameField]) {
+      setEditingId(null);
+      return;
+    }
+
     try {
       NProgress.start();
-      const newName = editedItems[itemId];
       await onEdit(itemId, { [nameField]: newName });
       notify.success(itemName + ' mis à jour avec succès');
       setEditingId(null);
