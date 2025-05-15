@@ -27,7 +27,7 @@ import ButtonAdd from "@/composants/ButtonAdd";
 import { TypeContext } from "@/contexte/useType";
 
 export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
-  const [numero, setNumero] = useState("");
+  // Le numéro sera généré à partir de la référence
   const [categorie_id, setCategorieId] = useState("");
   const [type_id, setTypeId] = useState("");
   const [marque, setMarque] = useState("");
@@ -50,7 +50,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
 
   const validateForm = () => {
     const formData = {
-      numero,
+      reference_id,
       categorie_id,
       type_id,
       etat,
@@ -59,7 +59,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
     };
 
     const requiredFields = {
-      numero: "Numéro",
+      reference_id: "Référence",
       categorie_id: "Catégorie",
       type_id: "Type",
       etat: "État",
@@ -98,7 +98,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
 
     try {
       const materielData = {
-        numero,
+        reference_id: parseInt(reference_id),
         categorie_id: parseInt(categorie_id),
         type_id: parseInt(type_id),
         marque,
@@ -111,8 +111,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
         montant: montant ? parseFloat(montant) : null,
         date_acquisition,
         lieu_affectation,
-        source_id: source_id ? parseInt(source_id) : null,
-        reference_id: reference_id ? parseInt(reference_id) : null,
+        source_id: source_id ? parseInt(source_id) : null
       };
 
       await materielService.createMateriel(materielData);
@@ -138,10 +137,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
         </DialogHeader>
 
         <div className="space-y-4 max-h-[50vh] overflow-y-auto">
-          <div className="space-y-2">
-            <TitreLabel titre="Numéro" required />
-            <InputOn width="w-full" value={numero} onChange={setNumero} />
-          </div>
+
 
           <div className="flex flex-wrap gap-4">
             <div className="space-y-2">
@@ -197,7 +193,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
             </div>
 
             <div className="space-y-2 w-80">
-              <TitreLabel titre="Référence" />
+              <TitreLabel titre="Référence" required />
               <ReferenceCombobox
                 width="w-full"
                 value={reference_id}

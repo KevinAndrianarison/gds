@@ -75,7 +75,7 @@ export default function   MaterielsTable({ materiels }) {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50 whitespace-nowrap">
           <tr>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N°" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° Référence" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Catégorie" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Type" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Marque" /></th>
@@ -84,6 +84,7 @@ export default function   MaterielsTable({ materiels }) {
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Montant (Ar)" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° Série" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° IMEI" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Date d'acquisition" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Région" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Responsable" /></th>
             <th className="px-4 py-3 text-center"><TitreLabel titre="Actions" /></th>
@@ -184,6 +185,19 @@ export default function   MaterielsTable({ materiels }) {
                   />
                 ) : (
                   materiel.numero_imei || '...'
+                )}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {editingMaterielId === materiel.id ? (
+                  <input
+                    type="date"
+                    value={editedMateriel.date_acquisition || ''}
+                    onChange={(e) => handleInputChange('date_acquisition', e.target.value)}
+                    className="p-2 text-black flex-grow border rounded w-full"
+                    onBlur={() => handleSaveMateriel(materiel.id, 'date_acquisition')}
+                  />
+                ) : (
+                  materiel.date_acquisition || '...'
                 )}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.region?.nom || '...'}</td>

@@ -54,7 +54,7 @@ export default function UserCombobox({width, value, onChange}) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={`focus:outline-none border-2 border-blue-200 rounded p-2 ${width}`}
+          className={`focus:outline-none border-2 border-blue-200 rounded p-2 truncate ${width}`}
         >
           {value
             ? users.find((user) => user.id === value)?.name

@@ -39,7 +39,7 @@ export const materielService = {
 
     validateMateriel: (materiel) => {
         const requiredFields = {
-            numero: 'Numéro',
+            reference_id: 'Référence',
             categorie_id: 'Catégorie',
             type_id: 'Type',
             etat: 'État',
