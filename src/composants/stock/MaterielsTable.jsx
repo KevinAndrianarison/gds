@@ -37,15 +37,16 @@ export default function   MaterielsTable({ materiels }) {
     );
   };
 
-  const handleSaveMateriel = async (id, field) => {
+  const handleSaveMateriel = async (id, field, value) => {
     try {
+      const newValue = value || editedMateriel[field];
       const hasChanged = 
-        editedMateriel[field] !== originalMateriel[field] && 
-        editedMateriel[field] !== null && 
-        editedMateriel[field] !== '';
+        newValue !== originalMateriel[field] && 
+        newValue !== null && 
+        newValue !== '';
 
       if (hasChanged) {
-        const updateData = { [field]: editedMateriel[field] };
+        const updateData = { [field]: newValue };
         await updateMateriel(id, updateData);
         
         // Mettre à jour l'original avec la nouvelle valeur
@@ -192,9 +193,11 @@ export default function   MaterielsTable({ materiels }) {
                   <input
                     type="date"
                     value={editedMateriel.date_acquisition || ''}
-                    onChange={(e) => handleInputChange('date_acquisition', e.target.value)}
+                    onChange={(e) => {
+                      handleInputChange('date_acquisition', e.target.value);
+                      handleSaveMateriel(materiel.id, 'date_acquisition', e.target.value);
+                    }}
                     className="p-2 text-black flex-grow border rounded w-full"
-                    onBlur={() => handleSaveMateriel(materiel.id, 'date_acquisition')}
                   />
                 ) : (
                   materiel.date_acquisition || '...'
