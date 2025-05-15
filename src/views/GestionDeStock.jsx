@@ -80,7 +80,7 @@ function GestionDeStockContent() {
         </div>
       ) : materiels.length === 0 ? (
         <Empty 
-          titre="Aucun matériel n'a encore été créé"
+          titre="Aucun matériel n'a été trouvé"
         />
       ) : (
         <MaterielsTable 
