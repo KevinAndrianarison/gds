@@ -103,7 +103,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
         type_id: parseInt(type_id),
         marque,
         caracteristiques,
-        etat: parseInt(etat),
+        etat: etat,
         region_id: parseInt(region_id),
         responsable_id: parseInt(responsable_id),
         numero_serie,
@@ -219,11 +219,10 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
                   <SelectValue placeholder="Choisir" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">Neuf</SelectItem>
-                  <SelectItem value="2">Bon état</SelectItem>
-                  <SelectItem value="3">État moyen</SelectItem>
-                  <SelectItem value="4">Mauvais état</SelectItem>
-                  <SelectItem value="5">Hors service</SelectItem>
+                  <SelectItem value="Bon état">Bon état</SelectItem>
+                  <SelectItem value="État moyen">État moyen</SelectItem>
+                  <SelectItem value="Mauvais état">Mauvais état</SelectItem>
+                  <SelectItem value="Hors service">Hors service</SelectItem>
                 </SelectContent>
               </Select>
             </div>

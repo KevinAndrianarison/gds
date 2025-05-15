@@ -6,7 +6,7 @@ import { MaterielContext } from '@/contexte/useMateriel'
 import Notiflix from 'notiflix'
 import NProgress from 'nprogress'
 
-export default function MaterielsTable({ materiels }) {
+export default function   MaterielsTable({ materiels }) {
   const { deleteMateriel, updateMateriel } = useContext(MaterielContext);
   const [editingMaterielId, setEditingMaterielId] = useState(null);
   const [editedMateriel, setEditedMateriel] = useState({});
@@ -81,7 +81,7 @@ export default function MaterielsTable({ materiels }) {
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Marque" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Caractéristiques" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="État" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Montant" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Montant (Ar)" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° Série" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° IMEI" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Région" /></th>
@@ -108,15 +108,41 @@ export default function MaterielsTable({ materiels }) {
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.categorie?.nom || '...'}</td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.type?.nom || '...'}</td>
-              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.marque || '...'}</td>
-              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.caracteristiques || '...'}</td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {editingMaterielId === materiel.id ? (
+                  <input
+                    type="text"
+                    value={editedMateriel.marque || ''}
+                    onChange={(e) => handleInputChange('marque', e.target.value)}
+                    className="p-2 text-black flex-grow border rounded w-full"
+                    onBlur={() => handleSaveMateriel(materiel.id, 'marque')}
+                  />
+                ) : (
+                  materiel.marque || '...'
+                )}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {editingMaterielId === materiel.id ? (
+                  <input
+                    type="text"
+                    value={editedMateriel.caracteristiques || ''}
+                    onChange={(e) => handleInputChange('caracteristiques', e.target.value)}
+                    className="p-2 text-black flex-grow border rounded w-full"
+                    onBlur={() => handleSaveMateriel(materiel.id, 'caracteristiques')}
+                  />
+                ) : (
+                  materiel.caracteristiques || '...'
+                )}
+              </td>
               <td className="px-4 py-3">
                 <span className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${
                   materiel.etat === 'Bon état' 
                     ? 'bg-green-400' 
                     : materiel.etat === 'État moyen' 
                     ? 'bg-yellow-400' 
-                    : 'bg-red-400'
+                    : materiel.etat === 'Mauvais état' 
+                    ? 'bg-red-400' 
+                    : 'bg-gray-400'
                 }`}>
                   {materiel.etat}
                 </span>

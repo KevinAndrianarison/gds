@@ -96,8 +96,7 @@ function GestionDeStockContent() {
         isOpen={showAddModal} 
         onClose={() => setShowAddModal(false)}
         onSuccess={() => {
-          setShowAddModal(false)
-          loadMateriels()
+           setShowAddModal(false)
         }}
       />
     </div>
