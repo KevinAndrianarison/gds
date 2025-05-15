@@ -31,7 +31,7 @@ export default function SearchFilters({
           <InputSearch 
             value={searchValue} 
             onChange={setSearchValue}
-            placeholder="Rechercher un matériel..."
+            placeholder="Rechercher un matériel"
           />
         </div>
         <button

@@ -11,7 +11,7 @@ export default function InputSearch({ width = "w-80", value, onChange }) {
                 className="outline-none w-full text-sm"
                 placeholder="Rechercher"
                 value={value}
-                onChange={onChange}
+                onChange={(e) => onChange(e.target.value)}
             />
         </div>
     );
