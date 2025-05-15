@@ -31,13 +31,6 @@ export default function ListeRegion({ searchTerm = '', regions: propRegions = nu
     );
   };
 
-  const handleSelectAllRegions = () => {
-    if (selectedRegions.length === filteredRegions.length) {
-      setSelectedRegions([]);
-    } else {
-      setSelectedRegions(filteredRegions.map(region => region.id));
-    }
-  };
 
   const handleDeleteSelectedRegions = () => {
     if (selectedRegions.length === 0) return;
@@ -73,16 +66,40 @@ export default function ListeRegion({ searchTerm = '', regions: propRegions = nu
   };
 
   const handleSaveRegion = async (regionId) => {
+    const originalRegion = regions.find(r => r.id === regionId);
+    const newValue = editedRegions[regionId];
+
+    if (!newValue || newValue.trim() === '') {
+      Notiflix.Notify.warning('Le nom de la région ne peut pas être vide');
+      return;
+    }
+
+    if (originalRegion.nom === newValue.trim()) {
+      setEditingRegionId(null);
+      setEditedRegions(prev => {
+        const newState = { ...prev };
+        delete newState[regionId];
+        return newState;
+      });
+      return;
+    }
+
     try {
       NProgress.start();
-      const newName = editedRegions[regionId];
-      await axios.put(`${url}/api/regions/${regionId}`, { nom: newName });
-      Notiflix.Notify.success('Région mise à jour avec succès');
-      setEditingRegionId(null);
+      await axios.put(`${url}/api/regions/${regionId}`, {
+        nom: newValue.trim()
+      });
+      Notiflix.Notify.success('Région modifiée avec succès');
       getAllRegion();
     } catch (error) {
-      Notiflix.Notify.warning('Erreur lors de la mise à jour de la région');
+      Notiflix.Notify.warning('Erreur lors de la modification de la région');
     } finally {
+      setEditingRegionId(null);
+      setEditedRegions(prev => {
+        const newState = { ...prev };
+        delete newState[regionId];
+        return newState;
+      });
       NProgress.done();
     }
   };
