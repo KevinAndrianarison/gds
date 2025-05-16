@@ -1,9 +1,10 @@
-import { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { UrlContext } from './useUrl';
-import Notiflix from 'notiflix';
-import NProgress from 'nprogress';
+import { createContext, useState, useContext, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { UrlContext } from "./useUrl";
+import Notiflix from "notiflix";
+import NProgress from "nprogress";
+import { ShowContext } from "./useShow";
 
 export const AuthContext = createContext({});
 
@@ -13,6 +14,7 @@ export function AuthContextProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { url } = useContext(UrlContext);
+  const { setIsACL, setIsAdmin } = useContext(ShowContext);
 
   useEffect(() => {
     checkAuth();
@@ -22,7 +24,7 @@ export function AuthContextProvider({ children }) {
   useEffect(() => {
     const requestInterceptor = axios.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -37,11 +39,12 @@ export function AuthContextProvider({ children }) {
       (response) => response,
       async (error) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.removeItem("userRole");
           setUser(null);
           setIsAuthenticated(false);
-          navigate('/login');
+          navigate("/login");
         }
         return Promise.reject(error);
       }
@@ -62,25 +65,34 @@ export function AuthContextProvider({ children }) {
       });
 
       const { access_token, user } = response.data;
-      
-      localStorage.setItem('token', `Bearer ${access_token}`);
-      localStorage.setItem('user', JSON.stringify(user));
-      
+
+      localStorage.setItem("token", `Bearer ${access_token}`);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("userRole", user.role);
+
       setUser(user);
       setIsAuthenticated(true);
-      
-      Notiflix.Notify.success('Connexion réussie !');
-      navigate('/gestion-de-stock');
+      Notiflix.Notify.success("Connexion réussie !");
+      navigate("/gestion-de-stock");
+      if (user.role === "admin") {
+        setIsACL(false);
+        setIsAdmin(true);
+      } else if (user.role === "acl") {
+        setIsAdmin(false);
+        setIsACL(true);
+      }
     } catch (error) {
-      console.error('Erreur de connexion:', error.response?.data);
+      console.error("Erreur de connexion:", error.response?.data);
       if (error.response?.status === 500) {
-        Notiflix.Notify.failure('Erreur serveur: Vérifiez la configuration JWT du backend');
+        Notiflix.Notify.failure(
+          "Erreur serveur: Vérifiez la configuration JWT du backend"
+        );
       } else if (error.response?.status === 401) {
-        Notiflix.Notify.failure('Email ou mot de passe incorrect');
+        Notiflix.Notify.failure("Email ou mot de passe incorrect");
       } else if (error.response?.data?.message) {
         Notiflix.Notify.failure(error.response.data.message);
       } else {
-        Notiflix.Notify.failure('Erreur de connexion. Veuillez réessayer.');
+        Notiflix.Notify.failure("Erreur de connexion. Veuillez réessayer.");
       }
     } finally {
       NProgress.done();
@@ -89,48 +101,53 @@ export function AuthContextProvider({ children }) {
 
   const logout = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
-        await axios.post(`${url}/api/logout`, {}, {
-          headers: { Authorization: token }
-        });
+        await axios.post(
+          `${url}/api/logout`,
+          {},
+          {
+            headers: { Authorization: token },
+          }
+        );
       }
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      console.error("Erreur lors de la déconnexion:", error);
     } finally {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userRole");
       setUser(null);
       setIsAuthenticated(false);
-      navigate('/login');
-      Notiflix.Notify.success('Déconnexion réussie !');
+      navigate("/login");
+      Notiflix.Notify.success("Déconnexion réussie !");
     }
   };
 
   const checkAuth = async () => {
     try {
-      const token = localStorage.getItem('token');
-      
+      const token = localStorage.getItem("token");
+
       if (token) {
         // Récupérer les dernières données du serveur
         const response = await axios.get(`${url}/api/user`, {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
-        
+
         const userData = response.data;
         setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem("user", JSON.stringify(userData));
         setIsAuthenticated(true);
-        
+
         const currentPath = window.location.pathname;
-        if (currentPath === '/login') {
-          navigate('/gestion-de-stock');
+        if (currentPath === "/login") {
+          navigate("/gestion-de-stock");
         }
       }
     } catch (error) {
-      console.error('Error checking auth:', error);
+      console.error("Error checking auth:", error);
     } finally {
       setLoading(false);
     }
@@ -145,7 +162,7 @@ export function AuthContextProvider({ children }) {
         loading,
         login,
         logout,
-        checkAuth
+        checkAuth,
       }}
     >
       {!loading && children}

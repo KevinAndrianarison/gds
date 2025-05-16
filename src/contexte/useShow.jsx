@@ -1,4 +1,5 @@
-import { createContext, useState } from 'react';
+import { isCancel } from 'axios';
+import { createContext, useEffect, useState } from 'react';
 
 export const ShowContext = createContext({});
 
@@ -8,6 +9,17 @@ export function ShowContextProvider({ children }) {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isSpinnerView, setIsSpinnerView] = useState(false);
   const [isDash, setIsDash] = useState(false);
+  const [isACL, setIsACL] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(()=>{
+    const role = localStorage.getItem('userRole');
+    if (role === 'admin') {
+      setIsAdmin(true);
+    } else if (role === 'acl') {
+      setIsACL(true);
+    }
+  },[])
 
   return (
     <ShowContext.Provider
@@ -17,11 +29,15 @@ export function ShowContextProvider({ children }) {
         isConnexion,
         isForgotPassword,
         isDash,
+        isACL,
+        isAdmin,
         setIsLogin,
         setIsForgotPassword,
         setIsConnexion,
         setIsSpinnerView,
-        setIsDash
+        setIsDash,
+        setIsACL,
+        setIsAdmin
       }}
     >
       {children}
