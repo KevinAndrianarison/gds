@@ -274,7 +274,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
 
             <div className="flex flex-wrap gap-4">
               <div className="space-y-2">
-                <TitreLabel titre="Montant" />
+                <TitreLabel titre="Montant (Ariary)" />
                 <InputOn
                   width="w-full"
                   type="number"

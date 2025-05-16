@@ -8,26 +8,8 @@ export const MaterielContext = createContext({});
 
 export function MaterielContextProvider({ children }) {
     const [materiels, setMateriels] = useState([]);
-    const [filteredMateriels, setFilteredMateriels] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const filterMateriels = (searchValue) => {
-        if (!searchValue || typeof searchValue !== 'string' || !searchValue.trim()) {
-            setFilteredMateriels(materiels);
-            return;
-        }
-        
-        const searchLower = searchValue.toLowerCase();
-        const filtered = materiels.filter(materiel => {
-            const matchNumero = materiel.numero?.toLowerCase().includes(searchLower);
-            const matchCategorie = materiel.categorie?.nom?.toLowerCase().includes(searchLower);
-            const matchType = materiel.type?.nom?.toLowerCase().includes(searchLower);
-            return matchNumero || matchCategorie || matchType;
-        });
-        
-        setFilteredMateriels(filtered);
-    };
 
     function getAllMateriels() {
         nProgress.start();
@@ -37,7 +19,6 @@ export function MaterielContextProvider({ children }) {
         return materielService.getAllMateriels()
             .then((response) => {
                 setMateriels(response);
-                setFilteredMateriels(response);
                 setIsLoading(false);
                 nProgress.done();
                 return response;
@@ -102,16 +83,16 @@ export function MaterielContextProvider({ children }) {
     return (
         <MaterielContext.Provider
             value={{
-                materiels: filteredMateriels,
-                allMateriels: materiels,
+                materiels,
                 isLoading,
+                setMateriels,
+                setIsLoading,
                 getAllMateriels,
                 deleteMateriel,
                 createMateriel,
                 updateMateriel,
                 isModalOpen,
                 setIsModalOpen,
-                filterMateriels,
                 closeModal
             }}
         >

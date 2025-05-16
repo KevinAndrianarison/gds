@@ -16,22 +16,18 @@ export default function GestionDeStock() {
 }
 
 function GestionDeStockContent() {
-  const { materiels, getAllMateriels, isLoading, deleteMateriel, filterMateriels } = useMateriel();
+  const { materiels, getAllMateriels, isLoading, deleteMateriel } = useMateriel();
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [categorie, setCategorie] = useState('');
   const [region, setRegion] = useState('');
   const [etat, setEtat] = useState('');
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     getAllMateriels()
   }, []);
 
-  useEffect(() => {
-    filterMateriels(searchValue);
-  }, [searchValue]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')) return

@@ -1,51 +1,65 @@
-import React, { useState } from 'react'
-import { Search, Filter } from 'lucide-react'
-import InputSearch from '@/composants/InputSearch'
-import ButtonAdd from '@/composants/ButtonAdd'
-import AddMaterielModal from './AddMaterielModal'
+import React, { useContext, useEffect, useState } from "react";
+import { Search, Filter } from "lucide-react";
+import InputSearch from "@/composants/InputSearch";
+import ButtonAdd from "@/composants/ButtonAdd";
+import AddMaterielModal from "./AddMaterielModal";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import { CategorieContext } from "@/contexte/useCategorie";
+import { RegionContext } from "@/contexte/useRegion";
 
-export default function SearchFilters({ 
-  searchValue, 
-  setSearchValue, 
-  showFilters, 
+export default function SearchFilters({
+  searchValue,
+  setSearchValue,
+  showFilters,
   setShowFilters,
   categorie,
   setCategorie,
   region,
   setRegion,
   etat,
-  setEtat
+  setEtat,
 }) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { categories, getAllCategories } = useContext(CategorieContext);
+  const { regions, getAllRegion } = useContext(RegionContext);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await Promise.all([getAllCategories(), getAllRegion()]);
+    };
+    fetchData();
+  }, []);
+
   return (
     <div>
       <div className="flex items-center gap-4">
         <div className="flex-1">
-          <InputSearch 
-            value={searchValue} 
+          <InputSearch
+            value={searchValue}
             onChange={setSearchValue}
-            placeholder="Rechercher un matériel"
+            placeholder="Rechercher un matériel..."
           />
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center justify-center p-2 rounded-lg hover:bg-blue-100 transition-colors duration-200 ${showFilters ? 'bg-blue-100' : 'bg-blue-50'}`}
+          className={`flex items-center justify-center p-2 rounded-lg hover:bg-blue-100 transition-colors duration-200 ${
+            showFilters ? "bg-blue-100" : "bg-blue-50"
+          }`}
         >
           <Filter className="h-4 w-4 text-blue-400" />
         </button>
-        <ButtonAdd 
-          label='Ajouter un matériel'
-          onClick={() => setIsModalOpen(true)} 
+        <ButtonAdd
+          label="Ajouter un matériel"
+          onClick={() => setIsModalOpen(true)}
         />
 
-        <AddMaterielModal 
+        <AddMaterielModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />
@@ -59,9 +73,11 @@ export default function SearchFilters({
                 <SelectValue placeholder="Catégorie" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="informatique">Informatique</SelectItem>
-                <SelectItem value="mobilier">Mobilier</SelectItem>
-                <SelectItem value="vehicule">Véhicule</SelectItem>
+                {categories.map((categorie) => (
+                  <SelectItem key={categorie.id} value={categorie.id}>
+                    {categorie.nom}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -70,9 +86,11 @@ export default function SearchFilters({
                 <SelectValue placeholder="Région" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="antananarivo">Antananarivo</SelectItem>
-                <SelectItem value="toamasina">Toamasina</SelectItem>
-                <SelectItem value="mahajanga">Mahajanga</SelectItem>
+                {regions.map((region) => (
+                  <SelectItem key={region.id} value={region.id}>
+                    {region.nom}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -81,14 +99,15 @@ export default function SearchFilters({
                 <SelectValue placeholder="État" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="bon">Bon état</SelectItem>
-                <SelectItem value="moyen">État moyen</SelectItem>
-                <SelectItem value="mauvais">Mauvais état</SelectItem>
+                  <SelectItem value="Bon état">Bon état</SelectItem>
+                  <SelectItem value="État moyen">État moyen</SelectItem>
+                  <SelectItem value="Mauvais état">Mauvais état</SelectItem>
+                  <SelectItem value="Hors service">Hors service</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }
