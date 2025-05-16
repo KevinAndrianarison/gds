@@ -16,7 +16,7 @@ export default function GestionDeStock() {
 }
 
 function GestionDeStockContent() {
-  const { materiels, getAllMateriels, isLoading, deleteMateriel } =
+  const { materiels, getAllMateriels, isLoading, deleteMateriel, getMaterielParIdRegion } =
     useMateriel();
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -26,7 +26,16 @@ function GestionDeStockContent() {
   const [etat, setEtat] = useState("");
 
   useEffect(() => {
-    getAllMateriels();
+    if(localStorage.getItem("user") !== null){
+      const user = JSON.parse(localStorage.getItem("user"));
+      if(user.region_id){
+        getMaterielParIdRegion(user.region_id);
+      }else{
+        getAllMateriels();
+      }
+    }else{
+      getAllMateriels();
+    }
   }, []);
 
   const handleDelete = async (id) => {

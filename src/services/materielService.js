@@ -22,6 +22,17 @@ axios.interceptors.response.use(
 );
 
 export const materielService = {
+
+    getMaterielParIdRegion: async (regionId) => {
+        try {
+            const response = await axios.get(`${API_URL}/materiels/region/${regionId}`);
+            return response.data;
+        } catch (error) {
+            Notify.failure('Erreur lors du chargement des matériels par région');
+            throw error;
+        }
+    },
+
     getAllMateriels: async () => {
         try {
             const response = await axios.get(`${API_URL}/materiels`);
