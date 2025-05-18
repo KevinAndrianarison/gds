@@ -164,7 +164,7 @@ export default function ListeGenerique({
         <InputSearch
           width="w-full"
           value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          onChange={setSearchValue}
         />
       )}
       <div className="flex justify-between items-center">
