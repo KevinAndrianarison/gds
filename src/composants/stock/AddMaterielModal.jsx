@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { materielService } from "@/services/materielService";
 import { MaterielContext } from "@/contexte/useMateriel";
-import Notiflix from 'notiflix';
+import Notiflix from "notiflix";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,7 @@ import SourceCombobox from "@/composants/stock/SourceCombobox";
 import ReferenceCombobox from "@/composants/stock/ReferenceCombobox";
 import ButtonAdd from "@/composants/ButtonAdd";
 import { TypeContext } from "@/contexte/useType";
+import { ShowContext } from "@/contexte/useShow";
 
 export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
   // Le numéro sera généré à partir de la référence
@@ -43,10 +44,18 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
   const [source_id, setSourceId] = useState("");
   const [reference_id, setReferenceId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isAdmin, isACL } = useContext(ShowContext);
 
   const [error, setError] = useState(null);
   const { types, filterTypesByCategorie } = useContext(TypeContext);
-  const { getAllMateriels } = useContext(MaterielContext);
+  const { getAllMateriels, getMaterielParIdRegion } = useContext(MaterielContext);
+
+  useEffect(() => {
+    if (isACL) {
+      const storedRegionId = JSON.parse(localStorage.getItem("region"))?.id;
+      setRegionId(storedRegionId);
+    }
+  }, [isACL]);
 
   const validateForm = () => {
     const formData = {
@@ -69,7 +78,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
 
     const missingFields = [];
     Object.entries(formData).forEach(([field, value]) => {
-      if (!value || (typeof value === 'string' && value.trim() === "")) {
+      if (!value || (typeof value === "string" && value.trim() === "")) {
         missingFields.push(requiredFields[field]);
       }
     });
@@ -111,17 +120,21 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
         montant: montant ? parseFloat(montant) : null,
         date_acquisition,
         lieu_affectation,
-        source_id: source_id ? parseInt(source_id) : null
+        source_id: source_id ? parseInt(source_id) : null,
       };
 
       await materielService.createMateriel(materielData);
       onClose();
-      await getAllMateriels();
+      if (isAdmin) {
+        getAllMateriels();
+      } else {
+        getMaterielParIdRegion(region_id);
+      }
     } catch (err) {
       if (err.response?.data?.message) {
         Notiflix.Notify.failure(err.response.data.message);
       } else {
-        Notiflix.Notify.failure('Erreur lors de la création du matériel');
+        Notiflix.Notify.failure("Erreur lors de la création du matériel");
       }
       console.error(err);
     } finally {
@@ -137,8 +150,6 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
         </DialogHeader>
 
         <div className="space-y-4 max-h-[50vh] overflow-y-auto">
-
-
           <div className="flex flex-wrap gap-4">
             <div className="space-y-2">
               <TitreLabel titre="Catégorie" required />
@@ -150,7 +161,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
                   setCategorieId(categorieId);
                   filterTypesByCategorie(categorieId);
                   // Réinitialiser le type quand une nouvelle catégorie est sélectionnée
-                  setTypeId('');
+                  setTypeId("");
                 }}
                 onTypeFilterChange={filterTypesByCategorie}
               />
@@ -164,7 +175,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
                 onChange={(typeId) => {
                   setTypeId(typeId);
                   // Trouver et définir la catégorie associée au type
-                  const selectedType = types.find(type => type.id === typeId);
+                  const selectedType = types.find((type) => type.id === typeId);
                   if (selectedType) {
                     setCategorieId(selectedType.categorie_id);
                   }
@@ -234,14 +245,16 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <TitreLabel titre="Région" required />
-              <ComboboxComponent
-                width="w-full"
-                value={region_id}
-                onChange={setRegionId}
-              />
-            </div>
+            {isAdmin && (
+              <div className="space-y-2 ">
+                <TitreLabel titre="Région" required />
+                <ComboboxComponent
+                  width="w-full"
+                  value={region_id}
+                  onChange={setRegionId}
+                />
+              </div>
+            )}
 
             <div className="space-y-2">
               <TitreLabel titre="Responsable" required />
@@ -296,7 +309,11 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
           </div>
         </div>
         <div className="flex justify-end pt-2">
-          <ButtonAdd onClick={handleSubmit} label="AJOUTER" isLoad={isSubmitting} />
+          <ButtonAdd
+            onClick={handleSubmit}
+            label="AJOUTER"
+            isLoad={isSubmitting}
+          />
         </div>
       </DialogContent>
     </Dialog>
