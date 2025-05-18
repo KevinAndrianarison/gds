@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Search, Filter } from "lucide-react";
+import { Filter } from "lucide-react";
 import InputSearch from "@/composants/InputSearch";
 import ButtonAdd from "@/composants/ButtonAdd";
 import AddMaterielModal from "./AddMaterielModal";
@@ -29,6 +29,8 @@ export default function SearchFilters({
   setEtat,
   showAll,
   setShowAll,
+  setSelectedCategoryName,
+  setSelectedRegionName,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { categories, getAllCategories } = useContext(CategorieContext);
@@ -74,7 +76,15 @@ export default function SearchFilters({
       {showFilters && (
         <div className="mt-2 p-4">
           <div className="grid gap-2 md:grid-cols-3">
-            <Select value={categorie} onValueChange={setCategorie}>
+            <Select
+              value={categorie}
+              onValueChange={(value) => {
+                setCategorie(value);
+                setSelectedCategoryName(
+                  categories.find((cat) => cat.id === value)?.nom || ""
+                );
+              }}
+            >
               <SelectTrigger className="focus:outline-none border-2 border-blue-200 rounded p-2 w-full">
                 <SelectValue placeholder="Catégorie" />
               </SelectTrigger>
@@ -87,7 +97,15 @@ export default function SearchFilters({
               </SelectContent>
             </Select>
             {isAdmin && (
-              <Select value={region} onValueChange={setRegion}>
+              <Select
+                value={region}
+                onValueChange={(value) => {
+                  setRegion(value);
+                  setSelectedRegionName(
+                    regions.find((reg) => reg.id === value)?.nom || ""
+                  );
+                }}
+              >
                 <SelectTrigger className="focus:outline-none border-2 border-blue-200 rounded p-2 w-full">
                   <SelectValue placeholder="Région" />
                 </SelectTrigger>

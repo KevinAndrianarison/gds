@@ -35,6 +35,8 @@ function GestionDeStockContent() {
   const [searchValue, setSearchValue] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [categorie, setCategorie] = useState("");
+  const [selectedCategoryName, setSelectedCategoryName] = useState("");
+  const [selectedRegionName, setSelectedRegionName] = useState("");
   const [region, setRegion] = useState("");
   const [type, setType] = useState("");
   const [etat, setEtat] = useState("");
@@ -48,6 +50,9 @@ function GestionDeStockContent() {
     if (localStorage.getItem("user") !== null) {
       const user = JSON.parse(localStorage.getItem("user"));
       if (user.region_id) {
+        const region = JSON.parse(localStorage.getItem("region"));
+        setRegion(region.id);
+        setSelectedRegionName(region.nom);
         getMaterielParIdRegion(user.region_id);
       } else {
         getAllMateriels();
@@ -57,32 +62,56 @@ function GestionDeStockContent() {
     }
   }, []);
 
-
   const exportToPDF = () => {
+    setIsLoadPdf(true);
     const doc = new jsPDF({ orientation: "landscape" });
     doc.setFontSize(18);
     doc.text("Liste des Matériels", 14, 15);
     const exportDate = new Date().toLocaleString();
     doc.setFontSize(10);
-    doc.text(`Exporté le: ${exportDate}`, 14, 22);
+    doc.setTextColor(0);
+    const selectedCategory = selectedCategoryName
+      ? `Catégorie: ${selectedCategoryName}`
+      : "Toutes les catégories";
+    const selectedRegion = selectedRegionName
+      ? `Région: ${selectedRegionName}`
+      : "Toutes les régions";
+
+    doc.text(selectedCategory, 14, 30);
+    doc.text(selectedRegion, 14, 26);
+    doc.setTextColor(77, 77, 77);
+    doc.text(`Exporté le: ${exportDate}`, 14, 38);
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     const headers = [
-      "N° Référence", "Catégorie", "Type", "Marque", "Caractéristiques",
-      "État", "Montant (Ar)", "N° Série", "N° IMEI", "Date d'acquisition",
-      "Région", "Responsable"
+      "N° Référence",
+      "Catégorie",
+      "Type",
+      "Marque",
+      "Caractéristiques",
+      "État",
+      "Montant (Ar)",
+      "N° Série",
+      "N° IMEI",
+      "Date d'acquisition",
+      "Région",
+      "Responsable",
     ];
-    let y = 30;
+
+    let y = 40;
     const columnWidths = [22, 22, 22, 22, 32, 22, 22, 22, 22, 27, 22, 22];
     const paddingBottom = 2;
+
     const wrapText = (text, maxWidth) => {
-      const words = text.split(' ');
+      const words = text.split(" ");
       const lines = [];
       let currentLine = words[0];
+
       for (let i = 1; i < words.length; i++) {
         const word = words[i];
-        const lineWidth = doc.getTextWidth(currentLine + ' ' + word);
+        const lineWidth = doc.getTextWidth(currentLine + " " + word);
         if (lineWidth < maxWidth) {
-          currentLine += ' ' + word;
+          currentLine += " " + word;
         } else {
           lines.push(currentLine);
           currentLine = word;
@@ -91,26 +120,46 @@ function GestionDeStockContent() {
       lines.push(currentLine);
       return lines;
     };
+
     headers.forEach((header, i) => {
-      doc.rect(14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), y, columnWidths[i], 10, 'S');
-      doc.text(header, 16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), y + 7);
+      doc.rect(
+        14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
+        y,
+        columnWidths[i],
+        10,
+        "S"
+      );
+      doc.text(
+        header,
+        16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
+        y + 7
+      );
     });
+
     y += 10;
+
     materiels.forEach((materiel) => {
       const rowData = [
-        materiel.numero || '',
-        materiel.categorie?.nom || '',
-        materiel.type?.nom || '',
-        materiel.marque || '',
-        materiel.caracteristiques || '',
-        materiel.etat || '',
-        materiel.montant || '',
-        materiel.numero_serie || '',
-        materiel.numero_imei || '',
-        materiel.date_acquisition || '',
-        materiel.region?.nom || '',
-        materiel.responsable?.name || 'Non assigné'
+        materiel.numero || "",
+        materiel.categorie?.nom || "",
+        materiel.type?.nom || "",
+        materiel.marque || "",
+        materiel.caracteristiques || "",
+        materiel.etat === "Bon état"
+          ? "Bon état"
+          : materiel.etat === "État moyen"
+          ? "État moyen"
+          : materiel.etat === "Mauvais état"
+          ? "Mauvais état"
+          : "Inconnu",
+        materiel.montant || "",
+        materiel.numero_serie || "",
+        materiel.numero_imei || "",
+        materiel.date_acquisition || "",
+        materiel.region?.nom || "",
+        materiel.responsable?.name || "Non assigné",
       ];
+
       let maxLines = 1;
       const linesArray = rowData.map((data, i) => {
         const lines = wrapText(data.toString(), columnWidths[i] - 2);
@@ -119,20 +168,57 @@ function GestionDeStockContent() {
         }
         return lines;
       });
+
       const rowHeight = maxLines * 5 + paddingBottom;
+
       linesArray.forEach((lines, i) => {
         lines.forEach((line, j) => {
-          doc.text(line, 16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), y + 5 + j * 5);
+          if (i === 5) {
+            let color;
+            switch (line) {
+              case "Bon état":
+                color = [51, 255, 57];
+                break;
+              case "État moyen":
+                color = [51, 119, 255];
+                break;
+              case "Mauvais état":
+                color = [255, 51, 51];
+                break;
+              default:
+                color = [77, 77, 77];
+            }
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(...color);
+          } else {
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(0);
+          }
+
+          doc.text(
+            line,
+            16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
+            y + 5 + j * 5
+          );
         });
-        doc.rect(14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), y, columnWidths[i], rowHeight);
+
+        doc.rect(
+          14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
+          y,
+          columnWidths[i],
+          rowHeight
+        );
       });
+
       y += rowHeight;
+
       if (y > 180) {
         doc.addPage("landscape");
         y = 20;
       }
     });
     doc.save("Materiels.pdf");
+    setIsLoadPdf(false);
   };
 
   const exportToExcel = () => {
@@ -222,6 +308,8 @@ function GestionDeStockContent() {
         setEtat={setEtat}
         showAll={showAll}
         setShowAll={setShowAll}
+        setSelectedCategoryName={setSelectedCategoryName}
+        setSelectedRegionName={setSelectedRegionName}
       />
       {isLoading ? (
         <div className="mt-6">
@@ -250,7 +338,7 @@ function GestionDeStockContent() {
       {(filteredMateriels.length > 0 || (showAll && materiels.length > 0)) && (
         <div className="flex gap-2 my-4">
           <ButtonPdf isLoading={isLoadPdf} onClick={exportToPDF} />
-          <ButtonExcel onClick={exportToExcel} />
+          <ButtonExcel isLoading={isLoadExcel} onClick={exportToExcel} />
         </div>
       )}
 
