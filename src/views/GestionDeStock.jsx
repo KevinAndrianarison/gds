@@ -21,8 +21,9 @@ function GestionDeStockContent() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [categorie, setCategorie] = useState("");
-  const [region, setRegion] = useState("");
+  const [categorie, setCategorie] = useState('');
+  const [region, setRegion] = useState('');
+  const [type, setType] = useState('');
   const [etat, setEtat] = useState("");
 
   useEffect(() => {
@@ -50,6 +51,14 @@ function GestionDeStockContent() {
     }
   };
 
+  const filteredMateriels = materiels.filter(materiel => {
+    const matchesSearch = (materiel.categorie.nom && materiel.categorie.nom.toLowerCase().includes(searchValue.toLowerCase())) ||
+                          (materiel.type.nom && materiel.type.nom.toLowerCase().includes(searchValue.toLowerCase()));
+    const matchesCategorie = !categorie || materiel.categorie_id === categorie;
+    const matchesType = !type || materiel.type_id === type;
+    return matchesSearch && matchesCategorie && matchesType;
+  });
+
   return (
     <div className="w-[80vw] mx-auto">
       <Entete titre="stocks" description="gérez vos matériels et équipements" />
@@ -74,6 +83,8 @@ function GestionDeStockContent() {
         setShowFilters={setShowFilters}
         categorie={categorie}
         setCategorie={setCategorie}
+        type={type}
+        setType={setType}
         region={region}
         setRegion={setRegion}
         etat={etat}
@@ -99,7 +110,7 @@ function GestionDeStockContent() {
         <Empty titre="Aucun matériel n'a été trouvé" />
       ) : (
         <MaterielsTable
-          materiels={materiels}
+          materiels={filteredMateriels}
           onDelete={handleDelete}
           onEdit={() => setShowAddModal(true)}
         />
