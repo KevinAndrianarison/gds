@@ -33,6 +33,7 @@ function GestionDeStockContent() {
   const [region, setRegion] = useState("");
   const [type, setType] = useState("");
   const [etat, setEtat] = useState("");
+  const [showAll, setShowAll] = useState(false);
   const nomRegion = JSON.parse(localStorage.getItem("region"))?.nom;
   const { isACL } = useContext(ShowContext);
 
@@ -64,14 +65,15 @@ function GestionDeStockContent() {
   const filteredMateriels = materiels.filter((materiel) => {
     const matchesSearch =
       (materiel.categorie.nom &&
-        materiel.categorie.nom
-          .toLowerCase()
-          .includes(searchValue.toLowerCase())) ||
+        materiel.categorie.nom.toLowerCase().includes(searchValue.toLowerCase())) ||
       (materiel.type.nom &&
         materiel.type.nom.toLowerCase().includes(searchValue.toLowerCase()));
+
     const matchesCategorie = !categorie || materiel.categorie_id === categorie;
-    const matchesType = !type || materiel.type_id === type;
-    return matchesSearch && matchesCategorie && matchesType;
+    const matchesRegion = !region || materiel.region_id === region;
+    const matchesEtat = !etat || materiel.etat === etat;
+
+    return matchesSearch && matchesCategorie && matchesRegion && matchesEtat;
   });
 
   return (
@@ -110,14 +112,13 @@ function GestionDeStockContent() {
         setShowFilters={setShowFilters}
         categorie={categorie}
         setCategorie={setCategorie}
-        type={type}
-        setType={setType}
         region={region}
         setRegion={setRegion}
         etat={etat}
         setEtat={setEtat}
+        showAll={showAll}
+        setShowAll={setShowAll}
       />
-
       {isLoading ? (
         <div className="mt-6">
           {[...Array(5)].map((_, index) => (
@@ -137,7 +138,7 @@ function GestionDeStockContent() {
         <Empty titre="Aucun matériel n'a été trouvé" />
       ) : (
         <MaterielsTable
-          materiels={filteredMateriels}
+          materiels={showAll ? materiels : filteredMateriels}
           onDelete={handleDelete}
           onEdit={() => setShowAddModal(true)}
         />

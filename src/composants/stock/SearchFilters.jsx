@@ -13,6 +13,8 @@ import {
 import { CategorieContext } from "@/contexte/useCategorie";
 import { RegionContext } from "@/contexte/useRegion";
 import { ShowContext } from "@/contexte/useShow";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 
 export default function SearchFilters({
   searchValue,
@@ -25,6 +27,8 @@ export default function SearchFilters({
   setRegion,
   etat,
   setEtat,
+  showAll,
+  setShowAll,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { categories, getAllCategories } = useContext(CategorieContext);
@@ -107,6 +111,17 @@ export default function SearchFilters({
                 <SelectItem value="Hors service">Hors service</SelectItem>
               </SelectContent>
             </Select>
+            <button
+              className={`flex items-center font-bold justify-center rounded gap-2 p-2 border w-40 ${
+                showAll
+                  ? "bg-gray-500 text-white border-none font-light"
+                  : "bg-white text-blue-500 border-blue-200"
+              }`}
+              onClick={() => setShowAll(!showAll)}
+            >
+              <FontAwesomeIcon icon={faEye} />
+              <p>{showAll ? "Afficher filtrés" : "Tout afficher"}</p>
+            </button>
           </div>
         </div>
       )}
