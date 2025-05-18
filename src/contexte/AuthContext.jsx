@@ -41,6 +41,7 @@ export function AuthContextProvider({ children }) {
         if (error.response?.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
+          localStorage.removeItem("region");
           localStorage.removeItem("userRole");
           setUser(null);
           setIsAuthenticated(false);
@@ -64,10 +65,10 @@ export function AuthContextProvider({ children }) {
         password,
       });
 
-      const { access_token, user } = response.data;
-
+      const { access_token, region, user } = response.data;
       localStorage.setItem("token", `Bearer ${access_token}`);
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("region", JSON.stringify(region));
       localStorage.setItem("userRole", user.role);
 
       setUser(user);
@@ -116,6 +117,7 @@ export function AuthContextProvider({ children }) {
     } finally {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.removeItem("region");
       localStorage.removeItem("userRole");
       setUser(null);
       setIsAuthenticated(false);
@@ -136,9 +138,10 @@ export function AuthContextProvider({ children }) {
           },
         });
 
-        const userData = response.data;
+        const userData = response.data.user;
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("region", JSON.stringify(response.data.region));
         setIsAuthenticated(true);
 
         const currentPath = window.location.pathname;

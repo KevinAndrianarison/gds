@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { CategorieContext } from "@/contexte/useCategorie";
 import { RegionContext } from "@/contexte/useRegion";
+import { ShowContext } from "@/contexte/useShow";
 
 export default function SearchFilters({
   searchValue,
@@ -28,6 +29,7 @@ export default function SearchFilters({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { categories, getAllCategories } = useContext(CategorieContext);
   const { regions, getAllRegion } = useContext(RegionContext);
+  const { isAdmin } = useContext(ShowContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,29 +82,29 @@ export default function SearchFilters({
                 ))}
               </SelectContent>
             </Select>
-
-            <Select value={region} onValueChange={setRegion}>
-              <SelectTrigger className="focus:outline-none border-2 border-blue-200 rounded p-2 w-full">
-                <SelectValue placeholder="Région" />
-              </SelectTrigger>
-              <SelectContent>
-                {regions.map((region) => (
-                  <SelectItem key={region.id} value={region.id}>
-                    {region.nom}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
+            {isAdmin && (
+              <Select value={region} onValueChange={setRegion}>
+                <SelectTrigger className="focus:outline-none border-2 border-blue-200 rounded p-2 w-full">
+                  <SelectValue placeholder="Région" />
+                </SelectTrigger>
+                <SelectContent>
+                  {regions.map((region) => (
+                    <SelectItem key={region.id} value={region.id}>
+                      {region.nom}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
             <Select value={etat} onValueChange={setEtat}>
               <SelectTrigger className="focus:outline-none border-2 border-blue-200 rounded p-2 w-full">
                 <SelectValue placeholder="État" />
               </SelectTrigger>
               <SelectContent>
-                  <SelectItem value="Bon état">Bon état</SelectItem>
-                  <SelectItem value="État moyen">État moyen</SelectItem>
-                  <SelectItem value="Mauvais état">Mauvais état</SelectItem>
-                  <SelectItem value="Hors service">Hors service</SelectItem>
+                <SelectItem value="Bon état">Bon état</SelectItem>
+                <SelectItem value="État moyen">État moyen</SelectItem>
+                <SelectItem value="Mauvais état">Mauvais état</SelectItem>
+                <SelectItem value="Hors service">Hors service</SelectItem>
               </SelectContent>
             </Select>
           </div>

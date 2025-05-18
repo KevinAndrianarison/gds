@@ -12,7 +12,6 @@ export function MaterielContextProvider({ children }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   function getMaterielParIdRegion(regionId) {
-    console.log(regionId);
     setIsLoading(true);
     return materielService
       .getMaterielParIdRegion(regionId)
@@ -32,7 +31,6 @@ export function MaterielContextProvider({ children }) {
   }
 
   function getAllMateriels() {
-    console.log("getAllMateriels");
     nProgress.start();
     setIsLoading(true);
     setMateriels([]);
