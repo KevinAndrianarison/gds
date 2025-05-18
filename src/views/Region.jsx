@@ -13,7 +13,11 @@ export default function Region() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
 
-  const sortedRegions = [...regions].sort((a, b) => {
+  const filteredRegions = regions.filter(region =>
+    region.nom.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const sortedRegions = [...filteredRegions].sort((a, b) => {
     if (sortOrder === 'asc') {
       return a.nom.localeCompare(b.nom);
     } else {
@@ -36,7 +40,7 @@ export default function Region() {
       <div className="mt-4 flex items-center gap-2">
         <InputSearch 
           value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)} 
+          onChange={setSearchTerm} 
         />
         <FilterCroissant 
           onClick={() => setSortOrder('asc')} 
@@ -49,7 +53,6 @@ export default function Region() {
       </div>
       <div className=" p-4 text-gray-700">
         <ListeRegion 
-          searchTerm={searchTerm} 
           regions={sortedRegions} 
         />
       </div>

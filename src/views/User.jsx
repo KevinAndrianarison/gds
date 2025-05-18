@@ -40,7 +40,7 @@ export default function User() {
       </Dialog>
       <Effectifs />
       <div className='flex mt-8 flex-col gap-2'>
-        <InputSearch value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <InputSearch value={searchTerm} onChange={setSearchTerm} />
         <ListUser searchTerm={searchTerm} />
       </div>
     </div>
