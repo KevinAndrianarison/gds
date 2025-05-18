@@ -15,7 +15,6 @@ import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { TypeContext } from "@/contexte/useType";
-import InputSearch from "@/composants/InputSearch";
 import ListeTypes from "./ListeTypes";
 import {
   Dialog,
@@ -23,12 +22,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ShowContext } from "@/contexte/useShow";
 
 export default function TypeCombobox({ value, onChange, error }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { types, isLoading, getAllTypes } = useContext(TypeContext);
+  const { isAdmin } = useContext(ShowContext);
 
   useEffect(() => {
     getAllTypes();
@@ -83,7 +84,7 @@ export default function TypeCombobox({ value, onChange, error }) {
           </Command>
         </PopoverContent>
       </Popover>
-      {!isLoading && (
+      {!isLoading && isAdmin && (
         <Button
           type="button"
           variant="addIcon"

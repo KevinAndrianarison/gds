@@ -15,7 +15,6 @@ import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ReferenceContext } from "@/contexte/useReference";
-import InputSearch from "@/composants/InputSearch";
 import ListeReferences from "./ListeReferences";
 import {
   Dialog,
@@ -23,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ShowContext } from "@/contexte/useShow";
 
 export default function ReferenceCombobox({ value, onChange, error }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +30,7 @@ export default function ReferenceCombobox({ value, onChange, error }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { references, isLoading, getAllReferences } =
     useContext(ReferenceContext);
+  const { isAdmin } = useContext(ShowContext);
 
   useEffect(() => {
     getAllReferences();
@@ -86,7 +87,7 @@ export default function ReferenceCombobox({ value, onChange, error }) {
           </Command>
         </PopoverContent>
       </Popover>
-      {!isLoading && (
+      {!isLoading && isAdmin && (
         <Button
           type="button"
           variant="addIcon"

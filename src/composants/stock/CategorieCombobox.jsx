@@ -15,7 +15,6 @@ import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CategorieContext } from "@/contexte/useCategorie";
-import InputSearch from "@/composants/InputSearch";
 import ListeCategories from "./ListeCategories";
 import {
   Dialog,
@@ -23,13 +22,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ShowContext } from "@/contexte/useShow";
 
-export default function CategorieCombobox({ value, onChange, error, disabled = false, showAddButton = true }) {
+export default function CategorieCombobox({
+  value,
+  onChange,
+  error,
+  disabled = false,
+  showAddButton = true,
+}) {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { categories, isLoading, getAllCategories } =
     useContext(CategorieContext);
+  const { isAdmin } = useContext(ShowContext);
 
   useEffect(() => {
     getAllCategories();
@@ -53,7 +60,13 @@ export default function CategorieCombobox({ value, onChange, error, disabled = f
               disabled && "opacity-50 cursor-not-allowed"
             )}
           >
-            {disabled ? (selectedCategorie ? selectedCategorie.nom : "Catégorie") : (selectedCategorie ? selectedCategorie.nom : "Sélectionner une catégorie")}
+            {disabled
+              ? selectedCategorie
+                ? selectedCategorie.nom
+                : "Catégorie"
+              : selectedCategorie
+              ? selectedCategorie.nom
+              : "Sélectionner une catégorie"}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -83,7 +96,7 @@ export default function CategorieCombobox({ value, onChange, error, disabled = f
           </Command>
         </PopoverContent>
       </Popover>
-      {!isLoading && showAddButton && (
+      {!isLoading && showAddButton && isAdmin && (
         <Button
           type="button"
           variant="addIcon"
