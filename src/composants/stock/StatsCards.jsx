@@ -7,7 +7,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 export default function StatsCards({ total, inGoodCondition, inBadCondition, isLoading }) {
   return (
     <div className="grid gap-4 md:grid-cols-3 my-4">
-      <div className="bg-green-50 rounded-3xl p-5 hover:bg-green-300/20 cursor-pointer transition-colors duration-200">
+      <div className="bg-green-100 rounded-3xl p-5 hover:bg-green-300/20 cursor-pointer transition-colors duration-200">
         <div className="flex items-center justify-between mb-2">
           <TitreLabel titre='Total Matériel' />
           <Package className="h-5 w-5 text-green-400" />

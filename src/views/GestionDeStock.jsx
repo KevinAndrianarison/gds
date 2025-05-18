@@ -9,6 +9,8 @@ import { MaterielContextProvider, useMateriel } from "@/contexte/useMateriel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { ShowContext } from "@/contexte/useShow";
+import ButtonExcel from "@/composants/ButtonExcel";
+import ButtonPdf from "@/composants/ButtonPdf";
 
 export default function GestionDeStock() {
   return (
@@ -65,7 +67,9 @@ function GestionDeStockContent() {
   const filteredMateriels = materiels.filter((materiel) => {
     const matchesSearch =
       (materiel.categorie.nom &&
-        materiel.categorie.nom.toLowerCase().includes(searchValue.toLowerCase())) ||
+        materiel.categorie.nom
+          .toLowerCase()
+          .includes(searchValue.toLowerCase())) ||
       (materiel.type.nom &&
         materiel.type.nom.toLowerCase().includes(searchValue.toLowerCase()));
 
@@ -142,6 +146,12 @@ function GestionDeStockContent() {
           onDelete={handleDelete}
           onEdit={() => setShowAddModal(true)}
         />
+      )}
+      {(filteredMateriels.length > 0 || (showAll && materiels.length > 0)) && (
+        <div className="flex gap-2 my-4">
+          <ButtonPdf />
+          <ButtonExcel />
+        </div>
       )}
 
       <AddMaterielModal
