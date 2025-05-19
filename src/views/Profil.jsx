@@ -295,11 +295,11 @@ export default function Profil() {
         <div>
           <h2 className="text-xl font-semibold">{userData.name}</h2>
           <p className="text-gray-600">{userData.email}</p>
-          <p
+          <div
             className={
               userData.role === "admin"
-                ? "text-gray-600 uppercase mt-4 flex gap-2 border-yellow-500 border-2 justify-center rounded-full py-0.5 items-center font-semibold"
-                : "text-gray-600 uppercase mt-4 flex gap-2 border-green-400 border-2 justify-center rounded-full py-0.5 items-center font-semibold"
+                ? "w-32 text-gray-600 uppercase mt-4 flex gap-2 border-yellow-500 border-2 justify-center rounded-full py-0.5 items-center font-semibold"
+                : "w-32 text-gray-600 uppercase mt-4 flex gap-2 border-green-400 border-2 justify-center rounded-full py-0.5 items-center font-semibold"
             }
           >
             {userData.role === "admin" && (
@@ -309,7 +309,7 @@ export default function Profil() {
               <FontAwesomeIcon className="text-green-400" icon={faUser} />
             )}
             {userData.role}
-          </p>
+          </div>
         </div>
       </div>
 
