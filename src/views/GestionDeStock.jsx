@@ -252,7 +252,7 @@ function GestionDeStockContent() {
 
   const filteredMateriels = materiels.filter((materiel) => {
     const matchesSearch =
-      (materiel.categorie.nom &&
+(materiel.categorie.nom &&
         materiel.categorie.nom
           .toLowerCase()
           .includes(searchValue.toLowerCase())) ||
@@ -281,7 +281,7 @@ function GestionDeStockContent() {
         }
         inBadCondition={
           isLoading
-            ? null
+                  ? null
             : materiels.filter(
                 (m) => m.etat === "Mauvais état" || m.etat === "Hors service"
               ).length
@@ -290,12 +290,12 @@ function GestionDeStockContent() {
       />
       {isACL && (
         <p className="flex items-center text-lg gap-2 text-gray-700 my-4">
-          <FontAwesomeIcon className="text-blue-500" icon={faGlobe} />
+<FontAwesomeIcon className="text-blue-500" icon={faGlobe} />
           {nomRegion}
         </p>
       )}
 
-      <SearchFilters
+                <SearchFilters
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         showFilters={showFilters}
