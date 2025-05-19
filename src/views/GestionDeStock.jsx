@@ -92,7 +92,7 @@ function GestionDeStockContent() {
     doc.setFontSize(8);
     const headers = [
       "N° Référence",
-      "Catégorie",
+      "Appartenance",
       "Type",
       "Marque",
       "Caractéristiques",
@@ -152,7 +152,7 @@ function GestionDeStockContent() {
     materiels.forEach((materiel) => {
       const rowData = [
         materiel.numero || "",
-        materiel.categorie?.nom || "",
+        materiel.appartenance?.nom || "",
         materiel.type?.nom || "",
         materiel.marque || "",
         materiel.caracteristiques || "",
