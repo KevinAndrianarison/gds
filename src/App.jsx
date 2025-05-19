@@ -20,6 +20,7 @@ import { CategorieProvider } from './contexte/useCategorie';
 import { UserContextProvider } from './contexte/useUser';
 import { SourceProvider } from './contexte/useSource';
 import { ReferenceProvider } from './contexte/useReference';
+import { AppartenanceContextProvider } from './contexte/useAppartenance';
 
 Notiflix.Confirm.init({
   titleColor: '#3b82f6',
@@ -46,7 +47,8 @@ export default function App() {
       <CategorieProvider>
         <TypeProvider>
           <SourceProvider>
-            <ReferenceProvider>
+            <AppartenanceContextProvider>
+              <ReferenceProvider>
               <Routes>
                 <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
@@ -59,7 +61,8 @@ export default function App() {
                 <Route path="/utilisateurs" element={<ProtectedRoute><MainLayout><User /></MainLayout></ProtectedRoute>} />
                 <Route path="/application" element={<ProtectedRoute><MainLayout><Application /></MainLayout></ProtectedRoute>} />
               </Routes>
-            </ReferenceProvider>
+              </ReferenceProvider>
+            </AppartenanceContextProvider>
           </SourceProvider>
         </TypeProvider>
       </CategorieProvider>

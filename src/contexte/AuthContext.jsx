@@ -15,6 +15,7 @@ export function AuthContextProvider({ children }) {
   const navigate = useNavigate();
   const { url } = useContext(UrlContext);
   const { setIsACL, setIsAdmin } = useContext(ShowContext);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -60,6 +61,7 @@ export function AuthContextProvider({ children }) {
   const login = async (email, password) => {
     try {
       NProgress.start();
+      setIsLoading(true);
       const response = await axios.post(`${url}/api/login`, {
         email,
         password,
@@ -97,6 +99,7 @@ export function AuthContextProvider({ children }) {
       }
     } finally {
       NProgress.done();
+      setIsLoading(false);
     }
   };
 
@@ -152,7 +155,7 @@ export function AuthContextProvider({ children }) {
     } catch (error) {
       console.error("Error checking auth:", error);
     } finally {
-      setLoading(false);
+      setLoading(false);  
     }
   };
 
@@ -166,6 +169,7 @@ export function AuthContextProvider({ children }) {
         login,
         logout,
         checkAuth,
+        isLoading,
       }}
     >
       {!loading && children}

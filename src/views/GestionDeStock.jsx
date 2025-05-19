@@ -65,27 +65,34 @@ function GestionDeStockContent() {
   const exportToPDF = () => {
     setIsLoadPdf(true);
     const doc = new jsPDF({ orientation: "landscape" });
-    doc.setFontSize(18);
-    doc.text("Liste des Matériels", 14, 15);
-    const exportDate = new Date().toLocaleString();
+
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 170, 255);
+    doc.text("Détails des matériels", 14, 15);
+
     doc.setFontSize(10);
     doc.setTextColor(0);
+    doc.setFont("times", "bolditalic");
+    const exportDate = new Date().toLocaleString();
     const selectedCategory = selectedCategoryName
-      ? `Catégorie: ${selectedCategoryName}`
-      : "Toutes les catégories";
+      ? `- Catégorie : ${selectedCategoryName}`
+      : "- Catégorie : Toutes";
     const selectedRegion = selectedRegionName
-      ? `Région: ${selectedRegionName}`
-      : "Toutes les régions";
+      ? `- Région: ${selectedRegionName}`
+      : "- Région : Toutes";
 
     doc.text(selectedCategory, 14, 30);
     doc.text(selectedRegion, 14, 26);
     doc.setTextColor(77, 77, 77);
+    doc.setFont("helvetica", "normal");
     doc.text(`Exporté le: ${exportDate}`, 14, 38);
+
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     const headers = [
       "N° Référence",
-      "Catégorie",
+      "Appartenance",
       "Type",
       "Marque",
       "Caractéristiques",
@@ -120,20 +127,24 @@ function GestionDeStockContent() {
       lines.push(currentLine);
       return lines;
     };
-
+    doc.setDrawColor(0, 170, 255);
+    doc.setLineWidth(0.1);
     headers.forEach((header, i) => {
+      doc.setFillColor(0, 170, 255);
       doc.rect(
         14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
         y,
         columnWidths[i],
         10,
-        "S"
+        "FD"
       );
+      doc.setTextColor(255, 255, 255);
       doc.text(
         header,
         16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
         y + 7
       );
+      doc.setTextColor(0);
     });
 
     y += 10;
@@ -141,7 +152,7 @@ function GestionDeStockContent() {
     materiels.forEach((materiel) => {
       const rowData = [
         materiel.numero || "",
-        materiel.categorie?.nom || "",
+        materiel.appartenance?.nom || "",
         materiel.type?.nom || "",
         materiel.marque || "",
         materiel.caracteristiques || "",
@@ -201,7 +212,8 @@ function GestionDeStockContent() {
             y + 5 + j * 5
           );
         });
-
+        doc.setDrawColor(51, 187, 255);
+        doc.setLineWidth(0.05);
         doc.rect(
           14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
           y,
@@ -217,7 +229,8 @@ function GestionDeStockContent() {
         y = 20;
       }
     });
-    doc.save("Materiels.pdf");
+
+    doc.save(`Liste des materiels ${selectedRegionName} ${selectedCategoryName}.pdf`);
     setIsLoadPdf(false);
   };
 

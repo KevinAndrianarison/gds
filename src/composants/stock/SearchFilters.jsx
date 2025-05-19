@@ -56,7 +56,7 @@ export default function SearchFilters({
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center justify-center p-2 rounded-lg hover:bg-blue-100 transition-colors duration-200 ${
+          className={`flex items-center justify-center p-2 cursor-pointer rounded-lg hover:bg-blue-100 transition-colors duration-200 ${
             showFilters ? "bg-blue-100" : "bg-blue-50"
           }`}
         >

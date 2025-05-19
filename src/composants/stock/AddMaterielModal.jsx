@@ -23,12 +23,12 @@ import TypeCombobox from "@/composants/stock/TypeCombobox";
 import UserCombobox from "@/composants/users/UserCombobox";
 import SourceCombobox from "@/composants/stock/SourceCombobox";
 import ReferenceCombobox from "@/composants/stock/ReferenceCombobox";
+import AppartenaceCombobox from "@/composants/stock/AppartenaceCombobox";
 import ButtonAdd from "@/composants/ButtonAdd";
 import { TypeContext } from "@/contexte/useType";
 import { ShowContext } from "@/contexte/useShow";
 
 export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
-  // Le numéro sera généré à partir de la référence
   const [categorie_id, setCategorieId] = useState("");
   const [type_id, setTypeId] = useState("");
   const [marque, setMarque] = useState("");
@@ -43,9 +43,9 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
   const [lieu_affectation, setLieuAffectation] = useState("");
   const [source_id, setSourceId] = useState("");
   const [reference_id, setReferenceId] = useState("");
+  const [appartenance_id, setAppartenanceId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, isACL } = useContext(ShowContext);
-
   const [error, setError] = useState(null);
   const { types, filterTypesByCategorie } = useContext(TypeContext);
   const { getAllMateriels, getMaterielParIdRegion } = useContext(MaterielContext);
@@ -121,6 +121,7 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
         date_acquisition,
         lieu_affectation,
         source_id: source_id ? parseInt(source_id) : null,
+        appartenance_id: appartenance_id ? parseInt(appartenance_id) : null,
       };
 
       await materielService.createMateriel(materielData);
@@ -160,7 +161,6 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
                 onChange={(categorieId) => {
                   setCategorieId(categorieId);
                   filterTypesByCategorie(categorieId);
-                  // Réinitialiser le type quand une nouvelle catégorie est sélectionnée
                   setTypeId("");
                 }}
                 onTypeFilterChange={filterTypesByCategorie}
@@ -174,7 +174,6 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
                 value={type_id}
                 onChange={(typeId) => {
                   setTypeId(typeId);
-                  // Trouver et définir la catégorie associée au type
                   const selectedType = types.find((type) => type.id === typeId);
                   if (selectedType) {
                     setCategorieId(selectedType.categorie_id);
@@ -209,6 +208,14 @@ export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
                 width="w-full"
                 value={reference_id}
                 onChange={setReferenceId}
+              />
+            </div>
+
+            <div className="space-y-2 w-80">
+              <TitreLabel titre="Appartenance" />
+              <AppartenaceCombobox
+                value={appartenance_id}
+                onChange={setAppartenanceId}
               />
             </div>
           </div>

@@ -82,6 +82,7 @@ export default function   MaterielsTable({ materiels }) {
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Marque" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Caractéristiques" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="État" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Appartenance" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Montant (Ar)" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° Série" /></th>
             <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° IMEI" /></th>
@@ -148,6 +149,9 @@ export default function   MaterielsTable({ materiels }) {
                 }`}>
                   {materiel.etat}
                 </span>
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {materiel.appartenance?.nom || '...'}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                 {editingMaterielId === materiel.id ? (
