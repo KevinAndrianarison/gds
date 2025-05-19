@@ -22,17 +22,4 @@ instance.interceptors.request.use(
   }
 );
 
-// Intercepteur pour gérer les erreurs de réponse
-instance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token expiré ou invalide
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
-
 export default instance;

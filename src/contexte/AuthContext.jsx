@@ -66,7 +66,7 @@ export function AuthContextProvider({ children }) {
         email,
         password,
       });
-
+                
       const { access_token, region, user } = response.data;
       localStorage.setItem("token", `Bearer ${access_token}`);
       localStorage.setItem("user", JSON.stringify(user));
