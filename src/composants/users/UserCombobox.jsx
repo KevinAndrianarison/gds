@@ -16,6 +16,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { UserContext } from "@/contexte/useUser"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCrown, faUser } from "@fortawesome/free-solid-svg-icons"
 
 export default function UserCombobox({width, value, onChange}) {
   const [open, setOpen] = useState(false)
@@ -76,7 +78,13 @@ export default function UserCombobox({width, value, onChange}) {
                     onChange(user.id);
                     setOpen(false);
                   }}
-                >
+                >{
+                  user.role === 'admin' ? (
+                    <FontAwesomeIcon icon={faCrown} className="text-yellow-500" />
+                  ) : (
+                    <FontAwesomeIcon icon={faUser} className="text-blue-500"/>
+                  )
+                }
                   {user.name}
                   <Check
                     className={cn(
