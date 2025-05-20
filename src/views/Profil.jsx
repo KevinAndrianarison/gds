@@ -9,7 +9,6 @@ import nProgress from "nprogress";
 import { Notify } from "notiflix";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faUserSecret,
   faUser,
   faCrown,
 } from "@fortawesome/free-solid-svg-icons";
