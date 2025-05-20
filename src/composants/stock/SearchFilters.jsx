@@ -14,7 +14,7 @@ import { CategorieContext } from "@/contexte/useCategorie";
 import { RegionContext } from "@/contexte/useRegion";
 import { ShowContext } from "@/contexte/useShow";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faXmark, faFilter } from "@fortawesome/free-solid-svg-icons";
 
 export default function SearchFilters({
   searchValue,
@@ -74,8 +74,18 @@ export default function SearchFilters({
       </div>
 
       {showFilters && (
-        <div className="mt-2 p-4">
-          <div className="grid gap-2 md:grid-cols-3">
+        <div className="mt-2 bg-gray-50 rounded-lg border-gray-100">
+          <div className="flex justify-end pt-1 pr-1">
+            <FontAwesomeIcon
+              icon={faXmark}
+              onClick={() => setShowFilters(false)}
+              className="text-red-500 bg-red-100 rounded-full p-1 px-1.5 cursor-pointer"
+            />
+          </div>
+          <div className="flex items-center text-gray-500 text-sm font-bold px-8 gap-2 uppercase">
+            <FontAwesomeIcon icon={faFilter} /> <p>Filtrage par </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3 px-8 pt-4 pb-8">
             <Select
               value={categorie}
               onValueChange={(value) => {
@@ -85,7 +95,7 @@ export default function SearchFilters({
                 );
               }}
             >
-              <SelectTrigger className="focus:outline-none border-2 border-blue-200 rounded p-2 w-full">
+              <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded-3xl p-2 w-full px-4">
                 <SelectValue placeholder="Catégorie" />
               </SelectTrigger>
               <SelectContent>
@@ -106,7 +116,7 @@ export default function SearchFilters({
                   );
                 }}
               >
-                <SelectTrigger className="focus:outline-none border-2 border-blue-200 rounded p-2 w-full">
+                <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded-3xl p-2 w-full px-4">
                   <SelectValue placeholder="Région" />
                 </SelectTrigger>
                 <SelectContent>
@@ -119,7 +129,7 @@ export default function SearchFilters({
               </Select>
             )}
             <Select value={etat} onValueChange={setEtat}>
-              <SelectTrigger className="focus:outline-none border-2 border-blue-200 rounded p-2 w-full">
+              <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded-3xl p-2 px-4 w-full">
                 <SelectValue placeholder="État" />
               </SelectTrigger>
               <SelectContent>
@@ -130,7 +140,7 @@ export default function SearchFilters({
               </SelectContent>
             </Select>
             <button
-              className={`flex items-center font-bold justify-center rounded gap-2 p-2 border w-40 ${
+              className={`flex items-center font-bold justify-center rounded-3xl gap-2 p-2 border-2 w-40 ${
                 showAll
                   ? "bg-gray-500 text-white border-none font-light"
                   : "bg-white text-blue-500 border-blue-200"
