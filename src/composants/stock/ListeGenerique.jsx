@@ -3,15 +3,20 @@ import { Loader2 } from "lucide-react";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { Button } from "@/components/ui/button";
-import { faTrash, faPen, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faPen,
+  faTrashCan,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Empty from "../Empty";
 import { notify } from "@/utils/notify";
 import { Input } from "@/components/ui/input";
 import InputSearch from "@/composants/InputSearch";
 
-export default function ListeGenerique({ 
-  items = [], 
+export default function ListeGenerique({
+  items = [],
   onAdd,
   onDelete,
   onEdit,
@@ -21,7 +26,6 @@ export default function ListeGenerique({
   searchTerm = "",
   nameField = "nom", // champ à utiliser pour le nom de l'élément
   ExtraField = null, // composant supplémentaire à afficher dans le formulaire
-  onExtraFieldChange = null // fonction pour gérer le changement du composant supplémentaire
 }) {
   const [editingId, setEditingId] = useState(null);
   const [editedItems, setEditedItems] = useState({});
@@ -34,14 +38,14 @@ export default function ListeGenerique({
     setSearchValue(searchTerm);
   }, [searchTerm]);
 
-  const filteredItems = items.filter(item => 
+  const filteredItems = items.filter((item) =>
     item[nameField].toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const handleSelectItem = (itemId) => {
-    setSelectedItems(prev => 
-      prev.includes(itemId) 
-        ? prev.filter(id => id !== itemId)
+    setSelectedItems((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
         : [...prev, itemId]
     );
   };
@@ -50,7 +54,7 @@ export default function ListeGenerique({
     if (selectedItems.length === filteredItems.length) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(filteredItems.map(item => item.id));
+      setSelectedItems(filteredItems.map((item) => item.id));
     }
   };
 
@@ -60,7 +64,9 @@ export default function ListeGenerique({
     try {
       NProgress.start();
       await onMultipleDelete(selectedItems);
-      notify.success(selectedItems.length + ' ' + itemName + '(s) supprimé(s) avec succès');
+      notify.success(
+        selectedItems.length + " " + itemName + "(s) supprimé(s) avec succès"
+      );
       setSelectedItems([]);
     } catch (error) {
       notify.error(error);
@@ -71,15 +77,15 @@ export default function ListeGenerique({
 
   const handleEditItem = (itemId) => {
     setEditingId(itemId);
-    const itemToEdit = items.find(i => i.id === itemId);
-    setEditedItems(prev => ({
+    const itemToEdit = items.find((i) => i.id === itemId);
+    setEditedItems((prev) => ({
       ...prev,
-      [itemId]: itemToEdit[nameField]
+      [itemId]: itemToEdit[nameField],
     }));
   };
 
   const handleSaveItem = async (itemId) => {
-    const originalItem = items.find(item => item.id === itemId);
+    const originalItem = items.find((item) => item.id === itemId);
     const newName = editedItems[itemId];
 
     // Ne faire la requête que si le nom a changé
@@ -91,7 +97,7 @@ export default function ListeGenerique({
     try {
       NProgress.start();
       await onEdit(itemId, { [nameField]: newName });
-      notify.success(itemName + ' mis à jour avec succès');
+      notify.success(itemName + " mis à jour avec succès");
       setEditingId(null);
     } catch (error) {
       notify.error(error);
@@ -104,7 +110,7 @@ export default function ListeGenerique({
     try {
       NProgress.start();
       await onDelete(itemId);
-      notify.success(itemName + ' supprimé avec succès');
+      notify.success(itemName + " supprimé avec succès");
     } catch (error) {
       notify.error(error);
     } finally {
@@ -118,7 +124,8 @@ export default function ListeGenerique({
         setIsAdding(true);
         NProgress.start();
         const result = await onAdd({ [nameField]: newItemValue.trim() });
-        if (result) { // Ne réinitialiser que si l'ajout a réussi
+        if (result) {
+          // Ne réinitialiser que si l'ajout a réussi
           setNewItemValue("");
         }
       } catch (error) {
@@ -141,16 +148,12 @@ export default function ListeGenerique({
             placeholder={`Nouveau ${itemName}`}
             className="flex-grow"
           />
-          {ExtraField && (
-            <div className="w-64">
-              {ExtraField}
-            </div>
-          )}
+          {ExtraField && <div className="w-64">{ExtraField}</div>}
         </div>
         <Button
           onClick={handleAddItem}
           variant="add"
-          className='rounded-xl'
+          className="rounded-xl"
           disabled={!newItemValue.trim() || isAdding}
         >
           {isAdding ? (
@@ -168,9 +171,11 @@ export default function ListeGenerique({
         />
       )}
       <div className="flex justify-between items-center">
-        <h1 className="uppercase text-xs font-bold mt-2">Liste des {itemName}s</h1>
+        <h1 className="uppercase text-xs font-bold mt-2">
+          Liste des {itemName}s
+        </h1>
         {selectedItems.length > 0 && (
-          <div 
+          <div
             className="flex items-center gap-2 text-white bg-red-400 rounded-full px-4 py-1 cursor-pointer"
             onClick={handleDeleteSelectedItems}
           >
@@ -181,31 +186,41 @@ export default function ListeGenerique({
           </div>
         )}
       </div>
-      
-      {(!isLoading && filteredItems.length !== 0) && (
+
+      {!isLoading && filteredItems.length !== 0 && (
         <div className="bg-gray-50 text-sm max-h-[50vh] overflow-y-auto rounded px-4 flex flex-col gap-4">
           {filteredItems.map((item) => (
-            <div key={item.id} className="flex py-1 justify-between items-center w-full">
+            <div
+              key={item.id}
+              className="flex py-1 justify-between items-center w-full"
+            >
               <div className="flex items-center gap-2">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={selectedItems.includes(item.id)}
                   onChange={() => handleSelectItem(item.id)}
                 />
                 {editingId === item.id ? (
-                  <input 
-                    type="text" 
-                    value={editedItems[item.id] || ''} 
-                    onChange={(e) => setEditedItems(prev => ({
-                      ...prev,
-                      [item.id]: e.target.value
-                    }))}
+                  <input
+                    type="text"
+                    value={editedItems[item.id] || ""}
+                    onChange={(e) =>
+                      setEditedItems((prev) => ({
+                        ...prev,
+                        [item.id]: e.target.value,
+                      }))
+                    }
                     className="p-2 text-black flex-grow border rounded"
                     onBlur={() => handleSaveItem(item.id)}
                     autoFocus
                   />
                 ) : (
-                  <input type="text" value={item[nameField]} className="p-2 text-black flex-grow" readOnly />
+                  <input
+                    type="text"
+                    value={item[nameField]}
+                    className="p-2 text-black flex-grow"
+                    readOnly
+                  />
                 )}
               </div>
               <div className="flex items-center gap-2">
@@ -235,7 +250,7 @@ export default function ListeGenerique({
         </div>
       )}
 
-      {(!isLoading && filteredItems.length === 0) && (
+      {!isLoading && filteredItems.length === 0 && (
         <Empty titre={`Aucun ${itemName} n'a été trouvé`} />
       )}
     </div>

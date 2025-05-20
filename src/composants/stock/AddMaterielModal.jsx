@@ -28,7 +28,7 @@ import ButtonAdd from "@/composants/ButtonAdd";
 import { TypeContext } from "@/contexte/useType";
 import { ShowContext } from "@/contexte/useShow";
 
-export default function AddMaterielModal({ isOpen, onClose, onSuccess }) {
+export default function AddMaterielModal({ isOpen, onClose }) {
   const [categorie_id, setCategorieId] = useState("");
   const [type_id, setTypeId] = useState("");
   const [marque, setMarque] = useState("");

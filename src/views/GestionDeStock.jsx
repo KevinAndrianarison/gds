@@ -230,7 +230,9 @@ function GestionDeStockContent() {
       }
     });
 
-    doc.save(`Liste des materiels ${selectedRegionName} ${selectedCategoryName}.pdf`);
+    doc.save(
+      `Liste des materiels ${selectedRegionName} ${selectedCategoryName}.pdf`
+    );
     setIsLoadPdf(false);
   };
 
