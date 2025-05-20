@@ -21,8 +21,10 @@ export default function RecapStock({
 }) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const isGoodCondition = (etat) => etat === "Bon état" || etat === "État moyen";
-  const isBadCondition = (etat) => etat === "Mauvais état" || etat === "Hors service";
+  const isGoodCondition = (etat) =>
+    etat === "Bon état" || etat === "État moyen";
+  const isBadCondition = (etat) =>
+    etat === "Mauvais état" || etat === "Hors service";
 
   const filteredCategories = materielsGroupes
     .map((categorie) => ({
@@ -40,16 +42,21 @@ export default function RecapStock({
       })),
     }))
     .filter((categorie) => {
-      if (status === "goodCondition") {
-        return categorie.types.some((type) => 
-          type.materiels.some((materiel) => isGoodCondition(materiel.etat))
-        );
-      } else if (status === "badCondition") {
-        return categorie.types.some((type) => 
-          type.materiels.some((materiel) => isBadCondition(materiel.etat))
-        );
-      }
-      return true;
+      const hasMatchingMaterials = categorie.types.some((type) =>
+        type.materiels.some((materiel) =>
+          status === "goodCondition"
+            ? isGoodCondition(materiel.etat)
+            : status === "badCondition"
+            ? isBadCondition(materiel.etat)
+            : true
+        )
+      );
+
+      const matchesSearchTerm = categorie.nom
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+      return hasMatchingMaterials && matchesSearchTerm;
     });
 
   return (
@@ -103,52 +110,24 @@ export default function RecapStock({
                 <div className="w-full flex items-center gap-2">
                   <FontAwesomeIcon icon={faTags} className="text-gray-500" />
                   <p className="truncate">
-                    {categorie.nom.toLowerCase().includes(searchTerm.toLowerCase()) ? (
-                      <span>{categorie.nom}</span>
-                    ) : (
-                      categorie.nom
-                    )}
+                    <span>{categorie.nom}</span>
                   </p>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="border-t">
                 {categorie.types.map((type) => {
-                  const hasMatchingMaterial = type.materiels.some((materiel) => {
-                    if (status === "goodCondition") {
-                      return isGoodCondition(materiel.etat);
-                    } else if (status === "badCondition") {
-                      return isBadCondition(materiel.etat);
-                    }
-                    return true;
-                  });
-
                   return (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-2 justify-between ${
-                        type.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        hasMatchingMaterial
-                          ? ""
-                          : ""
-                      }`}
+                      className='flex items-center gap-2 justify-between'
                     >
                       <div className="flex items-center py-2 gap-2">
                         <FontAwesomeIcon
                           icon={faFolder}
-                          className={`text-yellow-500 ${
-                            type.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            hasMatchingMaterial
-                              ? "text-yellow-500"
-                              : ""
-                          }`}
+                          className='text-yellow-500'
                         />
                         <p
-                          className={`truncate ${
-                            type.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            hasMatchingMaterial
-                              ? ""
-                              : ""
-                          }`}
+                          className='truncate '
                         >
                           {type.nom}
                         </p>
@@ -163,7 +142,7 @@ export default function RecapStock({
         </Accordion>
       </div>
 
-      {filteredCategories.some((categorie) => 
+      {filteredCategories.some((categorie) =>
         categorie.types.some((type) => type.materiels.length > 0)
       ) && (
         <div className="flex gap-2 my-2">
