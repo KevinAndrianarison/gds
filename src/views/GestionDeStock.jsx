@@ -26,10 +26,12 @@ export default function GestionDeStock() {
 function GestionDeStockContent() {
   const {
     materiels,
+    materielsTemp,
     getAllMateriels,
     isLoading,
     deleteMateriel,
     getMaterielParIdRegion,
+    setMateriels,
   } = useMateriel();
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -45,6 +47,8 @@ function GestionDeStockContent() {
   const { isACL } = useContext(ShowContext);
   const [isLoadPdf, setIsLoadPdf] = useState(false);
   const [isLoadExcel, setIsLoadExcel] = useState(false);
+  const [filteredMateriels, setFilteredMateriels] = useState([]);
+  const [materielsGroupes, setMaterielsGroupes] = useState([]);
 
   useEffect(() => {
     if (localStorage.getItem("user") !== null) {
@@ -265,7 +269,7 @@ function GestionDeStockContent() {
     }
   };
 
-  const filteredMateriels = materiels.filter((materiel) => {
+  const FilteredMateriels = materiels.filter((materiel) => {
     const matchesSearch =
       (materiel.categorie.nom &&
         materiel.categorie.nom
@@ -273,31 +277,63 @@ function GestionDeStockContent() {
           .includes(searchValue.toLowerCase())) ||
       (materiel.type.nom &&
         materiel.type.nom.toLowerCase().includes(searchValue.toLowerCase()));
-
     const matchesCategorie = !categorie || materiel.categorie_id === categorie;
     const matchesRegion = !region || materiel.region_id === region;
     const matchesEtat = !etat || materiel.etat === etat;
-
     return matchesSearch && matchesCategorie && matchesRegion && matchesEtat;
   });
 
+  function regrouperParCategorieEtType(materiels) {
+    const result = [];
+
+    materiels.forEach((materiel) => {
+      const { categorie, type } = materiel;
+      let categorieExistante = result.find((cat) => cat.id === categorie.id);
+      if (!categorieExistante) {
+        categorieExistante = {
+          id: categorie.id,
+          nom: categorie.nom,
+          types: [],
+        };
+        result.push(categorieExistante);
+      }
+      let typeExistant = categorieExistante.types.find((t) => t.id === type.id);
+      if (!typeExistant) {
+        typeExistant = {
+          id: type.id,
+          nom: type.nom,
+          materiels: [],
+        };
+        categorieExistante.types.push(typeExistant);
+      }
+      typeExistant.materiels.push(materiel);
+    });
+    return result;
+  }
+
+  useEffect(() => {
+    setMaterielsGroupes(regrouperParCategorieEtType(FilteredMateriels));
+    setFilteredMateriels(FilteredMateriels);
+  }, [materiels, searchValue, categorie, region, etat]);
+
   return (
-    <div className="w-[80vw] mx-auto">
+    <div className="w-[80vw] mx-auto" onClick={() => setShowFilters(false)}>
       <Entete titre="stocks" description="gérez vos matériels et équipements" />
 
       <StatsCards
-        total={isLoading ? null : materiels.length}
+        materielsGroupes={materielsGroupes}
+        total={isLoading ? null : filteredMateriels.length}
         inGoodCondition={
           isLoading
             ? null
-            : materiels.filter(
+            : filteredMateriels.filter(
                 (m) => m.etat === "Bon état" || m.etat === "État moyen"
               ).length
         }
         inBadCondition={
           isLoading
             ? null
-            : materiels.filter(
+            : filteredMateriels.filter(
                 (m) => m.etat === "Mauvais état" || m.etat === "Hors service"
               ).length
         }
@@ -325,6 +361,9 @@ function GestionDeStockContent() {
         setShowAll={setShowAll}
         setSelectedCategoryName={setSelectedCategoryName}
         setSelectedRegionName={setSelectedRegionName}
+        setMateriels={setMateriels}
+        materielsTemp={materielsTemp}
+        setFilteredMateriels={setFilteredMateriels}
       />
       {isLoading ? (
         <div className="mt-6">
@@ -345,12 +384,12 @@ function GestionDeStockContent() {
         <Empty titre="Aucun matériel n'a été trouvé" />
       ) : (
         <MaterielsTable
-          materiels={showAll ? materiels : filteredMateriels}
+          materiels={filteredMateriels}
           onDelete={handleDelete}
           onEdit={() => setShowAddModal(true)}
         />
       )}
-      {(filteredMateriels.length > 0 || (showAll && materiels.length > 0)) && (
+      {filteredMateriels.length > 0 && (
         <div className="flex gap-2 my-4">
           <ButtonPdf isLoading={isLoadPdf} onClick={exportToPDF} />
           <ButtonExcel isLoading={isLoadExcel} onClick={exportToExcel} />

@@ -31,6 +31,9 @@ export default function SearchFilters({
   setShowAll,
   setSelectedCategoryName,
   setSelectedRegionName,
+  setMateriels,
+  materielsTemp,
+  setFilteredMateriels,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { categories, getAllCategories } = useContext(CategorieContext);
@@ -44,8 +47,17 @@ export default function SearchFilters({
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (!showAll) {
+      setSearchValue("");
+      setCategorie("");
+      setRegion("");
+      setEtat("");
+    }
+  }, [showAll]);
+
   return (
-    <div>
+    <div onClick={(e) => e.stopPropagation()}>
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <InputSearch
@@ -74,7 +86,7 @@ export default function SearchFilters({
       </div>
 
       {showFilters && (
-        <div className="mt-2 bg-gray-50 rounded-lg border-gray-100">
+        <div className="mt-2 bg-gray-50 rounded-lg border-gray-100 absolute right-5 border shadow-lg">
           <div className="flex justify-end pt-1 pr-1">
             <FontAwesomeIcon
               icon={faXmark}
@@ -140,12 +152,14 @@ export default function SearchFilters({
               </SelectContent>
             </Select>
             <button
-              className={`flex items-center font-bold justify-center rounded-3xl gap-2 p-2 border-2 w-40 ${
-                showAll
-                  ? "bg-gray-500 text-white border-none font-light"
-                  : "bg-white text-blue-500 border-blue-200"
+              className={`flex items-center justify-center rounded gap-2 p-2 w-40 ${
+                showAll ? "bg-gray-500 text-white" : "bg-blue-400 text-white"
               }`}
-              onClick={() => setShowAll(!showAll)}
+              onClick={() => {
+                setShowAll(!showAll);
+                setFilteredMateriels(materielsTemp);
+                setMateriels(materielsTemp);
+              }}
             >
               <FontAwesomeIcon icon={faEye} />
               <p>{showAll ? "Afficher filtrés" : "Tout afficher"}</p>

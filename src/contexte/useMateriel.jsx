@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from "react";
-import { UrlContext } from "./useUrl";
 import nProgress from "nprogress";
 import { materielService } from "@/services/materielService";
 import Notiflix from "notiflix";
@@ -8,6 +7,7 @@ export const MaterielContext = createContext({});
 
 export function MaterielContextProvider({ children }) {
   const [materiels, setMateriels] = useState([]);
+  const [materielsTemp, setMaterielsTemp] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -17,6 +17,7 @@ export function MaterielContextProvider({ children }) {
       .getMaterielParIdRegion(regionId)
       .then((response) => {
         setMateriels(response);
+        setMaterielsTemp(response);
         setIsLoading(false);
         return response;
       })
@@ -39,6 +40,7 @@ export function MaterielContextProvider({ children }) {
       .getAllMateriels()
       .then((response) => {
         setMateriels(response);
+        setMaterielsTemp(response);
         setIsLoading(false);
         nProgress.done();
         return response;
@@ -58,6 +60,7 @@ export function MaterielContextProvider({ children }) {
       .then(() => {
         // Mettre à jour la liste locale en supprimant le matériel
         setMateriels((prev) => prev.filter((m) => m.id !== id));
+        setMaterielsTemp((prev) => prev.filter((m) => m.id !== id));
         return true;
       })
       .catch((err) => {
@@ -73,6 +76,7 @@ export function MaterielContextProvider({ children }) {
       .then((newMateriel) => {
         // Ajouter le nouveau matériel à la liste locale
         setMateriels((prev) => [...prev, newMateriel]);
+        setMaterielsTemp((prev) => [...prev, newMateriel]);
         return newMateriel;
       })
       .catch((err) => {
@@ -88,6 +92,9 @@ export function MaterielContextProvider({ children }) {
       .then((updatedMateriel) => {
         // Mettre à jour le matériel dans la liste locale
         setMateriels((prev) =>
+          prev.map((m) => (m.id === id ? { ...m, ...updatedMateriel } : m))
+        );
+        setMaterielsTemp((prev) =>
           prev.map((m) => (m.id === id ? { ...m, ...updatedMateriel } : m))
         );
         return updatedMateriel;
@@ -109,6 +116,7 @@ export function MaterielContextProvider({ children }) {
         materiels,
         isLoading,
         isModalOpen,
+        materielsTemp,
         setMateriels,
         setIsLoading,
         getAllMateriels,
@@ -118,6 +126,7 @@ export function MaterielContextProvider({ children }) {
         getMaterielParIdRegion,
         setIsModalOpen,
         closeModal,
+        setMaterielsTemp,
       }}
     >
       {children}
