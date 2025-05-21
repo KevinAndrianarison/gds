@@ -8,8 +8,6 @@ import Empty from "../composants/Empty";
 import ButtonExcel from "../composants/ButtonExcel";
 import ButtonPdf from "../composants/ButtonPdf";
 
-
-
 export default function GestionSupply() {
   const [showFilters, setShowFilters] = useState(false);
   const { isLoadingSpin, supplies } = useContext(SupplyContext);
@@ -17,7 +15,7 @@ export default function GestionSupply() {
     <div onClick={() => setShowFilters(false)} className="w-[80vw] mx-auto">
       <Entete titre="supply" description="gérez vos stocks" />
       <SupplyForm />
-      {isLoadingSpin ? (
+      {isLoadingSpin && supplies.length === 0 ? (
         <div className="mt-6">
           {[...Array(5)].map((_, index) => (
             <div key={index} className=" rounded mb-4 p-4">
@@ -32,13 +30,16 @@ export default function GestionSupply() {
             </div>
           ))}
         </div>
-      ) : supplies.length === 0 ? (
+      ) : !isLoadingSpin && supplies.length === 0 ? (
         <div className="my-10">
           <Empty titre="Aucun supply n'a été trouvé" />
         </div>
       ) : (
-        <div >
-          <SupplyTable showFilters={showFilters} setShowFilters={setShowFilters} />
+        <div>
+          <SupplyTable
+            showFilters={showFilters}
+            setShowFilters={setShowFilters}
+          />
           <div className="flex items-center justify-end mt-4 gap-2">
             <ButtonExcel />
             <ButtonPdf />
