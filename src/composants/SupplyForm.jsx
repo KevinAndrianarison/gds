@@ -50,7 +50,7 @@ export default function SupplyForm() {
       rubrique,
       receptionnaire,
     };
-    if (!nom || !region || !stockInitial || !receptionnaire) {
+    if (!nom || !region || !stockInitial || !receptionnaire || !rubrique || !date) {
       Notiflix.Notify.warning("Veuillez remplir tous les champs obligatoires");
       return;
     }
@@ -95,7 +95,7 @@ export default function SupplyForm() {
 
   return (
     <div className="border-b-2 py-4 border-gray-100 flex justify-between">
-      <div className="border-r w-[75%] flex flex-wrap gap-4 border-gray-100 flex">
+      <div className="border-r w-[80%] flex flex-wrap gap-4 border-gray-100 flex px-2">
         <div className="flex flex-col gap-2 w-40">
           <TitreLabel titre="Nouveau matériel" required />
           <div className="flex items-center flex-wrap gap-2">
@@ -141,15 +141,15 @@ export default function SupplyForm() {
           </div>
         </div>
         <div className="flex flex-col gap-2 w-40">
-          <TitreLabel titre="Rubrique" />
+          <TitreLabel titre="Rubrique" required />
           <div className="flex items-center flex-wrap gap-2">
             <InputOn value={rubrique} onChange={setRubrique} width="w-40" />
           </div>
         </div>
         <div className="flex flex-col gap-2 w-40">
-          <TitreLabel titre="Numeros B.E" />
+          <TitreLabel titre="Numéros B.E" />
           <div className="flex items-center flex-wrap gap-2">
-            <InputOn value={numeroBe} onChange={setNumeroBe} width="w-40" />
+            <InputOn value={numeroBe} type="number" onChange={setNumeroBe} width="w-40" />
           </div>
         </div>
         <div className="flex flex-col gap-2 w-40">
@@ -178,18 +178,18 @@ export default function SupplyForm() {
             <textarea
               value={observation}
               onChange={(e) => setObservation(e.target.value)}
-              className="border  border-blue-200 focus:outline-none rounded p-2 h-10 min-h-10"
+              className="border-2 border-blue-200 focus:outline-none rounded p-2 h-10 min-h-10"
             ></textarea>
           </div>
         </div>
         <div className="flex flex-col gap-2 w-40">
-          <TitreLabel titre="Date" />
+          <TitreLabel titre="Date" required />
           <div className="flex items-center flex-wrap gap-2">
             <InputOn value={date} onChange={setDate} width="w-40" type="date" />
           </div>
         </div>
         <div className="flex flex-col gap-2 w-40">
-          <TitreLabel titre="Receptionnaire" required />
+          <TitreLabel titre="Réceptionnaire" required />
           <div className="flex items-center flex-wrap gap-2">
             <Select
               value={receptionnaire}
@@ -230,7 +230,7 @@ export default function SupplyForm() {
           />
         </div>
       </div>
-      <div className="border-l w-[25%] border-gray-100 px-4">
+      <div className="border-l w-[20%] border-gray-100 px-4">
         <TitreLabel titre="Nombre de matériel" />
         <p className="text-3xl text-gray-700">
           {isLoadingSpin ? (

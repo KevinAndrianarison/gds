@@ -72,7 +72,7 @@ export default function   MaterielsTable({ materiels }) {
     }));
   };
   return (
-    <div className="mt-6 overflow-x-auto border border-gray-200 rounded">
+    <div className="mt-4 overflow-x-auto border border-gray-200 rounded max-h-[500px] overflow-y-auto">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50 whitespace-nowrap">
           <tr>
