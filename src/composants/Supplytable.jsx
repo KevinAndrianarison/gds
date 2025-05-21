@@ -17,6 +17,15 @@ import axios from "axios";
 import nProgress from "nprogress";
 import Notiflix from "notiflix";
 import { UrlContext } from "@/contexte/useUrl";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import PlusSupply from "./PlusSupply";
+import MinusSupply from "./MinusSupply";
+
+
 // Données de test
 
 function SupplyTable({ showFilters, setShowFilters }) {
@@ -25,6 +34,15 @@ function SupplyTable({ showFilters, setShowFilters }) {
   const { regions, getAllRegion } = useContext(RegionContext);
   const { supplies, getAllSupply } = useContext(SupplyContext);
   const { url } = useContext(UrlContext);
+  const [editingSupplyId, setEditingSupplyId] = useState(null);
+  const [editedSupply, setEditedSupply] = useState({});
+  const [originalSupply, setOriginalSupply] = useState({});
+
+  const handleEditSupply = (supply) => {
+    setEditingSupplyId(supply.id);
+    setEditedSupply({ ...supply });
+    setOriginalSupply({ ...supply });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +50,40 @@ function SupplyTable({ showFilters, setShowFilters }) {
     };
     fetchData();
   }, []);
+
+  const handleInputChange = (field, value) => {
+    setEditedSupply(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSaveSupply = async (id, field) => {
+    try {
+      const newValue = editedSupply[field] || originalSupply[field];
+      const hasChanged = newValue !== originalSupply[field] && newValue !== null;
+
+      if (hasChanged) {
+        nProgress.start();
+        try {
+          await axios.put(`${url}/api/supplies/${id}`, { [field]: newValue });
+          getAllSupply();
+          Notiflix.Notify.success('Matériel modifié avec succès');
+        } catch (error) {
+          console.error(error);
+          Notiflix.Notify.failure('Erreur lors de la modification');
+        } finally {
+          nProgress.done();
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      Notiflix.Notify.failure('Erreur lors de la modification');
+    } finally {
+      nProgress.done();
+    }
+  };
+
 
   const handleDeleteSupply = async (id) => {
     Notiflix.Confirm.show(
@@ -54,6 +106,8 @@ function SupplyTable({ showFilters, setShowFilters }) {
       }
     );
   };
+
+
 
   return (
     <div onClick={(e) => e.stopPropagation()} className="my-2">
@@ -106,13 +160,14 @@ function SupplyTable({ showFilters, setShowFilters }) {
         </div>
       )}
 
-      <div className="mt-4 overflow-x-auto border border-gray-200 rounded max-h-[500px] overflow-y-auto">
+      <div className="mt-2 overflow-x-auto border border-gray-200 rounded max-h-[500px] overflow-y-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50 whitespace-nowrap">
             <tr>
               <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Matériel" /></th>
               <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Région" /></th>
               <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Stock initial" /></th>
+              <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Stock final" /></th>
               <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Rubrique" /></th>
               <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Lieux destination" /></th>
               <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Numéros B.E" /></th>
@@ -126,15 +181,107 @@ function SupplyTable({ showFilters, setShowFilters }) {
           <tbody className="bg-white divide-y cursor-pointer divide-gray-200">
             {supplies.map((supply) => (
               <tr key={supply.id}>
-                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.nom}</td>
+                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                  {editingSupplyId === supply.id ? (
+                    <input
+                      type="text"
+                      value={editedSupply.nom}
+                      onChange={(e) => handleInputChange('nom', e.target.value)}
+                      className="p-2 text-black flex-grow border rounded w-full"
+                      onBlur={() => handleSaveSupply(supply.id, 'nom')}
+                      autoFocus
+                    />
+                  ) : (
+                    supply.nom
+                  )}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.region.nom}</td>
                 <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.stock_initial}</td>
-                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.rubrique}</td>
-                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.lieu_destination}</td>
-                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.numero_be}</td>
-                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.date}</td>
-                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.transporteur}</td>
-                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.observation}</td>
+                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.stock_final}</td>
+                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                  {editingSupplyId === supply.id ? (
+                    <input
+                      type="text"
+                      value={editedSupply.rubrique}
+                      onChange={(e) => handleInputChange('rubrique', e.target.value)}
+                      className="p-2 text-black flex-grow border rounded w-full"
+                      onBlur={() => handleSaveSupply(supply.id, 'rubrique')}
+                      autoFocus
+                    />
+                  ) : (
+                    supply.rubrique
+                  )}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                  {editingSupplyId === supply.id ? (
+                    <input
+                      type="text"
+                      value={editedSupply.lieu_destination}
+                      onChange={(e) => handleInputChange('lieu_destination', e.target.value)}
+                      className="p-2 text-black flex-grow border rounded w-full"
+                      onBlur={() => handleSaveSupply(supply.id, 'lieu_destination')}
+                      autoFocus
+                    />
+                  ) : (
+                    supply.lieu_destination
+                  )}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                  {editingSupplyId === supply.id ? (
+                    <input
+                      type="text"
+                      value={editedSupply.numero_be}
+                      onChange={(e) => handleInputChange('numero_be', e.target.value)}
+                      className="p-2 text-black flex-grow border rounded w-full"
+                      onBlur={() => handleSaveSupply(supply.id, 'numero_be')}
+                      autoFocus
+                    />
+                  ) : (
+                    supply.numero_be
+                  )}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                  {editingSupplyId === supply.id ? (
+                    <input
+                      type="text"
+                      value={editedSupply.date}
+                      onChange={(e) => handleInputChange('date', e.target.value)}
+                      className="p-2 text-black flex-grow border rounded w-full"
+                      onBlur={() => handleSaveSupply(supply.id, 'date')}
+                      autoFocus
+                    />
+                  ) : (
+                    supply.date
+                  )}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                  {editingSupplyId === supply.id ? (
+                    <input
+                      type="text"
+                      value={editedSupply.transporteur}
+                      onChange={(e) => handleInputChange('transporteur', e.target.value)}
+                      className="p-2 text-black flex-grow border rounded w-full"
+                      onBlur={() => handleSaveSupply(supply.id, 'transporteur')}
+                      autoFocus
+                    />
+                  ) : (
+                    supply.transporteur
+                  )}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                  {editingSupplyId === supply.id ? (
+                    <input
+                      type="text"
+                      value={editedSupply.observation}
+                      onChange={(e) => handleInputChange('observation', e.target.value)}
+                      className="p-2 text-black flex-grow border rounded w-full"
+                      onBlur={() => handleSaveSupply(supply.id, 'observation')}
+                      autoFocus
+                    />
+                  ) : (
+                    supply.observation
+                  )}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{supply.receptionnaire}</td>
                 <td className="px-4 py-3 text-sm flex items-center justify-center">
                   <div className="flex items-center gap-2 cursor-pointer">
@@ -143,18 +290,37 @@ function SupplyTable({ showFilters, setShowFilters }) {
                       onClick={() => handleDeleteSupply(supply.id)}
                       className="text-red-500 bg-red-200 p-1 rounded-full cursor-pointer"
                     />
-                    <FontAwesomeIcon
-                      icon={faPen}
-                      className="text-blue-500 bg-blue-200 p-1 rounded-full cursor-pointer"
-                    />
-                    <FontAwesomeIcon
-                      icon={faPlus}
-                      className="text-blue-500 bg-blue-200 p-1 rounded-full cursor-pointer"
-                    />
-                    <FontAwesomeIcon
-                      icon={faMinus}
-                      className="text-yellow-500 bg-yellow-200  p-1 rounded-full cursor-pointer"
-                    />
+
+                    {(editingSupplyId !== supply.id || editedSupply.id === null) && (
+                      <FontAwesomeIcon
+                        icon={faPen}
+                        onClick={() => handleEditSupply(supply)}
+                        className="text-blue-500 bg-blue-200 p-1 rounded-full cursor-pointer"
+                      />
+                    )}
+
+                    <Popover>
+                      <PopoverTrigger>
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          className="text-blue-500 bg-blue-200 p-1 rounded-full mt-1 cursor-pointer"
+                        /></PopoverTrigger>
+                      <PopoverContent>
+                        <PlusSupply supply={supply} />
+                      </PopoverContent>
+                    </Popover>
+                    <Popover>
+                      <PopoverTrigger>
+                        <FontAwesomeIcon
+                          icon={faMinus}
+                          className="text-yellow-500 bg-yellow-200 mt-1 p-1 rounded-full cursor-pointer"
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <MinusSupply supply={supply} />
+                      </PopoverContent>
+                    </Popover>
+
                   </div>
                 </td>
               </tr>

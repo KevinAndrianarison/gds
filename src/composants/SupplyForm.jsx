@@ -42,6 +42,7 @@ export default function SupplyForm() {
       nom,
       region_id: region,
       stock_initial: stockInitial,
+      stock_final: stockInitial,
       numero_be: numeroBe,
       lieu_destination: lieuDestination,
       transporteur,

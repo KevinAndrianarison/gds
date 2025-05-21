@@ -5,6 +5,10 @@ import SupplyTable from "../composants/Supplytable";
 import { SupplyContext } from "../contexte/useSupply";
 import { useContext } from "react";
 import Empty from "../composants/Empty";
+import ButtonExcel from "../composants/ButtonExcel";
+import ButtonPdf from "../composants/ButtonPdf";
+
+
 
 export default function GestionSupply() {
   const [showFilters, setShowFilters] = useState(false);
@@ -33,7 +37,13 @@ export default function GestionSupply() {
           <Empty titre="Aucun supply n'a été trouvé" />
         </div>
       ) : (
-        <SupplyTable showFilters={showFilters} setShowFilters={setShowFilters} />
+        <div >
+          <SupplyTable showFilters={showFilters} setShowFilters={setShowFilters} />
+          <div className="flex items-center justify-end mt-4 gap-2">
+            <ButtonExcel />
+            <ButtonPdf />
+          </div>
+        </div>
       )}
     </div>
   );
