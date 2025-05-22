@@ -1,7 +1,7 @@
 import { isCancel } from 'axios';
 import { createContext, useEffect, useState } from 'react';
 
-export const ShowContext = createContext({});
+export const  ShowContext = createContext({});
 
 export function ShowContextProvider({ children }) {
   const [isLogin, setIsLogin] = useState(true);

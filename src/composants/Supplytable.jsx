@@ -17,7 +17,8 @@ import {
   faPen,
   faPlus,
   faMinus,
-  faEye
+  faEye,
+  faShare
 } from "@fortawesome/free-solid-svg-icons";
 import TitreLabel from "@/composants/TitreLabel";
 import { SupplyContext } from "@/contexte/useSupply";
@@ -33,13 +34,16 @@ import {
 import PlusSupply from "./PlusSupply";
 import MinusSupply from "./MinusSupply";
 import DetailsSupply from "./DetailsSupply";
+import { ShowContext } from "@/contexte/useShow";
+import ShareMateriel from "./ShareMateriel";
 // Données de test
 
 function SupplyTable({ showFilters, setShowFilters }) {
   const [searchValue, setSearchValue] = useState("");
+  const { isACL, isAdmin } = useContext(ShowContext);
   const [region, setRegion] = useState("");
   const { regions, getAllRegion } = useContext(RegionContext);
-  const { supplies, getAllSupply } = useContext(SupplyContext);
+  const { supplies, getAllSupply, getSupplyParIdRegion } = useContext(SupplyContext);
   const { url } = useContext(UrlContext);
   const [editingSupplyId, setEditingSupplyId] = useState(null);
   const [editedSupply, setEditedSupply] = useState({});
@@ -65,17 +69,22 @@ function SupplyTable({ showFilters, setShowFilters }) {
     }));
   };
 
-  const handleSaveSupply = async (id, field) => {
+  const handleSaveSupply = async (id, field, value) => {
     try {
-      const newValue = editedSupply[field] || originalSupply[field];
+      const newValue = value || editedSupply[field];
       const hasChanged =
-        newValue !== originalSupply[field] && newValue !== null;
+        newValue !== originalSupply[field] && newValue !== null && newValue !== '';
 
       if (hasChanged) {
         nProgress.start();
         try {
           await axios.put(`${url}/api/supplies/${id}`, { [field]: newValue });
-          getAllSupply();
+          let region = JSON.parse(localStorage.getItem("region"));
+          if (region) {
+            getSupplyParIdRegion(region.id);
+          } else {
+            getAllSupply();
+          }
           Notiflix.Notify.success("Matériel modifié avec succès");
         } catch (error) {
           console.error(error);
@@ -102,7 +111,12 @@ function SupplyTable({ showFilters, setShowFilters }) {
         nProgress.start();
         try {
           await axios.delete(`${url}/api/supplies/${id}`);
-          getAllSupply();
+          let region = JSON.parse(localStorage.getItem("region"));
+          if (region) {
+            getSupplyParIdRegion(region.id);
+          } else {
+            getAllSupply();
+          }
           Notiflix.Notify.success("Matériel supprimé avec succès");
         } catch (error) {
           console.error(error);
@@ -118,9 +132,8 @@ function SupplyTable({ showFilters, setShowFilters }) {
     <div onClick={(e) => e.stopPropagation()} className="my-2">
       <button
         onClick={() => setShowFilters(!showFilters)}
-        className={`flex items-center justify-center p-2 cursor-pointer rounded-lg hover:bg-blue-100 transition-colors duration-200 ${
-          showFilters ? "bg-blue-100" : "bg-blue-50"
-        }`}
+        className={`flex items-center justify-center p-2 cursor-pointer rounded-lg hover:bg-blue-100 transition-colors duration-200 ${showFilters ? "bg-blue-100" : "bg-blue-50"
+          }`}
       >
         <FontAwesomeIcon icon={faFilter} className="h-4 w-4 text-blue-400" />
       </button>
@@ -130,12 +143,12 @@ function SupplyTable({ showFilters, setShowFilters }) {
             <FontAwesomeIcon
               onClick={() => setShowFilters(false)}
               icon={faXmark}
-              className="text-red-400 cursor-pointer bg-red-100 rounded-full py-1 px-1.5"
+              className="text-red-500 cursor-pointer bg-red-100 rounded-full py-1 px-1.5"
             />
           </div>
           <p className="flex items-center text-sm gap-2 text-gray-700 font-semibold uppercase px-4">
             <FontAwesomeIcon icon={faFilter} className="text-gray-500" />
-            Filtrer par
+            Filtrage
           </p>
           <div className="flex items-center gap-2 px-4 mb-6 mt-2">
             <InputSearch
@@ -145,23 +158,25 @@ function SupplyTable({ showFilters, setShowFilters }) {
               placeholder="Rechercher"
               width="w-46"
             />
-            <Select
-              value={region}
-              onValueChange={(value) => {
-                setRegion(value);
-              }}
-            >
-              <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded-3xl p-2 w-40 px-4">
-                <SelectValue placeholder="Région" />
-              </SelectTrigger>
-              <SelectContent>
-                {regions.map((region) => (
-                  <SelectItem key={region.id} value={region.id}>
-                    {region.nom}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {isAdmin && (
+              <Select
+                value={region}
+                onValueChange={(value) => {
+                  setRegion(value);
+                }}
+              >
+                <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded-3xl p-2 w-40 px-4">
+                  <SelectValue placeholder="Région" />
+                </SelectTrigger>
+                <SelectContent>
+                  {regions.map((region) => (
+                    <SelectItem key={region.id} value={region.id}>
+                      {region.nom}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </div>
       )}
@@ -287,14 +302,13 @@ function SupplyTable({ showFilters, setShowFilters }) {
                 <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                   {editingSupplyId === supply.id ? (
                     <input
-                      type="text"
+                      type="date"
                       value={editedSupply.date}
-                      onChange={(e) =>
-                        handleInputChange("date", e.target.value)
-                      }
+                      onChange={(e) => {
+                        handleInputChange("date", e.target.value);
+                        handleSaveSupply(supply.id, "date", e.target.value);
+                      }}
                       className="p-2 text-black flex-grow border rounded w-full"
-                      onBlur={() => handleSaveSupply(supply.id, "date")}
-                      autoFocus
                     />
                   ) : (
                     supply.date
@@ -345,12 +359,12 @@ function SupplyTable({ showFilters, setShowFilters }) {
 
                     {(editingSupplyId !== supply.id ||
                       editedSupply.id === null) && (
-                      <FontAwesomeIcon
-                        icon={faPen}
-                        onClick={() => handleEditSupply(supply)}
-                        className="text-blue-500 bg-blue-200 p-1 rounded-full cursor-pointer"
-                      />
-                    )}
+                        <FontAwesomeIcon
+                          icon={faPen}
+                          onClick={() => handleEditSupply(supply)}
+                          className="text-blue-500 bg-blue-200 p-1 rounded-full cursor-pointer"
+                        />
+                      )}
 
                     <Popover>
                       <PopoverTrigger>
@@ -378,15 +392,26 @@ function SupplyTable({ showFilters, setShowFilters }) {
                       <Popover>
                         <PopoverTrigger>
                           <FontAwesomeIcon
-                          icon={faEye}
-                          className="text-gray-500 bg-gray-200 mt-1 p-1 rounded-full cursor-pointer"
-                        />
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[80vw]">
-                        <DetailsSupply supply={supply} />
+                            icon={faEye}
+                            className="text-gray-500 bg-gray-200 mt-1 p-1 rounded-full cursor-pointer"
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[80vw]">
+                          <DetailsSupply supply={supply} />
                         </PopoverContent>
                       </Popover>
                     )}
+                    <Popover>
+                      <PopoverTrigger>
+                        <FontAwesomeIcon
+                          icon={faShare}
+                          className="text-gray-500 bg-gray-200 mt-1 p-1 rounded-full cursor-pointer"
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <ShareMateriel supply={supply} status="supply" />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </td>
               </tr>

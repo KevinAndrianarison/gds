@@ -86,7 +86,7 @@ export default function SearchFilters({
       </div>
 
       {showFilters && (
-        <div className="mt-2 bg-gray-50 rounded-lg border-gray-100 absolute right-5 border shadow-lg">
+        <div className="mt-2 bg-gray-50 rounded-lg border-gray-100 absolute right-5 z-10 border shadow-lg">
           <div className="flex justify-end pt-1 pr-1">
             <FontAwesomeIcon
               icon={faXmark}

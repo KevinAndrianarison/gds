@@ -1,13 +1,19 @@
 import React, { useState, useContext } from 'react'
 import TitreLabel from '@/composants/TitreLabel'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faPen, faShare } from '@fortawesome/free-solid-svg-icons'
 import { MaterielContext } from '@/contexte/useMateriel'
 import Notiflix from 'notiflix'
 import NProgress from 'nprogress'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import ShareMateriel from '@/composants/ShareMateriel'
 
-export default function   MaterielsTable({ materiels }) {
-  const { deleteMateriel, updateMateriel } = useContext(MaterielContext);
+export default function MaterielsTable({ materiels }) {
+  const { deleteMateriel, updateMateriel, getMaterielParIdRegion, getAllMateriels } = useContext(MaterielContext);
   const [editingMaterielId, setEditingMaterielId] = useState(null);
   const [editedMateriel, setEditedMateriel] = useState({});
   const [originalMateriel, setOriginalMateriel] = useState({});
@@ -40,24 +46,28 @@ export default function   MaterielsTable({ materiels }) {
   const handleSaveMateriel = async (id, field, value) => {
     try {
       const newValue = value || editedMateriel[field];
-      const hasChanged = 
-        newValue !== originalMateriel[field] && 
-        newValue !== null && 
+      const hasChanged =
+        newValue !== originalMateriel[field] &&
+        newValue !== null &&
         newValue !== '';
 
       if (hasChanged) {
         const updateData = { [field]: newValue };
         await updateMateriel(id, updateData);
-        
         // Mettre à jour l'original avec la nouvelle valeur
         setOriginalMateriel(prev => ({
           ...prev,
           [field]: editedMateriel[field]
         }));
+        let region = JSON.parse(localStorage.getItem('region'));
+        if (region) {
+          getMaterielParIdRegion(region.id);
+        } else {
+          getAllMateriels();
+        }
       }
     } catch (error) {
       Notiflix.Notify.warning('Erreur lors de la mise à jour');
-      // Restaurer la valeur originale
       setEditedMateriel(prev => ({
         ...prev,
         [field]: originalMateriel[field]
@@ -138,15 +148,14 @@ export default function   MaterielsTable({ materiels }) {
                 )}
               </td>
               <td className="px-4 py-3">
-                <span className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${
-                  materiel.etat === 'Bon état' 
-                    ? 'bg-green-400' 
-                    : materiel.etat === 'État moyen' 
-                    ? 'bg-yellow-400' 
-                    : materiel.etat === 'Mauvais état' 
-                    ? 'bg-red-400' 
-                    : 'bg-gray-400'
-                }`}>
+                <span className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${materiel.etat === 'Bon état'
+                  ? 'bg-green-400'
+                  : materiel.etat === 'État moyen'
+                    ? 'bg-yellow-400'
+                    : materiel.etat === 'Mauvais état'
+                      ? 'bg-red-400'
+                      : 'bg-gray-400'
+                  }`}>
                   {materiel.etat}
                 </span>
               </td>
@@ -223,6 +232,18 @@ export default function   MaterielsTable({ materiels }) {
                       onClick={() => handleEditMateriel(materiel)}
                     />
                   )}
+                  <Popover>
+                    <PopoverTrigger>
+                      <FontAwesomeIcon
+                        icon={faShare}
+                        className="text-gray-500 bg-gray-200 p-2 rounded-full cursor-pointer mt-1"
+                      />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <ShareMateriel materiel={materiel} status="materiel" />
+                    </PopoverContent>
+                  </Popover>
+
                 </div>
               </td>
             </tr>

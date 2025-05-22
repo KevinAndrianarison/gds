@@ -61,6 +61,12 @@ export function MaterielContextProvider({ children }) {
         // Mettre à jour la liste locale en supprimant le matériel
         setMateriels((prev) => prev.filter((m) => m.id !== id));
         setMaterielsTemp((prev) => prev.filter((m) => m.id !== id));
+        let region = JSON.parse(localStorage.getItem('region'));
+        if(region){
+          getMaterielParIdRegion(region.id);
+        }else{
+          getAllMateriels();
+        }
         return true;
       })
       .catch((err) => {

@@ -23,9 +23,28 @@ export function SupplyContextProvider({ children }) {
     }
   };
 
-  useEffect(() => {
-    getAllSupply();
-  }, []);
+  const getSupplyParIdRegion = async (idRegion) => {
+    nProgress.start();
+    setIsLoadingSpin(true);
+    try {
+      const response = await axios.get(`${url}/api/supplies/region/${idRegion}`);
+      setSupplies(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      nProgress.done();
+      setIsLoadingSpin(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   let region = JSON.parse(localStorage.getItem('region'));
+  //   if(region){
+  //     getSupplyParIdRegion(region.id);
+  //   }else{
+  //     getAllSupply();
+  //   }
+  // }, []);
 
   return (
     <SupplyContext.Provider
@@ -34,6 +53,7 @@ export function SupplyContextProvider({ children }) {
         setSupplies,
         getAllSupply,
         isLoadingSpin,
+        getSupplyParIdRegion,
       }}
     >
       {children}

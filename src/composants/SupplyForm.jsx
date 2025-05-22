@@ -19,12 +19,14 @@ import { UrlContext } from "@/contexte/useUrl";
 import nProgress from "nprogress";
 import axios from "axios";
 import Notiflix from "notiflix";
+import { ShowContext } from "@/contexte/useShow";
 
 export default function SupplyForm() {
+  const { isAdmin, isACL } = useContext(ShowContext);
   const [region, setRegion] = useState("");
   const { regions, getAllRegion } = useContext(RegionContext);
   const { users, getAlluser } = useContext(UserContext);
-  const { supplies, getAllSupply, isLoadingSpin } = useContext(SupplyContext);
+  const { supplies, getAllSupply, isLoadingSpin, getSupplyParIdRegion } = useContext(SupplyContext);
   const { url } = useContext(UrlContext);
   const [receptionnaire, setReceptionnaire] = useState("");
   const [nom, setNom] = useState("");
@@ -36,6 +38,13 @@ export default function SupplyForm() {
   const [rubrique, setRubrique] = useState("");
   const [date, setDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    let region = JSON.parse(localStorage.getItem("region"));
+    if (isACL) {
+      setRegion(region.id);
+    }
+  }, []);
 
   function addSupply() {
     const data = {
@@ -70,7 +79,11 @@ export default function SupplyForm() {
         setRubrique("");
         setDate("");
         setReceptionnaire("");
-        getAllSupply();
+        if (isACL) {
+          getSupplyParIdRegion(region);
+        } else {
+          getAllSupply();
+        }
         Notiflix.Report.success("Succès", "Matériel ajouté avec succès", "OK");
         nProgress.done();
         setIsLoading(false);
@@ -108,28 +121,31 @@ export default function SupplyForm() {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-2 w-40">
-          <TitreLabel titre="Région" required />
-          <div className="flex items-center flex-wrap gap-2">
-            <Select
-              value={region}
-              onValueChange={(value) => {
-                setRegion(value);
-              }}
-            >
-              <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded p-2 w-40 px-4">
-                <SelectValue placeholder="Région" />
-              </SelectTrigger>
-              <SelectContent>
-                {regions.map((region) => (
-                  <SelectItem key={region.id} value={region.id}>
-                    {region.nom}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        {isAdmin && (
+          <div className="flex flex-col gap-2 w-40">
+            <TitreLabel titre="Région" required />
+            <div className="flex items-center flex-wrap gap-2">
+              <Select
+                value={region}
+                onValueChange={(value) => {
+                  setRegion(value);
+                }}
+              >
+                <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded p-2 w-40 px-4">
+                  <SelectValue placeholder="Région" />
+                </SelectTrigger>
+                <SelectContent>
+                  {regions.map((region) => (
+                    <SelectItem key={region.id} value={region.id}>
+                      {region.nom}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
+        )}
+
         <div className="flex flex-col gap-2 w-40">
           <TitreLabel titre="Stock initial" required />
           <div className="flex items-center flex-wrap gap-2">

@@ -7,10 +7,20 @@ import { useContext } from "react";
 import Empty from "../composants/Empty";
 import ButtonExcel from "../composants/ButtonExcel";
 import ButtonPdf from "../composants/ButtonPdf";
+import { useEffect } from "react";
 
 export default function GestionSupply() {
   const [showFilters, setShowFilters] = useState(false);
-  const { isLoadingSpin, supplies } = useContext(SupplyContext);
+  const { isLoadingSpin, supplies, getSupplyParIdRegion, getAllSupply } = useContext(SupplyContext);
+  useEffect(() => {
+    let region = JSON.parse(localStorage.getItem('region'));
+    if (region) {
+      getSupplyParIdRegion(region.id);
+    } else {
+      getAllSupply();
+    }
+  }, []);
+
   return (
     <div onClick={() => setShowFilters(false)} className="w-[80vw] mx-auto">
       <Entete titre="supply" description="gérez vos stocks" />

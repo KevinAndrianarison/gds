@@ -365,7 +365,7 @@ function GestionDeStockContent() {
         materielsTemp={materielsTemp}
         setFilteredMateriels={setFilteredMateriels}
       />
-      {isLoading ? (
+      {isLoading && materiels.length === 0 ? (
         <div className="mt-6">
           {[...Array(5)].map((_, index) => (
             <div key={index} className=" rounded mb-4 p-4">
@@ -380,7 +380,7 @@ function GestionDeStockContent() {
             </div>
           ))}
         </div>
-      ) : materiels.length === 0 ? (
+      ) : !isLoading && materiels.length === 0 ? (
         <Empty titre="Aucun matériel n'a été trouvé" />
       ) : (
         <MaterielsTable

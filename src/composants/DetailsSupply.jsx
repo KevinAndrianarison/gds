@@ -7,9 +7,12 @@ import { UrlContext } from "../contexte/useUrl";
 import nProgress from "nprogress";
 import Notiflix from "notiflix";
 import { useState } from "react";
+import TitreLabel from "./TitreLabel";
+import ButtonPdf from "./ButtonPdf";
+import ButtonExcel from "./ButtonExcel";
 
 export default function DetailsSupply({ supply }) {
-  const { getAllSupply } = useContext(SupplyContext);
+  const { getAllSupply, getSupplyParIdRegion } = useContext(SupplyContext);
   const { url } = useContext(UrlContext);
   const [editingDetailId, setEditingDetailId] = useState(null);
   const [editedDetail, setEditedDetail] = useState({});
@@ -19,17 +22,22 @@ export default function DetailsSupply({ supply }) {
     setEditedDetail((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSaveDetail = async (id, field) => {
+  const handleSaveDetail = async (id, field, value) => {
     try {
-      const newValue = editedDetail[field] || originalDetail[field];
+      const newValue = value || editedDetail[field];
       const hasChanged =
-        newValue !== originalDetail[field] && newValue !== null;
-        
+        newValue !== originalDetail[field] && newValue !== null && newValue !== '';
+
       if (hasChanged) {
         nProgress.start();
         try {
           await axios.put(`${url}/api/details-supplies/${id}`, { [field]: newValue, supply_id: supply.id });
-          getAllSupply();
+          let region = JSON.parse(localStorage.getItem("region"));
+          if (region) {
+            getSupplyParIdRegion(region.id);
+          } else {
+            getAllSupply();
+          }
           Notiflix.Notify.success("Détail modifié avec succès");
         } catch (error) {
           console.error(error);
@@ -55,7 +63,12 @@ export default function DetailsSupply({ supply }) {
         },
       })
       .then(() => {
-        getAllSupply();
+        let region = JSON.parse(localStorage.getItem("region"));
+        if (region) {
+          getSupplyParIdRegion(region.id);
+        } else {
+          getAllSupply();
+        }
         nProgress.done();
         Notiflix.Notify.success("Détail supprimé avec succès");
       })
@@ -71,31 +84,31 @@ export default function DetailsSupply({ supply }) {
 
   const handleEditDetail = (detail) => {
     setEditingDetailId(detail.id);
-    setEditedDetail({...detail});
-    setOriginalDetail({...detail});
+    setEditedDetail({ ...detail });
+    setOriginalDetail({ ...detail });
   };
   return (
     <div>
-      <h1 className="text-lg font-bold">
-        Details des <b className="text-blue-500">ENTRER - SORTIE</b>
+      <h1 className="text-lg">
+        <b className="text-blue-500">ENTRER - SORTIE</b>
       </h1>
-      <p className="flex items-center text-sm gap-2 text-gray-500">
+      <p className="flex items-center text-xs font-bold gap-2 text-gray-500">
         <FontAwesomeIcon icon={faThumbTack} className="text-yellow-500" />{" "}
         {supply.nom}
       </p>
-      <div className="mt-4 text-sm">
-        <div className="flex gap-2 bg-gray-100 py-2 uppercase font-bold text-gray-500 rounded-t-sm">
-          <h1 className="w-[14%] px-4">Rubrique</h1>
-          <h1 className="w-[10%]">Lieu</h1>
-          <h1 className="w-[14%]">Transporteur</h1>
-          <h1 className="w-[14%]">Réceptionnaire</h1>
-          <h1 className="w-[10%]">Numeros B.E</h1>
-          <h1 className="w-[14%]">Observations</h1>
-          <h1 className="w-[5%]">E/S</h1>
-          <h1 className="w-[10%]">Date</h1>
-          <div className="w-[9%] text-center">Actions</div>
+      <div className="mt-4 text-sm border rounded-sm">
+        <div className="flex gap-2 bg-gray-100 py-2 rounded-t-sm">
+          <div className="w-[14%] px-4"><TitreLabel titre="Rubrique" /></div>
+          <div className="w-[10%]"><TitreLabel titre="Lieu" /></div>
+          <div className="w-[14%]"><TitreLabel titre="Transporteur" /></div>
+          <div className="w-[14%]"><TitreLabel titre="Réceptionnaire" /></div>
+          <div className="w-[10%]"><TitreLabel titre="Numeros B.E" /></div>
+          <div className="w-[14%]"><TitreLabel titre="Observations" /></div>
+          <div className="w-[5%]"><TitreLabel titre="E/S" /></div>
+          <div className="w-[10%]"><TitreLabel titre="Date" /></div>
+          <div className="w-[9%] text-center"><TitreLabel titre="Actions" /></div>
         </div>
-        <div className="max-h-80 overflow-y-auto">
+        <div className="max-h-80 overflow-y-auto border-t">
           {supply.details_supply.map((detail) => (
             <div key={detail.id} className="flex gap-2 py-2">
               <h1 className="w-[14%] truncate px-4">
@@ -103,12 +116,11 @@ export default function DetailsSupply({ supply }) {
                   <input
                     type="text"
                     value={editedDetail.rubrique}
-                    onChange={(e) =>
-                      handleInputChange("rubrique", e.target.value)
-                    }
+                    onChange={(e) => {
+                      handleInputChange("rubrique", e.target.value);
+                      handleSaveDetail(detail.id, "rubrique", e.target.value);
+                    }}
                     className="p-2 text-black flex-grow border rounded w-full"
-                    onBlur={() => handleSaveDetail(detail.id, "rubrique")}
-                    autoFocus
                   />
                 ) : (
                   detail?.rubrique
@@ -195,21 +207,21 @@ export default function DetailsSupply({ supply }) {
                 )}
               </h1>
               <h1
-                className={`w-[5%] truncate font-bold ${
-                  detail?.entree ? "text-green-500" : "text-red-500"
-                }`}
+                className={`w-[5%] truncate font-bold ${detail?.entree ? "text-green-500" : "text-red-500"
+                  }`}
               >
                 {detail?.entree || detail?.sortie}
               </h1>
               <h1 className="w-[10%] truncate">
                 {editingDetailId === detail.id ? (
                   <input
-                    type="text"
+                    type="date"
                     value={editedDetail.date}
-                    onChange={(e) => handleInputChange("date", e.target.value)}
+                    onChange={(e) => {
+                      handleInputChange("date", e.target.value);
+                      handleSaveDetail(detail.id, "date", e.target.value);
+                    }}
                     className="p-2 text-black flex-grow border rounded w-full"
-                    onBlur={() => handleSaveDetail(detail.id, "date")}
-                    autoFocus
                   />
                 ) : (
                   detail?.date
@@ -221,15 +233,22 @@ export default function DetailsSupply({ supply }) {
                   onClick={() => handleDeleteDetail(detail.id)}
                   className="text-red-500 border-2 text-xs border-red-500 cursor-pointer rounded-full p-1"
                 />
-                <FontAwesomeIcon
-                  icon={faPen}
-                  onClick={() => handleEditDetail(detail)}
-                  className="text-yellow-500 border-2 text-xs border-yellow-500 cursor-pointer rounded-full p-1"
-                />
+                {(editingDetailId !== detail.id ||
+                  editedDetail.id === null) && (
+                    <FontAwesomeIcon
+                      icon={faPen}
+                      onClick={() => handleEditDetail(detail)}
+                      className="text-yellow-500 border-2 text-xs border-yellow-500 cursor-pointer rounded-full p-1"
+                    />
+                  )}
               </div>
             </div>
           ))}
         </div>
+      </div>
+      <div className="flex gap-2 text-sm mt-4">
+        <ButtonPdf />
+        <ButtonExcel />
       </div>
     </div>
   );

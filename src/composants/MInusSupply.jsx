@@ -17,7 +17,7 @@ export default function MinusSupply({ supply }) {
   const { url } = useContext(UrlContext);
   const [stockFinal, setStockFinal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const { getAllSupply } = useContext(SupplyContext);
+  const { getAllSupply, getSupplyParIdRegion } = useContext(SupplyContext);
   const [observation, setObservation] = useState("");
   const [rubrique, setRubrique] = useState("");
   const [lieuDestination, setLieuDestination] = useState("");
@@ -49,7 +49,12 @@ export default function MinusSupply({ supply }) {
       .then((response) => {
         setIsLoading(false);
         nProgress.done();
-        getAllSupply();
+        let region = JSON.parse(localStorage.getItem("region"));
+        if (region) {
+          getSupplyParIdRegion(region.id);
+        } else {
+          getAllSupply();
+        }
         Notiflix.Report.success(
           "Succès",
           "Matériel mis à jour avec succès",
@@ -71,7 +76,7 @@ export default function MinusSupply({ supply }) {
         Nombre de <b>{supply?.nom}</b> actuel :{" "}
         <b className="text-blue-500 text-lg">{supply?.stock_final || 0}</b>
       </p>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 max-h-60 overflow-y-auto my-2">
         <div className="flex items-center gap-2 border-2 border-yellow-300 ">
           <FontAwesomeIcon
             icon={faMinus}
@@ -91,24 +96,25 @@ export default function MinusSupply({ supply }) {
         <InputOn placeholder="Receptionnaire" value={receptionnaire} onChange={setReceptionnaire} width="w-full" />
         <InputOn placeholder="Observation" value={observation} onChange={setObservation} width="w-full" />
         <InputOn placeholder="Numéro de BE" value={numeroBe} type="number" onChange={setNumeroBe} width="w-full" />
-        <button onClick={handleMinusSupply} disabled={isLoading} className="text-yellow-600 font-bold bg-yellow-200 p-2 h-full cursor-pointer rounded-full">
-          {isLoading ? (
-            <p>
-              {" "}
-              Chargement
-              <FontAwesomeIcon icon={faSpinner} pulse className="ml-2" />{" "}
-            </p>
-          ) : (
-            <p >
-              Enregistrer
-              <FontAwesomeIcon
-                icon={faArrowRight}
-                className="ml-2"
-              />{" "}
-            </p>
-          )}
-        </button>
+
       </div>
+      <button onClick={handleMinusSupply} disabled={isLoading} className="text-yellow-600 font-bold bg-yellow-200 p-2 h-full cursor-pointer w-full mt-2 rounded-full">
+        {isLoading ? (
+          <p>
+            {" "}
+            Chargement
+            <FontAwesomeIcon icon={faSpinner} pulse className="ml-2" />{" "}
+          </p>
+        ) : (
+          <p >
+            Enregistrer
+            <FontAwesomeIcon
+              icon={faArrowRight}
+              className="ml-2"
+            />{" "}
+          </p>
+        )}
+      </button>
     </div>
   );
 }
