@@ -21,6 +21,7 @@ import { UserContextProvider } from './contexte/useUser';
 import { SourceProvider } from './contexte/useSource';
 import { ReferenceProvider } from './contexte/useReference';
 import { AppartenanceContextProvider } from './contexte/useAppartenance';
+import DetailsVehicule from './composants/DetailsVehicule';
 
 Notiflix.Confirm.init({
   titleColor: '#3b82f6',
@@ -56,6 +57,7 @@ export default function App() {
                 <Route path="/gestion-de-stock" element={<ProtectedRoute><MainLayout><GestionDeStock /></MainLayout></ProtectedRoute>} />
                 <Route path="/gestion-supply" element={<ProtectedRoute><MainLayout><GestionSupply /></MainLayout></ProtectedRoute>} />
                 <Route path="/gestion-de-vehicule" element={<ProtectedRoute><MainLayout><GestionDeVehicule /></MainLayout></ProtectedRoute>} />
+                <Route path="/details-vehicule/:id" element={<ProtectedRoute><MainLayout><DetailsVehicule /></MainLayout></ProtectedRoute>} />
                 <Route path="/profil" element={<ProtectedRoute><MainLayout><Profil /></MainLayout></ProtectedRoute>} />
                 <Route path="/regions" element={<ProtectedRoute><MainLayout><Region /></MainLayout></ProtectedRoute>} />
                 <Route path="/utilisateurs" element={<ProtectedRoute><MainLayout><User /></MainLayout></ProtectedRoute>} />

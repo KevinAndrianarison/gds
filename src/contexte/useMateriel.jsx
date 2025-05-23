@@ -18,7 +18,6 @@ export function MaterielContextProvider({ children }) {
     return materielService
       .getVehiculesParIdRegion(regionId)
       .then((response) => {
-        console.log(response);
         setVehicules(response);
         setIsLoadingVehicules(false);
         return response;
@@ -38,7 +37,6 @@ export function MaterielContextProvider({ children }) {
     return materielService
       .getAllVehicules()
       .then((response) => {
-        console.log(response);
         setVehicules(response);
         setIsLoadingVehicules(false);
         return response;
