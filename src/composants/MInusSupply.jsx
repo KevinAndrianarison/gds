@@ -77,7 +77,7 @@ export default function MinusSupply({ supply }) {
         <b className="text-blue-500 text-lg">{supply?.stock_final || 0}</b>
       </p>
       <div className="flex flex-col gap-2 max-h-60 overflow-y-auto my-2">
-        <div className="flex items-center gap-2 border-2 border-yellow-300 ">
+        <div className="flex items-center gap-2 rounded border-2 border-yellow-200 ">
           <FontAwesomeIcon
             icon={faMinus}
             className="text-yellow-500 bg-yellow-300 p-2 h-full"

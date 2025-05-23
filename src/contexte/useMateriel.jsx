@@ -10,6 +10,46 @@ export function MaterielContextProvider({ children }) {
   const [materielsTemp, setMaterielsTemp] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [vehicules, setVehicules] = useState([]);
+  const [isLoadingVehicules, setIsLoadingVehicules] = useState(false);
+
+  function getVehiculesParIdRegion(regionId) {
+    setIsLoadingVehicules(true);
+    return materielService
+      .getVehiculesParIdRegion(regionId)
+      .then((response) => {
+        console.log(response);
+        setVehicules(response);
+        setIsLoadingVehicules(false);
+        return response;
+      })
+      .catch((err) => {
+        console.error(err);
+        Notiflix.Notify.failure(
+          "Erreur lors du chargement des véhicules par région"
+        );
+        setIsLoadingVehicules(false);
+        throw err;
+      });
+  }
+
+  function getAllVehicules() {
+    setIsLoadingVehicules(true);
+    return materielService
+      .getAllVehicules()
+      .then((response) => {
+        console.log(response);
+        setVehicules(response);
+        setIsLoadingVehicules(false);
+        return response;
+      })
+      .catch((err) => {
+        console.error(err);
+        Notiflix.Notify.failure("Erreur lors du chargement des véhicules");
+        setIsLoadingVehicules(false);
+        throw err;
+      });
+  }
 
   function getMaterielParIdRegion(regionId) {
     setIsLoading(true);
@@ -61,10 +101,10 @@ export function MaterielContextProvider({ children }) {
         // Mettre à jour la liste locale en supprimant le matériel
         setMateriels((prev) => prev.filter((m) => m.id !== id));
         setMaterielsTemp((prev) => prev.filter((m) => m.id !== id));
-        let region = JSON.parse(localStorage.getItem('region'));
-        if(region){
+        let region = JSON.parse(localStorage.getItem("region"));
+        if (region) {
           getMaterielParIdRegion(region.id);
-        }else{
+        } else {
           getAllMateriels();
         }
         return true;
@@ -133,6 +173,10 @@ export function MaterielContextProvider({ children }) {
         setIsModalOpen,
         closeModal,
         setMaterielsTemp,
+        vehicules,
+        isLoadingVehicules,
+        getAllVehicules,
+        getVehiculesParIdRegion,
       }}
     >
       {children}

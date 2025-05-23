@@ -23,6 +23,28 @@ axios.interceptors.response.use(
 
 export const materielService = {
 
+    getAllVehicules: async () => {
+        try {
+            const response = await axios.get(`${API_URL}/materiel/vehicule`);
+            return response.data;
+        } catch (error) {
+            Notify.failure('Erreur lors du chargement des véhicules');
+            throw error;
+        }
+    },
+
+
+    getVehiculesParIdRegion: async (regionId) => {
+        try {
+            const response = await axios.get(`${API_URL}/vehicules/region/${regionId}`);
+            return response.data;
+        } catch (error) {
+            Notify.failure('Erreur lors du chargement des véhicules par région');
+            throw error;
+        }
+    },
+
+
     getMaterielParIdRegion: async (regionId) => {
         try {
             const response = await axios.get(`${API_URL}/materiels/region/${regionId}`);

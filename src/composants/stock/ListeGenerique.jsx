@@ -33,6 +33,7 @@ export default function ListeGenerique({
   const [newItemValue, setNewItemValue] = useState("");
   const [searchValue, setSearchValue] = useState(searchTerm);
   const [isAdding, setIsAdding] = useState(false);
+  const [isVehicule, setIsVehicule] = useState(false);
 
   useEffect(() => {
     setSearchValue(searchTerm);
@@ -50,13 +51,6 @@ export default function ListeGenerique({
     );
   };
 
-  const handleSelectAllItems = () => {
-    if (selectedItems.length === filteredItems.length) {
-      setSelectedItems([]);
-    } else {
-      setSelectedItems(filteredItems.map((item) => item.id));
-    }
-  };
 
   const handleDeleteSelectedItems = async () => {
     if (selectedItems.length === 0) return;
@@ -123,7 +117,7 @@ export default function ListeGenerique({
       try {
         setIsAdding(true);
         NProgress.start();
-        const result = await onAdd({ [nameField]: newItemValue.trim() });
+        const result = await onAdd({ [nameField]: newItemValue.trim(), isVehicule: isVehicule });
         if (result) {
           // Ne réinitialiser que si l'ajout a réussi
           setNewItemValue("");
@@ -148,6 +142,7 @@ export default function ListeGenerique({
             placeholder={`Nouveau ${itemName}`}
             className="flex-grow"
           />
+      
           {ExtraField && <div className="w-64">{ExtraField}</div>}
         </div>
         <Button
@@ -163,6 +158,12 @@ export default function ListeGenerique({
           )}
         </Button>
       </div>
+      {itemName === "catégorie" && (
+        <div className="flex items-center gap-2">
+          <input type="checkbox" checked={isVehicule} className="cursor-pointer" onChange={() => setIsVehicule(!isVehicule)} />
+          <p className="text-sm"> C'est un véhicule</p>
+        </div>
+      )}
       {items.length > 0 && (
         <InputSearch
           width="w-full"

@@ -161,7 +161,7 @@ export default function ShareMateriel({ materiel, status, supply }) {
                 </div>
             )}
             {!isLoading && (
-                <button disabled={isLoadingPost} onClick={handleShareMateriel} className="bg-blue-400  w-full text-white mt-2 px-4 py-2 inline flex items-center gap-2 rounded-3xl">
+                <button disabled={isLoadingPost} onClick={handleShareMateriel} className="bg-blue-400 cursor-pointer w-full text-white mt-2 px-4 py-2 inline flex items-center gap-2 rounded-3xl">
                     {isLoadingPost ? (
                         <FontAwesomeIcon icon={faSpinner} className="mr-2 animate-spin" pulse />
                     ) : (

@@ -76,7 +76,7 @@ export default function PlusSupply({ supply }) {
         <b className="text-blue-500 text-lg">{supply?.stock_final || 0}</b>
       </p>
       <div className="flex flex-col gap-2 max-h-60 overflow-y-auto my-2">
-        <div className="flex items-center gap-2 border-2 border-blue-300 ">
+        <div className="flex items-center gap-2 rounded border-2 border-blue-200 ">
           <FontAwesomeIcon
             icon={faPlus}
             className="text-blue-500 bg-blue-300 p-2 h-full"
@@ -89,7 +89,7 @@ export default function PlusSupply({ supply }) {
           />
         </div>
         <InputOn placeholder="Rubrique" value={rubrique} onChange={setRubrique} width="w-full" />
-        <InputOn placeholder="Date" value={date} type="date" onChange={setDate} width="w-full" />
+        <InputOn placeholder="Date" value={date} type="date"  onChange={setDate} width="w-full" />
         <InputOn placeholder="Lieu de destination" value={lieuDestination} onChange={setLieuDestination} width="w-full" />
         <InputOn placeholder="Transporteur" value={transporteur} onChange={setTransporteur} width="w-full" />
         <InputOn placeholder="Receptionnaire" value={receptionnaire} onChange={setReceptionnaire} width="w-full" />

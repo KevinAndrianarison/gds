@@ -23,6 +23,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ShowContext } from "@/contexte/useShow";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCarSide } from "@fortawesome/free-solid-svg-icons";
 
 export default function TypeCombobox({ value, onChange, error }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -77,7 +79,7 @@ export default function TypeCombobox({ value, onChange, error }) {
                       value === type.id ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {type.nom}
+                  {type.nom} {type.categorie.isVehicule && <FontAwesomeIcon icon={faCarSide} className="ml-2 text-blue-500 p-1 rounded-full bg-blue-100" />}
                 </CommandItem>
               ))}
             </CommandGroup>
