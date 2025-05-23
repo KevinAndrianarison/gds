@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import TitreLabel from '@/composants/TitreLabel'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faPen, faShare } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faPen, faShare, faCarSide } from '@fortawesome/free-solid-svg-icons'
 import { MaterielContext } from '@/contexte/useMateriel'
 import Notiflix from 'notiflix'
 import NProgress from 'nprogress'
@@ -119,7 +119,7 @@ export default function MaterielsTable({ materiels }) {
                   materiel.numero
                 )}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.categorie?.nom || '...'}</td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px] flex items-center gap-2">{materiel.categorie.isVehicule ? <FontAwesomeIcon icon={faCarSide} className="text-blue-500 bg-blue-200 p-1 rounded-full"  /> : ''} {materiel.categorie?.nom || '...'}</td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.type?.nom || '...'}</td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                 {editingMaterielId === materiel.id ? (

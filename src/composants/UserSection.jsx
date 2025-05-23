@@ -10,6 +10,7 @@ import {
   faScrewdriverWrench,
   faComputer,
   faFolderTree,
+  faLocationDot
 } from "@fortawesome/free-solid-svg-icons";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
@@ -59,7 +60,7 @@ export default function UserSection({ toggleMenu, isOpen }) {
         setIsConnexion(true);
         setIsLogin(true);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -78,7 +79,14 @@ export default function UserSection({ toggleMenu, isOpen }) {
         ) : (
           <div className="logoUtilisateur h-10 w-10 rounded-full"></div>
         )}
-        <span className="font-medium">{user?.name || "Utilisateur"}</span>
+        <div>
+          <span className="font-medium">{user?.name || "Utilisateur"}</span>
+          {JSON.parse(localStorage.getItem("region"))?.nom && (
+            <p className="text-sm text-gray-500 text-right">
+              <FontAwesomeIcon icon={faLocationDot} className="text-red-500 uppercase" /> {JSON.parse(localStorage.getItem("region"))?.nom}
+            </p>
+          )}
+        </div>
       </div>
       <div className="flex items-center gap-4">
         <div className="md:hidden">
