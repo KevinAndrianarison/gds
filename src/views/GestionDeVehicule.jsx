@@ -32,6 +32,7 @@ function GestionDeVehiculeContent() {
     getVehiculesParIdRegion,
     vehicules,
     isLoadingVehicules,
+    getOneUtilisation,
   } = useMateriel();
   const navigate = useNavigate();
   const [region, setRegion] = useState(null);
@@ -120,7 +121,9 @@ function GestionDeVehiculeContent() {
           {vehicules.map((vehicule) => (
             <div
               key={vehicule.id}
-              onClick={() => navigate(`/details-vehicule/${vehicule.id}`)}
+              onClick={() => {
+               getOneUtilisation(vehicule.id);
+              }}
               className="shadow-xs cursor-pointer hover:bg-blue-50 hover:border-white bg-gray-50 rounded-md p-2 flex justify-between items-center"
             >
               <div className="flex items-center gap-10">
@@ -135,25 +138,25 @@ function GestionDeVehiculeContent() {
                       `(${vehicule.caracteristiques})`}
                   </h1>
                   <p className="text-xs font-bold uppercase text-gray-500">
-                    Types
+                    {vehicule.categorie.nom}
                   </p>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-2">
                 <Popover>
-                  <PopoverTrigger className="bg-blue-500 text-white px-8 py-2 rounded cursor-pointer">
+                  <PopoverTrigger onClick={(e) => e.stopPropagation()} className="bg-blue-500 text-white px-8 py-2 rounded cursor-pointer">
                     Utiliser
                   </PopoverTrigger>
-                  <PopoverContent>
-                    <UtiliseVehicule vehicule={vehicule} />
+                  <PopoverContent className="w-[500px]">
+                    <UtiliseVehicule vehicule={vehicule} status='utiliser' />
                   </PopoverContent>
                 </Popover>
                 <Popover>
-                  <PopoverTrigger className="bg-gray-300 text-black font-bold px-8 py-2 rounded cursor-pointer">
+                  <PopoverTrigger onClick={(e) => e.stopPropagation()} className="bg-gray-300 text-black font-bold px-8 py-2 rounded cursor-pointer">
                     Assigner
                   </PopoverTrigger>
-                  <PopoverContent>
-                    <UtiliseVehicule vehicule={vehicule} />
+                  <PopoverContent className="w-[500px]">
+                    <UtiliseVehicule vehicule={vehicule} status='assigner' />
                   </PopoverContent>
                 </Popover>
               </div>

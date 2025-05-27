@@ -2,6 +2,9 @@ import { createContext, useContext, useState } from "react";
 import nProgress from "nprogress";
 import { materielService } from "@/services/materielService";
 import Notiflix from "notiflix";
+import { UrlContext } from "./useUrl";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const MaterielContext = createContext({});
 
@@ -12,6 +15,25 @@ export function MaterielContextProvider({ children }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [vehicules, setVehicules] = useState([]);
   const [isLoadingVehicules, setIsLoadingVehicules] = useState(false);
+  const [oneVehicule, setOneVehicule] = useState({});
+  const { url } = useContext(UrlContext);
+  const navigate = useNavigate();
+
+
+  function getOneUtilisation(id) {
+    nProgress.start();
+    axios.get(`${url}/api/materiels/${id}`)
+      .then((response) => {
+        setOneVehicule(response.data);
+        navigate(`/details-vehicule/${id}`);
+        nProgress.done();
+      })
+      .catch((err) => {
+        console.error(err);
+        Notiflix.Notify.failure("Erreur lors du chargement des utilisations");
+        nProgress.done();
+      });
+  }
 
   function getVehiculesParIdRegion(regionId) {
     setIsLoadingVehicules(true);
@@ -161,6 +183,10 @@ export function MaterielContextProvider({ children }) {
         isLoading,
         isModalOpen,
         materielsTemp,
+        isLoadingVehicules,
+        vehicules,
+        oneVehicule,
+        getOneUtilisation,
         setMateriels,
         setIsLoading,
         getAllMateriels,
@@ -171,10 +197,9 @@ export function MaterielContextProvider({ children }) {
         setIsModalOpen,
         closeModal,
         setMaterielsTemp,
-        vehicules,
-        isLoadingVehicules,
         getAllVehicules,
         getVehiculesParIdRegion,
+        setOneVehicule,
       }}
     >
       {children}

@@ -1,9 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { MaterielContext } from "@/contexte/useMateriel";
+import { useContext } from "react";
 
 export default function DetailsVehicule() {
   const navigate = useNavigate();
+  const { oneVehicule } = useContext(MaterielContext);
+
+
   return (
     <div className="w-[80vw] mx-auto">
       <button
@@ -13,9 +18,9 @@ export default function DetailsVehicule() {
         <FontAwesomeIcon icon={faArrowLeft} />
         Retour
       </button>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
-      </p>
+      <h1 className="text-2xl font-bold">
+        Detail sur l'utilisation de : {oneVehicule.type.nom}
+      </h1>
     </div>
   );
 }

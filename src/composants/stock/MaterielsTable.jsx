@@ -239,7 +239,7 @@ export default function MaterielsTable({ materiels }) {
                         className="text-gray-500 bg-gray-200 p-2 rounded-full cursor-pointer mt-1"
                       />
                     </PopoverTrigger>
-                    <PopoverContent className="w-80">
+                    <PopoverContent className="w-[400px]" >
                       <ShareMateriel materiel={materiel} status="materiel" />
                     </PopoverContent>
                   </Popover>
