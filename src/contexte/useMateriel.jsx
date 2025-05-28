@@ -15,22 +15,25 @@ export function MaterielContextProvider({ children }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [vehicules, setVehicules] = useState([]);
   const [isLoadingVehicules, setIsLoadingVehicules] = useState(false);
-  const [oneVehicule, setOneVehicule] = useState({});
+  const [oneVehicule, setOneVehicule] = useState('');
+  const [isLoadingUtilisation, setisLoadingUtilisation] = useState(false);
   const { url } = useContext(UrlContext);
   const navigate = useNavigate();
 
 
   function getOneUtilisation(id) {
     nProgress.start();
+    setisLoadingUtilisation(true)
     axios.get(`${url}/api/materiels/${id}`)
       .then((response) => {
-        setOneVehicule(response.data);
-        navigate(`/details-vehicule/${id}`);
+        setOneVehicule(response.data)
+        setisLoadingUtilisation(false)
         nProgress.done();
       })
       .catch((err) => {
         console.error(err);
         Notiflix.Notify.failure("Erreur lors du chargement des utilisations");
+        setisLoadingUtilisation(false)
         nProgress.done();
       });
   }
@@ -186,6 +189,8 @@ export function MaterielContextProvider({ children }) {
         isLoadingVehicules,
         vehicules,
         oneVehicule,
+        setisLoadingUtilisation,
+        isLoadingUtilisation,
         getOneUtilisation,
         setMateriels,
         setIsLoading,

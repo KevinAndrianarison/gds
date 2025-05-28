@@ -90,7 +90,7 @@ export default function DetailsSupply({ supply }) {
   return (
     <div>
       <h1 className="text-lg">
-        <b className="text-blue-500">ENTRER - SORTIE</b>
+        <b className="text-gray-700">Entrer - Sortie</b>
       </h1>
       <p className="flex items-center text-xs font-bold gap-2 text-gray-500">
         <FontAwesomeIcon icon={faThumbTack} className="text-yellow-500" />{" "}

@@ -122,7 +122,7 @@ function GestionDeVehiculeContent() {
             <div
               key={vehicule.id}
               onClick={() => {
-               getOneUtilisation(vehicule.id);
+                navigate(`/details-vehicule/${vehicule.id}`);
               }}
               className="shadow-xs cursor-pointer hover:bg-blue-50 hover:border-white bg-gray-50 rounded-md p-2 flex justify-between items-center"
             >
@@ -152,7 +152,7 @@ function GestionDeVehiculeContent() {
                   </PopoverContent>
                 </Popover>
                 <Popover>
-                  <PopoverTrigger onClick={(e) => e.stopPropagation()} className="bg-gray-300 text-black font-bold px-8 py-2 rounded cursor-pointer">
+                  <PopoverTrigger onClick={(e) => e.stopPropagation()} className="bg-gray-300 text-black text-gray-700 font-bold px-8 py-2 rounded cursor-pointer">
                     Assigner
                   </PopoverTrigger>
                   <PopoverContent className="w-[500px]">
