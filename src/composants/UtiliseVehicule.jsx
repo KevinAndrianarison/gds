@@ -53,11 +53,15 @@ export default function UtiliseVehicule({ vehicule, status }) {
 
     const handleSubmit = () => {
         let user = JSON.parse(localStorage.getItem('user'));
-        if (!chefMissionnaire || !lieu || !activite || !carburant || !immatriculation || !kmDepart || !kmArrivee || !totalKm || !qttLitre || !prix || !montant) {
+        if (status === 'utiliser') {
+            setChefMissionnaire(user.name);
+            console.log(user.name);
+        }
+        if (!(chefMissionnaire || user.name) || !lieu || !activite || !carburant || !immatriculation || !kmDepart || !kmArrivee || !totalKm || !qttLitre || !prix || !montant) {
             Notiflix.Notify.warning("Veuillez remplir tous les champs");
         } else {
             let formData = {
-                chef_missionnaire: chefMissionnaire || user.name,
+                chef_missionnaire: chefMissionnaire,
                 lieu: lieu,
                 activite: activite,
                 carburant: carburant,

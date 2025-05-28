@@ -3,7 +3,6 @@ import nProgress from "nprogress";
 import { materielService } from "@/services/materielService";
 import Notiflix from "notiflix";
 import { UrlContext } from "./useUrl";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export const MaterielContext = createContext({});
@@ -18,7 +17,6 @@ export function MaterielContextProvider({ children }) {
   const [oneVehicule, setOneVehicule] = useState('');
   const [isLoadingUtilisation, setisLoadingUtilisation] = useState(false);
   const { url } = useContext(UrlContext);
-  const navigate = useNavigate();
 
 
   function getOneUtilisation(id) {
@@ -26,6 +24,7 @@ export function MaterielContextProvider({ children }) {
     setisLoadingUtilisation(true)
     axios.get(`${url}/api/materiels/${id}`)
       .then((response) => {
+        console.log(response.data);
         setOneVehicule(response.data)
         setisLoadingUtilisation(false)
         nProgress.done();
