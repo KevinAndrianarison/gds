@@ -79,7 +79,7 @@ export default function TypeCombobox({ value, onChange, error }) {
                       value === type.id ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {type.nom} {type.categorie.isVehicule && <FontAwesomeIcon icon={faCarSide} className="ml-2 text-blue-500 p-1 rounded-full bg-blue-100" />}
+                  {type.nom} {type.categorie.isVehicule === 1 && <FontAwesomeIcon icon={faCarSide} className="ml-2 text-blue-500 p-1 rounded-full bg-blue-100" />}
                 </CommandItem>
               ))}
             </CommandGroup>

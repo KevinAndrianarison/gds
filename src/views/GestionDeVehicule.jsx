@@ -135,7 +135,7 @@ function GestionDeVehiculeContent() {
                       `(${vehicule.caracteristiques})`}
                   </h1>
                   <p className="text-xs font-bold uppercase text-gray-500">
-                    Types
+                    {vehicule.categorie.nom}
                   </p>
                 </div>
               </div>

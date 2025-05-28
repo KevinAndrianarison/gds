@@ -23,7 +23,7 @@ export default function GestionSupply() {
 
   return (
     <div onClick={() => setShowFilters(false)} className="w-[80vw] mx-auto">
-      <Entete titre="supply" description="gérez vos stocks" />
+      <Entete titre="approvisionnements" description="gérez vos stocks provisoires" />
       <SupplyForm />
       {isLoadingSpin && supplies.length === 0 ? (
         <div className="mt-6">
@@ -42,7 +42,7 @@ export default function GestionSupply() {
         </div>
       ) : !isLoadingSpin && supplies.length === 0 ? (
         <div className="my-10">
-          <Empty titre="Aucun supply n'a été trouvé" />
+          <Empty titre="Aucun matériel n'a été trouvé" />
         </div>
       ) : (
         <div>
