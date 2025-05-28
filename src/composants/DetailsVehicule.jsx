@@ -1,25 +1,58 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faSpinner, faFilter, faExchangeAlt } from "@fortawesome/free-solid-svg-icons";
 import { MaterielContextProvider, useMateriel } from "@/contexte/useMateriel";
 import { useContext, useEffect, useState } from "react";
 import TitreLabel from '@/composants/TitreLabel'
 import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 import Notiflix from 'notiflix'
 import NProgress from 'nprogress'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function DetailsVehiculeContent() {
   const navigate = useNavigate();
-  const { oneVehicule, getOneUtilisation, isLoadingUtilisation } =
+  const { oneVehicule, getOneUtilisation, isLoadingUtilisation, updateUtilisation, deleteUtilisation } =
     useMateriel();
   const { id } = useParams();
   const [editingUtilisationId, setEditingUtilisationId] = useState(null);
   const [editedUtilisation, setEditedUtilisation] = useState({});
   const [originalUtilisation, setOriginalUtilisation] = useState({});
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [filteredUtilisations, setFilteredUtilisations] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
 
   useEffect(() => {
     getOneUtilisation(id);
   }, [id]);
+
+  useEffect(() => {
+    if (oneVehicule?.utilisations) {
+      setFilteredUtilisations(oneVehicule.utilisations);
+    }
+  }, [oneVehicule]);
+
+  const handleFilter = () => {
+    if (startDate && endDate) {
+      setIsFiltered(true);
+      const filtered = oneVehicule.utilisations.filter((utilisation) => {
+        const utilisationDate = new Date(utilisation.date);
+        return (
+          utilisationDate >= startDate &&
+          utilisationDate <= endDate
+        );
+      });
+      setFilteredUtilisations(filtered);
+    }
+  };
+
+  const handleReset = () => {
+    setIsFiltered(false);
+    setStartDate(null);
+    setEndDate(null);
+    setFilteredUtilisations(oneVehicule.utilisations);
+  };
 
   const handleEditUtilisation = (utilisation) => {
     setEditingUtilisationId(utilisation.id);
@@ -37,7 +70,7 @@ function DetailsVehiculeContent() {
         try {
           NProgress.start();
           // TODO: Implement delete functionality
-          // await deleteUtilisation(id);
+           await deleteUtilisation(id);
         } catch (error) {
           Notiflix.Notify.warning('Erreur lors de la suppression');
         } finally {
@@ -77,8 +110,7 @@ function DetailsVehiculeContent() {
         }
 
         // TODO: Implement update functionality
-        // await updateUtilisation(id, updateData);
-        
+        await updateUtilisation(id, updateData);
         setOriginalUtilisation(prev => ({
           ...prev,
           [field]: editedUtilisation[field],
@@ -112,7 +144,7 @@ function DetailsVehiculeContent() {
         Retour
       </button>
       <div className="text-2xl flex gap-2 items-center font-bold text-gray-700 my-4">
-        <p>Detail sur l'utilisation de :</p>
+        <p>Détails sur les utilisations de :</p>
         {isLoadingUtilisation ? (
           <div className="h-6 bg-gray-200 w-20 rounded animate-pulse"></div>
         ) : (
@@ -121,6 +153,39 @@ function DetailsVehiculeContent() {
             <b>{oneVehicule?.caracteristiques}</b>
           </div>
         )}
+      </div>
+      <div className="flex justify-center gap-4 py-2">
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => setStartDate(date)}
+          dateFormat="yyyy-MM-dd"
+          placeholderText="Date de début"
+          className="p-2 focus:outline-none text-gray-700 text-center rounded font-bold ring"
+        />
+        <DatePicker
+          selected={endDate}
+          onChange={(date) => setEndDate(date)}
+          dateFormat="yyyy-MM-dd"
+          placeholderText="Date de fin"
+          className="p-2 focus:outline-none text-gray-700 text-center rounded font-bold ring"
+        />
+      </div>
+      <div className="flex justify-center gap-4 py-2">
+        <button
+          onClick={handleFilter}
+          className="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!startDate || !endDate}
+        >
+          <FontAwesomeIcon icon={faFilter} className="mr-2" />
+          Filtrer
+        </button>
+        <button
+          onClick={handleReset}
+          className="px-4 py-2 bg-gray-500 text-white rounded cursor-pointer"
+        >
+          <FontAwesomeIcon icon={faExchangeAlt} className="mr-2" />
+          Réinitialiser
+        </button>
       </div>
       <div className="mt-4 overflow-x-auto border border-gray-200 rounded max-h-[500px] overflow-y-auto">
         <table className="min-w-full divide-y divide-gray-200">
@@ -137,25 +202,25 @@ function DetailsVehiculeContent() {
               <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Total Km" /></th>
               <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Qté litre" /></th>
               <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="PU (Ar)" /></th>
-              <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Montant" /></th>
+              <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Montant (Ariary)" /></th>
               <th className="px-4 py-3 text-center"><TitreLabel titre="Actions" /></th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {isLoadingUtilisation ? (
               <tr>
-                <td colSpan="13" className="px-6 py-4 text-center">
+                <td colSpan="13" className="px-6 py-4 px-10">
                   <FontAwesomeIcon icon={faSpinner} className="text-gray-500 text-2xl" spinPulse />
                 </td>
               </tr>
-            ) : !oneVehicule?.utilisations?.length ? (
+            ) : !filteredUtilisations?.length ? (
               <tr>
                 <td colSpan="13" className="px-6 py-4 text-center text-gray-500">
                   Aucune utilisation enregistrée
                 </td>
               </tr>
             ) : (
-              oneVehicule.utilisations.map((utilisation) => (
+              filteredUtilisations.map((utilisation) => (
                 <tr key={utilisation.id}>
                   <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{utilisation.date}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{utilisation.chef_missionnaire}</td>
@@ -172,7 +237,19 @@ function DetailsVehiculeContent() {
                       utilisation.lieu
                     )}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{utilisation.activite}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                    {editingUtilisationId === utilisation.id ? (
+                      <input
+                        type="text"
+                        value={editedUtilisation.activite || ''}
+                        onChange={(e) => handleInputChange('activite', e.target.value)}
+                        className="p-2 text-black flex-grow border rounded w-full"
+                        onBlur={() => handleSaveUtilisation(utilisation.id, 'activite')}
+                      />
+                    ) : (
+                      utilisation.activite
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                     {editingUtilisationId === utilisation.id ? (
                       <input

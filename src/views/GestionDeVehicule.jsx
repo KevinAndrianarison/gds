@@ -121,7 +121,7 @@ function GestionDeVehiculeContent() {
           {vehicules.map((vehicule) => (
             <div
               key={vehicule.id}
-              onClick={() => {
+              onDoubleClick={() => {
                 navigate(`/details-vehicule/${vehicule.id}`);
               }}
               className="shadow-xs cursor-pointer hover:bg-blue-50 hover:border-white bg-gray-50 rounded-md p-2 flex justify-between items-center"

@@ -108,8 +108,8 @@ export default function SupplyForm() {
   }, []);
 
   return (
-    <div className="border-b-2 py-4 border-gray-100 flex justify-between">
-      <div className="border-r w-[80%] flex flex-wrap gap-4 border-gray-100 flex px-2">
+    <div className="border-b-2 py-4 border-gray-100 flex justify-between flex-wrap max-sm:flex-col gap-4">
+      <div className="border-r w-[80%] flex flex-wrap gap-4 border-gray-100 max-sm:w-full max-sm:border-none flex px-2">
         <div className="flex flex-col gap-2 w-40">
           <TitreLabel titre="Nouveau matériel" required />
           <div className="flex items-center flex-wrap gap-2">
@@ -122,7 +122,7 @@ export default function SupplyForm() {
           </div>
         </div>
         {isAdmin && (
-          <div className="flex flex-col gap-2 w-40">
+          <div className="flex flex-col gap-2 w-40 max-sm:w-full">
             <TitreLabel titre="Région" required />
             <div className="flex items-center flex-wrap gap-2">
               <Select

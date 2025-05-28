@@ -29,7 +29,7 @@ export default function Region() {
   }, []);
 
   return (
-    <div className=" w-[60vw] mx-auto">
+    <div className=" w-[60vw] max-sm:w-[90vw] mx-auto">
       <Entete
         titre="régions"
         description="les régions où se trouvent vos

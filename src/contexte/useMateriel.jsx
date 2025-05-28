@@ -24,7 +24,6 @@ export function MaterielContextProvider({ children }) {
     setisLoadingUtilisation(true)
     axios.get(`${url}/api/materiels/${id}`)
       .then((response) => {
-        console.log(response.data);
         setOneVehicule(response.data)
         setisLoadingUtilisation(false)
         nProgress.done();
@@ -138,6 +137,25 @@ export function MaterielContextProvider({ children }) {
       });
   }
 
+  function deleteUtilisation(id) {
+    return materielService
+      .deleteUtilisation(id)
+      .then(() => {
+        // Mettre à jour la liste locale en supprimant l'utilisation
+        setOneVehicule((prev) => ({
+          ...prev,
+          utilisations: prev.utilisations.filter((u) => u.id !== id)
+        }));
+        getOneUtilisation(oneVehicule.id);
+        return true;
+      })
+      .catch((err) => {
+        console.error(err);
+        Notiflix.Notify.failure("Erreur lors de la suppression de l'utilisation");
+        throw err;
+      });   
+  }
+
   function createMateriel(materielData) {
     return materielService
       .createMateriel(materielData)
@@ -174,6 +192,21 @@ export function MaterielContextProvider({ children }) {
       });
   }
 
+  function updateUtilisation(id, updateData) {
+    return materielService
+      .updateUtilisation(id, updateData)
+      .then((updatedUtilisation) => {
+        // Mettre à jour l'utilisation dans la liste locale
+        getOneUtilisation(oneVehicule.id);
+        return updatedUtilisation;
+      })
+      .catch((err) => {
+        console.error(err);
+        Notiflix.Notify.failure("Erreur lors de la mise à jour de l'utilisation");
+        throw err;
+      });
+  } 
+
   function closeModal() {
     setIsModalOpen(false);
   }
@@ -190,6 +223,7 @@ export function MaterielContextProvider({ children }) {
         oneVehicule,
         setisLoadingUtilisation,
         isLoadingUtilisation,
+        deleteUtilisation,
         getOneUtilisation,
         setMateriels,
         setIsLoading,
@@ -197,6 +231,7 @@ export function MaterielContextProvider({ children }) {
         deleteMateriel,
         createMateriel,
         updateMateriel,
+        updateUtilisation,
         getMaterielParIdRegion,
         setIsModalOpen,
         closeModal,

@@ -23,7 +23,7 @@ export default function User() {
   }, []);
 
   return (
-    <div className='w-[60vw] mx-auto'>
+    <div className='w-[60vw] max-sm:w-[90vw] mx-auto'>
       <Entete titre='utilisateurs' description='les utilisateurs de votre entreprise.' />
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogTrigger asChild>

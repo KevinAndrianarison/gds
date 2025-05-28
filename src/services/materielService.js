@@ -160,12 +160,45 @@ export const materielService = {
         }
     },
 
+    updateUtilisation: async (id, updateData) => {
+        try {
+            const filteredData = Object.keys(updateData).reduce((acc, key) => {
+                if (updateData[key] !== null && updateData[key] !== '') {
+                    acc[key] = updateData[key];
+                }
+                return acc;
+            }, {}); 
+
+            if (Object.keys(filteredData).length === 0) {
+                return null;
+            }
+
+            const response = await axios.put(`${API_URL}/vehicules/${id}`, filteredData);
+            Notify.success('Utilisation mise à jour avec succès');
+            return response.data;
+        } catch (error) {
+            Notify.failure('Erreur lors de la mise à jour de l\'utilisation');
+            throw error;
+        }
+    },
+
+
     deleteMateriel: async (id) => {
         try {
             await axios.delete(`${API_URL}/materiels/${id}`);
             Notify.success('Matériel supprimé avec succès');
         } catch (error) {
             Notify.failure('Erreur lors de la suppression du matériel');
+            throw error;
+        }
+    },
+
+    deleteUtilisation: async (id) => {
+        try {
+            await axios.delete(`${API_URL}/vehicules/${id}`);
+            Notify.success('Utilisation supprimée avec succès');
+        } catch (error) {
+            Notify.failure('Erreur lors de la suppression de l\'utilisation');
             throw error;
         }
     }

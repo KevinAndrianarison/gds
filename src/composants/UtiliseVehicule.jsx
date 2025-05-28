@@ -55,7 +55,6 @@ export default function UtiliseVehicule({ vehicule, status }) {
         let user = JSON.parse(localStorage.getItem('user'));
         if (status === 'utiliser') {
             setChefMissionnaire(user.name);
-            console.log(user.name);
         }
         if (!(chefMissionnaire || user.name) || !lieu || !activite || !carburant || !immatriculation || !kmDepart || !kmArrivee || !totalKm || !qttLitre || !prix || !montant) {
             Notiflix.Notify.warning("Veuillez remplir tous les champs");
