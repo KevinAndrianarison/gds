@@ -39,15 +39,15 @@ export function AuthContextProvider({ children }) {
     const responseInterceptor = axios.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          localStorage.removeItem("region");
-          localStorage.removeItem("userRole");
-          setUser(null);
-          setIsAuthenticated(false);
-          navigate("/login");
-        }
+        // if (error.response?.status === 401) {
+        //   localStorage.removeItem("token");
+        //   localStorage.removeItem("user");
+        //   localStorage.removeItem("region");
+        //   localStorage.removeItem("userRole");
+        //   setUser(null);
+        //   setIsAuthenticated(false);
+        //   navigate("/login");
+        // }
         return Promise.reject(error);
       }
     );

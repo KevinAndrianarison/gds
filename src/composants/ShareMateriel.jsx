@@ -41,7 +41,8 @@ export default function ShareMateriel({ materiel, status, supply }) {
                 setIsLoadingPost(true);
                 try {
                     await axios.put(`${url}/api/materiels/change-id-region/${materiel.id}/${selectedRegion}`, {
-                        responsable_id: selectedUser.id
+                        responsable_id: selectedUser.id,
+                        date_transfert: new Date().toISOString().split('T')[0]
                     },
                         {
                             headers: {
@@ -126,9 +127,9 @@ export default function ShareMateriel({ materiel, status, supply }) {
                 </div>
             ) : (
                 <div className="mt-2 flex justify-between gap-2 max-h-[200px] overflow-y-auto">
-                    <div className="w-1/2">
+                    <div className="w-1/3">
                         <TitreLabel titre="Régions" required />
-                        <div className="my-2">
+                        <div className="my-2 overflow-y-auto max-h-80">
                             {regions.reduce((acc, region) => {
                                 if (Number(region.id) !== Number(materiel?.region_id) && Number(region.id) !== Number(supply?.region_id)) {
                                     acc.push(region);
@@ -142,9 +143,9 @@ export default function ShareMateriel({ materiel, status, supply }) {
                             ))}
                         </div>
                     </div>
-                    <div className="w-1/2">
+                    <div className="w-2/3">
                         <TitreLabel titre={status === "materiel" ? "Responsables" : "Receptionnaires"} />
-                        <div className="my-2">
+                        <div className="my-2 overflow-y-auto max-h-80">
                             {users.reduce((acc, user) => {
                                 if (Number(user.id) !== Number(materiel?.responsable_id) && Number(user.id) !== Number(supply?.receptionnaire)) {
                                     acc.push(user);

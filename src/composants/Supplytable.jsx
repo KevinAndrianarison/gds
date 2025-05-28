@@ -408,7 +408,7 @@ function SupplyTable({ showFilters, setShowFilters }) {
                           className="text-gray-500 bg-gray-200 mt-1 p-1 rounded-full cursor-pointer"
                         />
                       </PopoverTrigger>
-                      <PopoverContent>
+                      <PopoverContent className="w-[400px]">
                         <ShareMateriel supply={supply} status="supply" />
                       </PopoverContent>
                     </Popover>
