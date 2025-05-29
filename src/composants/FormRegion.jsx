@@ -57,9 +57,9 @@ export default function FormRegion() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border-b-2 py-4 border-gray-100 flex justify-between flex-wrap max-sm:flex-col gap-4"
+      className="border-b-2 py-4 border-gray-100 flex justify-between flex-wrap max-sm:flex-col max-sm:gap-4"
     >
-      <div className="border-r w-[75%] border-gray-100 flex">
+      <div className="border-r w-[75%] border-gray-100 flex max-sm:border-none">
         <div className="flex flex-col gap-2">
           <TitreLabel titre="Région" />
           <div className="flex items-center flex-wrap gap-2">

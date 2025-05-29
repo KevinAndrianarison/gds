@@ -9,6 +9,9 @@ import Notiflix from 'notiflix'
 import NProgress from 'nprogress'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ButtonExcel from "./ButtonExcel";
+import ButtonPdf from "./ButtonPdf";
+
 
 function DetailsVehiculeContent() {
   const navigate = useNavigate();
@@ -160,14 +163,14 @@ function DetailsVehiculeContent() {
           onChange={(date) => setStartDate(date)}
           dateFormat="yyyy-MM-dd"
           placeholderText="Date de début"
-          className="p-2 focus:outline-none text-gray-700 text-center rounded font-bold ring"
+          className="p-2 focus:outline-none text-gray-700 text-center cursor-pointer rounded font-bold ring"
         />
         <DatePicker
           selected={endDate}
           onChange={(date) => setEndDate(date)}
           dateFormat="yyyy-MM-dd"
           placeholderText="Date de fin"
-          className="p-2 focus:outline-none text-gray-700 text-center rounded font-bold ring"
+          className="p-2 focus:outline-none text-gray-700 text-center cursor-pointer rounded font-bold ring"
         />
       </div>
       <div className="flex justify-center gap-4 py-2">
@@ -210,7 +213,7 @@ function DetailsVehiculeContent() {
             {isLoadingUtilisation ? (
               <tr>
                 <td colSpan="13" className="px-6 py-4 px-10">
-                  <FontAwesomeIcon icon={faSpinner} className="text-gray-500 text-2xl" spinPulse />
+                <div className="h-6 bg-gray-200 w-full rounded animate-pulse"></div>
                 </td>
               </tr>
             ) : !filteredUtilisations?.length ? (
@@ -352,6 +355,12 @@ function DetailsVehiculeContent() {
           </tbody>
         </table>
       </div>
+      {filteredUtilisations.length > 0 && (
+        <div className="flex justify-end mt-4 gap-2">
+          <ButtonExcel />
+          <ButtonPdf />
+        </div>
+      )}
     </div>
   );
 }
