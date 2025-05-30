@@ -52,6 +52,7 @@ export default function UtiliseVehicule({ vehicule, status }) {
     }, [prix, qttLitre]);
 
     const handleSubmit = () => {
+        let token = localStorage.getItem('token');
         let user = JSON.parse(localStorage.getItem('user'));
         if (status === 'utiliser') {
             setChefMissionnaire(user.name);
@@ -76,7 +77,11 @@ export default function UtiliseVehicule({ vehicule, status }) {
             }
             setIsLoading(true);
             nProgress.start();
-            axios.post(`${url}/api/vehicules`, formData)
+            axios.post(`${url}/api/vehicules`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
                 .then((res) => {
                     setIsLoading(false);
                     nProgress.done();
@@ -92,7 +97,7 @@ export default function UtiliseVehicule({ vehicule, status }) {
     }
     return (
         <div onClick={(e) => e.stopPropagation()}>
-            <h1 className="font-bold flex items-center gap-2"><p className="uppercase">Utilisation de</p> <b className="text-sm text-gray-500 truncate w-80">{vehicule.type.nom} - {vehicule.caracteristiques}</b> :</h1>
+            <h1 className="font-bold flex items-center gap-2"><p className="uppercase">Utilisation de</p> <b className="text-sm text-gray-500 truncate w-80">{vehicule.type.nom} {vehicule.caracteristiques ? `- ${vehicule.caracteristiques}` : ''}</b> :</h1>
             <div className="flex flex-wrap justify-between gap-2 mt-4">
                 {status === 'assigner' && (
                     <div className="flex flex-col gap-1 w-52">

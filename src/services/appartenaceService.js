@@ -42,8 +42,13 @@ export const appartenaceService = {
   },
 
   createAppartenance: async (appartenanceData) => {
+    let token = localStorage.getItem('token');
     try {
-      const response = await axios.post(`${API_URL}/appartenances`, appartenanceData);
+      const response = await axios.post(`${API_URL}/appartenances`, appartenanceData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       Notify.success('Appartenance ajoutée avec succès');
       return response.data;
     } catch (error) {
@@ -61,8 +66,13 @@ export const appartenaceService = {
   },
 
   updateAppartenance: async (id, updateData) => {
+    let token = localStorage.getItem('token');
     try {
-      const response = await axios.put(`${API_URL}/appartenances/${id}`, updateData);
+      const response = await axios.put(`${API_URL}/appartenances/${id}`, updateData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       Notify.success('Appartenance mise à jour avec succès');
       return response.data;
     } catch (error) {
@@ -80,8 +90,13 @@ export const appartenaceService = {
   },
 
   deleteAppartenance: async (id) => {
+    let token = localStorage.getItem('token');
     try {
-      await axios.delete(`${API_URL}/appartenances/${id}`);
+      await axios.delete(`${API_URL}/appartenances/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       Notify.success('Appartenance supprimée avec succès');
     } catch (error) {
       Notify.failure('Erreur lors de la suppression de l\'appartenance');

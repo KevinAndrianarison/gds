@@ -23,6 +23,7 @@ export default function DetailsSupply({ supply }) {
   };
 
   const handleSaveDetail = async (id, field, value) => {
+    let token = localStorage.getItem('token');
     try {
       const newValue = value || editedDetail[field];
       const hasChanged =
@@ -31,7 +32,11 @@ export default function DetailsSupply({ supply }) {
       if (hasChanged) {
         nProgress.start();
         try {
-          await axios.put(`${url}/api/details-supplies/${id}`, { [field]: newValue, supply_id: supply.id });
+          await axios.put(`${url}/api/details-supplies/${id}`, { [field]: newValue, supply_id: supply.id }, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
           let region = JSON.parse(localStorage.getItem("region"));
           if (region) {
             getSupplyParIdRegion(region.id);
@@ -55,11 +60,12 @@ export default function DetailsSupply({ supply }) {
   };
 
   const handleDeleteDetail = (id) => {
+    let token = localStorage.getItem('token');
     nProgress.start();
     axios
       .delete(`${url}/api/details-supplies/${id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then(() => {

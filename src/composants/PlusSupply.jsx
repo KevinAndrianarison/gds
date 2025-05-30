@@ -26,6 +26,7 @@ export default function PlusSupply({ supply }) {
   const [date, setDate] = useState("");
 
   const handlePlusSupply = () => {
+    let token = localStorage.getItem('token');
     if (stockFinal <= 0 || rubrique === "" || date === "") {
       Notiflix.Notify.warning("Le nombre de matériel à ajouter ne peut pas être négatif ou égal à 0 et la rubrique et la date sont obligatoires");
       return;
@@ -44,6 +45,10 @@ export default function PlusSupply({ supply }) {
         observation: observation,
         numero_be: numeroBe,
         date: date,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       .then((response) => {
         setIsLoading(false);

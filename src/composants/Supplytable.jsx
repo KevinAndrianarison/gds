@@ -94,6 +94,7 @@ function SupplyTable({ showFilters, setShowFilters }) {
   };
 
   const handleSaveSupply = async (id, field, value) => {
+    let token = localStorage.getItem('token');
     try {
       const newValue = value || editedSupply[field];
       const hasChanged =
@@ -102,7 +103,11 @@ function SupplyTable({ showFilters, setShowFilters }) {
       if (hasChanged) {
         nProgress.start();
         try {
-          await axios.put(`${url}/api/supplies/${id}`, { [field]: newValue });
+          await axios.put(`${url}/api/supplies/${id}`, { [field]: newValue }, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
           let region = JSON.parse(localStorage.getItem("region"));
           if (region) {
             getSupplyParIdRegion(region.id);
@@ -126,6 +131,7 @@ function SupplyTable({ showFilters, setShowFilters }) {
   };
 
   const handleDeleteSupply = async (id) => {
+    let token = localStorage.getItem('token');
     Notiflix.Confirm.show(
       "Confirmation de suppression",
       "Êtes-vous sûr de vouloir supprimer ce matériel ?",
@@ -134,7 +140,11 @@ function SupplyTable({ showFilters, setShowFilters }) {
       async () => {
         nProgress.start();
         try {
-          await axios.delete(`${url}/api/supplies/${id}`);
+          await axios.delete(`${url}/api/supplies/${id}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
           let region = JSON.parse(localStorage.getItem("region"));
           if (region) {
             getSupplyParIdRegion(region.id);

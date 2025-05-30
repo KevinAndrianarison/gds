@@ -99,7 +99,7 @@ export const materielService = {
     },
 
     createMateriel: async (materiel) => {
-        let token = JSON.parse(localStorage.getItem('token'));
+        let token = localStorage.getItem('token');
         try {
             if (!materielService.validateMateriel(materiel)) {
                 return null;
@@ -134,7 +134,7 @@ export const materielService = {
     },
 
     updateMateriel: async (id, updateData) => {
-        let token = JSON.parse(localStorage.getItem('token'));
+        let token = localStorage.getItem('token');
         try {
             // Filtrer les champs pour n'envoyer que les champs définis
             const filteredData = Object.keys(updateData).reduce((acc, key) => {
@@ -171,7 +171,7 @@ export const materielService = {
     },
 
     updateUtilisation: async (id, updateData) => {
-        let token = JSON.parse(localStorage.getItem('token'));
+        let token = localStorage.getItem('token');
         try {
             const filteredData = Object.keys(updateData).reduce((acc, key) => {
                 if (updateData[key] !== null && updateData[key] !== '') {
@@ -199,7 +199,7 @@ export const materielService = {
 
 
     deleteMateriel: async (id) => {
-        let token = JSON.parse(localStorage.getItem('token'));
+        let token = localStorage.getItem('token');
         try {
             await axios.delete(`${API_URL}/materiels/${id}`, {
                 headers: {
@@ -214,7 +214,7 @@ export const materielService = {
     },
 
     deleteUtilisation: async (id) => {
-        let token = JSON.parse(localStorage.getItem('token'));
+        let token = localStorage.getItem('token');
         try {
             await axios.delete(`${API_URL}/vehicules/${id}`, {
                 headers: {

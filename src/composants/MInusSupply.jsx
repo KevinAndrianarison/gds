@@ -27,6 +27,7 @@ export default function MinusSupply({ supply }) {
   const [date, setDate] = useState("");
 
   const handleMinusSupply = () => {
+    let token = localStorage.getItem('token');
     if (stockFinal <= 0 || rubrique === "" || date === "") {
       Notiflix.Notify.warning("Le nombre de matériel à retirer ne peut pas être négatif ou égal à 0 et la rubrique et la date sont obligatoires");
       return;
@@ -45,6 +46,10 @@ export default function MinusSupply({ supply }) {
         observation: observation,
         numero_be: numeroBe,
         date: date,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       .then((response) => {
         setIsLoading(false);
