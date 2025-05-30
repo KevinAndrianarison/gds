@@ -12,8 +12,7 @@ export default function LogoTitle() {
 
     return (
         <div onClick={goGestionStock} className="flex items-center cursor-pointer space-x-3 text-gray-800 text-2xl font-bold">
-            <div className="logoLogin h-10 w-10"></div>
-            <h5 className="hidden md:inline text-gray-800 text-md">gds</h5>
+            <div className="logoLogin h-10 w-40"></div>
         </div>
     );
 }
