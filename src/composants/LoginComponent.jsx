@@ -41,7 +41,7 @@ export default function LoginComponent() {
             </div>
             <div className='mt-4'>
                 <Buttonout type="submit" label='CONNEXION' />
-                <p onClick={switchtoforgotpassword} className="text-gray-500 cursor-pointer text-sm text-center mt-2 hover:underline hover:text-blue-400">
+                <p onClick={switchtoforgotpassword} className="hidden text-gray-500 cursor-pointer text-sm text-center mt-2 hover:underline hover:text-blue-400">
                     Mot de passe oublié ?
                 </p>
             </div>

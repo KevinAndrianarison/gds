@@ -13,9 +13,9 @@ export const ProtectedRoute = ({ children, roles }) => {
   
   NProgress.done();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/login" />;
+  // }
 
   if (roles && !roles.includes(user.role)) {
     return <Navigate to="/unauthorized" />;

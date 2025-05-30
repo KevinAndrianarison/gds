@@ -101,7 +101,7 @@ export default function UserBlock({ user }) {
           />
           Supprimer
         </button>
-        <button className="text-left flex items-center cursor-pointer border-t py-1">
+        <button className="text-left flex hidden items-center cursor-pointer border-t py-1">
           <FontAwesomeIcon
             icon={faPen}
             className="mr-2 bg-gray-200 p-1 rounded-full text-gray-500"
