@@ -29,31 +29,53 @@ import { useNavigate } from "react-router-dom";
 function GestionDeVehiculeContent() {
   const {
     getAllVehicules,
-    getVehiculesParIdRegion,
     vehicules,
     isLoadingVehicules,
-    getOneUtilisation,
   } = useMateriel();
   const navigate = useNavigate();
-  const [region, setRegion] = useState(null);
+  const [region, setRegion] = useState("all");
+  const [searchValue, setSearchValue] = useState("");
   const { isAdmin } = useContext(ShowContext);
   const { regions, getAllRegion } = useContext(RegionContext);
+  const [filteredVehicules, setFilteredVehicules] = useState([]);
 
   useEffect(() => {
     getAllRegion();
-    let region = JSON.parse(localStorage.getItem("region"));
-    if (region) {
-      getVehiculesParIdRegion(region.id);
-    } else {
-      getAllVehicules();
-    }
+    getAllVehicules();
   }, []);
+
+  // Initialiser filteredVehicules avec vehicules
+  useEffect(() => {
+    setFilteredVehicules(vehicules);
+  }, [vehicules]);
+
+  // Effet pour gérer la recherche et le filtrage par région
+  useEffect(() => {
+    let filtered = [...vehicules];
+
+    // Filtre par région
+    if (region && region !== 'all') {
+      filtered = filtered.filter(vehicule => vehicule.region.id === region);
+    }
+
+    // Filtre par recherche
+    if (searchValue.trim()) {
+      const searchLower = searchValue.toLowerCase();
+      filtered = filtered.filter(vehicule => 
+        vehicule.type?.nom?.toLowerCase().includes(searchLower) ||
+        vehicule.caracteristiques?.toLowerCase().includes(searchLower) ||
+        vehicule.categorie?.nom?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    setFilteredVehicules(filtered);
+  }, [searchValue, vehicules, region]);
 
   return (
     <div className="w-[80vw] mx-auto">
       <Entete titre="des véhicules" description="gérer vos véhicules" />
       <div className="my-2">
-        <InputSearch />
+        <InputSearch value={searchValue} onChange={setSearchValue} />
         <div className="mt-4 flex justify-between items-center">
           {isAdmin && (
             <div className="flex gap-2 flex-col gap-2">
@@ -70,6 +92,7 @@ function GestionDeVehiculeContent() {
                       <SelectValue placeholder="Région" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="all">Tout</SelectItem>
                       {regions.map((region) => (
                         <SelectItem key={region.id} value={region.id}>
                           {region.nom}
@@ -91,13 +114,13 @@ function GestionDeVehiculeContent() {
               />
             ) : (
               <p className="text-sm font-bold uppercase text-gray-500">
-                {vehicules.length}
+                {filteredVehicules.length}
               </p>
             )}
           </div>
         </div>
       </div>
-      {isLoadingVehicules && vehicules.length === 0 ? (
+      {isLoadingVehicules && filteredVehicules.length === 0 ? (
         <div className="mt-4 max-h-[500px] overflow-y-auto">
           {[...Array(5)].map((_, index) => (
             <div key={index} className=" rounded mb-4 p-4">
@@ -112,13 +135,13 @@ function GestionDeVehiculeContent() {
             </div>
           ))}
         </div>
-      ) : !isLoadingVehicules && vehicules.length === 0 ? (
+      ) : !isLoadingVehicules && filteredVehicules.length === 0 ? (
         <div className="my-10">
           <Empty titre="Aucun véhicule n'a été trouvé" />
         </div>
       ) : (
         <div className="mt-4 max-h-[500px] overflow-y-auto">
-          {vehicules.map((vehicule) => (
+          {filteredVehicules.map((vehicule) => (
             <div
               key={vehicule.id}
               onDoubleClick={() => {
@@ -164,7 +187,7 @@ function GestionDeVehiculeContent() {
           ))}
         </div>
       )}
-      {vehicules.length > 0 && (
+      {filteredVehicules.length > 0 && (
         <div className="mt-4 flex gap-2">
           <ButtonPdf />
           <ButtonExcel />

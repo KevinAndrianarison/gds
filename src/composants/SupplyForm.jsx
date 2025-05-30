@@ -108,7 +108,7 @@ export default function SupplyForm() {
   }, []);
 
   return (
-    <div className="border-b-2 py-4 border-gray-100 flex justify-between flex-wrap max-sm:flex-col gap-4">
+    <div className="border-b-2 py-4 border-gray-100 flex justify-between flex-wrap max-sm:flex-col max-sm:gap-4">
       <div className="border-r w-[80%] flex flex-wrap gap-4 border-gray-100 max-sm:w-full max-sm:border-none flex px-2">
         <div className="flex flex-col gap-2 w-40">
           <TitreLabel titre="Nouveau matériel" required />
@@ -131,7 +131,7 @@ export default function SupplyForm() {
                   setRegion(value);
                 }}
               >
-                <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded p-2 w-40 px-4">
+                <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded p-2 w-40  px-4">
                   <SelectValue placeholder="Région" />
                 </SelectTrigger>
                 <SelectContent>
@@ -247,7 +247,7 @@ export default function SupplyForm() {
           />
         </div>
       </div>
-      <div className="border-l w-[20%] border-gray-100 px-4">
+      <div className="border-l w-[20%] border-gray-100 max-sm:w-full px-4">
         <TitreLabel titre="Nombre de matériel" />
         <p className="text-3xl text-gray-700">
           {isLoadingSpin ? (

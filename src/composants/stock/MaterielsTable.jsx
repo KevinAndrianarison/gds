@@ -1,19 +1,29 @@
-import React, { useState, useContext } from 'react'
-import TitreLabel from '@/composants/TitreLabel'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faPen, faShare, faCarSide } from '@fortawesome/free-solid-svg-icons'
-import { MaterielContext } from '@/contexte/useMateriel'
-import Notiflix from 'notiflix'
-import NProgress from 'nprogress'
+import React, { useState, useContext } from "react";
+import TitreLabel from "@/composants/TitreLabel";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTrash,
+  faPen,
+  faShare,
+  faCarSide,
+} from "@fortawesome/free-solid-svg-icons";
+import { MaterielContext } from "@/contexte/useMateriel";
+import Notiflix from "notiflix";
+import NProgress from "nprogress";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import ShareMateriel from '@/composants/ShareMateriel'
+import ShareMateriel from "@/composants/ShareMateriel";
 
 export default function MaterielsTable({ materiels }) {
-  const { deleteMateriel, updateMateriel, getMaterielParIdRegion, getAllMateriels } = useContext(MaterielContext);
+  const {
+    deleteMateriel,
+    updateMateriel,
+    getMaterielParIdRegion,
+    getAllMateriels,
+  } = useContext(MaterielContext);
   const [editingMaterielId, setEditingMaterielId] = useState(null);
   const [editedMateriel, setEditedMateriel] = useState({});
   const [originalMateriel, setOriginalMateriel] = useState({});
@@ -26,16 +36,16 @@ export default function MaterielsTable({ materiels }) {
 
   const handleDeleteMateriel = (id) => {
     Notiflix.Confirm.show(
-      'Confirmation de suppression',
-      'Êtes-vous sûr de vouloir supprimer ce matériel ?',
-      'Oui',
-      'Non',
+      "Confirmation de suppression",
+      "Êtes-vous sûr de vouloir supprimer ce matériel ?",
+      "Oui",
+      "Non",
       async () => {
         try {
           NProgress.start();
           await deleteMateriel(id);
         } catch (error) {
-          Notiflix.Notify.warning('Erreur lors de la suppression du matériel');
+          Notiflix.Notify.warning("Erreur lors de la suppression du matériel");
         } finally {
           NProgress.done();
         }
@@ -49,17 +59,17 @@ export default function MaterielsTable({ materiels }) {
       const hasChanged =
         newValue !== originalMateriel[field] &&
         newValue !== null &&
-        newValue !== '';
+        newValue !== "";
 
       if (hasChanged) {
         const updateData = { [field]: newValue };
         await updateMateriel(id, updateData);
         // Mettre à jour l'original avec la nouvelle valeur
-        setOriginalMateriel(prev => ({
+        setOriginalMateriel((prev) => ({
           ...prev,
-          [field]: editedMateriel[field]
+          [field]: editedMateriel[field],
         }));
-        let region = JSON.parse(localStorage.getItem('region'));
+        let region = JSON.parse(localStorage.getItem("region"));
         if (region) {
           getMaterielParIdRegion(region.id);
         } else {
@@ -67,18 +77,18 @@ export default function MaterielsTable({ materiels }) {
         }
       }
     } catch (error) {
-      Notiflix.Notify.warning('Erreur lors de la mise à jour');
-      setEditedMateriel(prev => ({
+      Notiflix.Notify.warning("Erreur lors de la mise à jour");
+      setEditedMateriel((prev) => ({
         ...prev,
-        [field]: originalMateriel[field]
+        [field]: originalMateriel[field],
       }));
     }
   };
 
   const handleInputChange = (field, value) => {
-    setEditedMateriel(prev => ({
+    setEditedMateriel((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
   return (
@@ -86,20 +96,51 @@ export default function MaterielsTable({ materiels }) {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50 whitespace-nowrap">
           <tr>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° Référence" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Catégorie" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Type" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Marque" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Caractéristiques" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="État" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Appartenance" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Montant (Ar)" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° Série" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="N° IMEI" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Date d'acquisition" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Région" /></th>
-            <th className="px-6 py-4 text-left min-w-[150px]"><TitreLabel titre="Responsable" /></th>
-            <th className="px-4 py-3 text-center"><TitreLabel titre="Actions" /></th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Source" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="N° Référence" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Catégorie" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Caractéristiques" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Type" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Marque" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="État" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Appartenance" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Montant (Ar)" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="N° Série" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="N° IMEI" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Date d'acquisition" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Région" />
+            </th>
+            <th className="px-6 py-4 text-left min-w-[150px]">
+              <TitreLabel titre="Responsable" />
+            </th>
+            <th className="px-4 py-3 text-center">
+              <TitreLabel titre="Actions" />
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y cursor-pointer divide-gray-200">
@@ -109,115 +150,172 @@ export default function MaterielsTable({ materiels }) {
                 {editingMaterielId === materiel.id ? (
                   <input
                     type="text"
-                    value={editedMateriel.numero}
-                    onChange={(e) => handleInputChange('numero', e.target.value)}
+                    value={editedMateriel.source?.nom}
+                    onChange={(e) =>
+                      handleInputChange("source", e.target.value)
+                    }
                     className="p-2 text-black flex-grow border rounded w-full"
-                    onBlur={() => handleSaveMateriel(materiel.id, 'numero')}
+                    onBlur={() => handleSaveMateriel(materiel.id, "source")}
+                    autoFocus
+                  />
+                ) : (
+                  materiel.source?.nom || "..."
+                )}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {editingMaterielId === materiel.id ? (
+                  <input
+                    type="text"
+                    value={editedMateriel.numero}
+                    onChange={(e) =>
+                      handleInputChange("numero", e.target.value)
+                    }
+                    className="p-2 text-black flex-grow border rounded w-full"
+                    onBlur={() => handleSaveMateriel(materiel.id, "numero")}
                     autoFocus
                   />
                 ) : (
                   materiel.numero
                 )}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px] flex items-center gap-2">{materiel.categorie.isVehicule ? <FontAwesomeIcon icon={faCarSide} className="text-blue-500 bg-blue-200 p-1 rounded-full"  /> : ''} {materiel.categorie?.nom || '...'}</td>
-              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.type?.nom || '...'}</td>
-              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
-                {editingMaterielId === materiel.id ? (
-                  <input
-                    type="text"
-                    value={editedMateriel.marque || ''}
-                    onChange={(e) => handleInputChange('marque', e.target.value)}
-                    className="p-2 text-black flex-grow border rounded w-full"
-                    onBlur={() => handleSaveMateriel(materiel.id, 'marque')}
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px] flex items-center gap-2">
+                {materiel.categorie.isVehicule ? (
+                  <FontAwesomeIcon
+                    icon={faCarSide}
+                    className="text-blue-500 bg-blue-200 p-1 rounded-full"
                   />
                 ) : (
-                  materiel.marque || '...'
-                )}
+                  ""
+                )}{" "}
+                {materiel.categorie?.nom || "..."}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                 {editingMaterielId === materiel.id ? (
                   <input
                     type="text"
-                    value={editedMateriel.caracteristiques || ''}
-                    onChange={(e) => handleInputChange('caracteristiques', e.target.value)}
+                    value={editedMateriel.caracteristiques || ""}
+                    onChange={(e) =>
+                      handleInputChange("caracteristiques", e.target.value)
+                    }
                     className="p-2 text-black flex-grow border rounded w-full"
-                    onBlur={() => handleSaveMateriel(materiel.id, 'caracteristiques')}
+                    onBlur={() =>
+                      handleSaveMateriel(materiel.id, "caracteristiques")
+                    }
                   />
                 ) : (
-                  materiel.caracteristiques || '...'
+                  materiel.caracteristiques || "..."
+                )}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {materiel.type?.nom || "..."}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {editingMaterielId === materiel.id ? (
+                  <input
+                    type="text"
+                    value={editedMateriel.marque || ""}
+                    onChange={(e) =>
+                      handleInputChange("marque", e.target.value)
+                    }
+                    className="p-2 text-black flex-grow border rounded w-full"
+                    onBlur={() => handleSaveMateriel(materiel.id, "marque")}
+                  />
+                ) : (
+                  materiel.marque || "..."
                 )}
               </td>
               <td className="px-4 py-3">
-                <span className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${materiel.etat === 'Bon état'
-                  ? 'bg-green-400'
-                  : materiel.etat === 'État moyen'
-                    ? 'bg-yellow-400'
-                    : materiel.etat === 'Mauvais état'
-                      ? 'bg-red-400'
-                      : 'bg-gray-400'
-                  }`}>
+                <span
+                  className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${
+                    materiel.etat === "Bon état"
+                      ? "bg-green-400"
+                      : materiel.etat === "État moyen"
+                      ? "bg-yellow-400"
+                      : materiel.etat === "Mauvais état"
+                      ? "bg-red-400"
+                      : "bg-gray-400"
+                  }`}
+                >
                   {materiel.etat}
                 </span>
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
-                {materiel.appartenance?.nom || '...'}
+                {materiel.appartenance?.nom || "..."}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                 {editingMaterielId === materiel.id ? (
                   <input
                     type="number"
-                    value={editedMateriel.montant || ''}
-                    onChange={(e) => handleInputChange('montant', e.target.value)}
+                    value={editedMateriel.montant || ""}
+                    onChange={(e) =>
+                      handleInputChange("montant", e.target.value)
+                    }
                     className="p-2 text-black flex-grow border rounded w-full"
-                    onBlur={() => handleSaveMateriel(materiel.id, 'montant')}
+                    onBlur={() => handleSaveMateriel(materiel.id, "montant")}
                   />
                 ) : (
-                  materiel.montant || '...'
+                  materiel.montant || "..."
                 )}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                 {editingMaterielId === materiel.id ? (
                   <input
                     type="text"
-                    value={editedMateriel.numero_serie || ''}
-                    onChange={(e) => handleInputChange('numero_serie', e.target.value)}
+                    value={editedMateriel.numero_serie || ""}
+                    onChange={(e) =>
+                      handleInputChange("numero_serie", e.target.value)
+                    }
                     className="p-2 text-black flex-grow border rounded w-full"
-                    onBlur={() => handleSaveMateriel(materiel.id, 'numero_serie')}
+                    onBlur={() =>
+                      handleSaveMateriel(materiel.id, "numero_serie")
+                    }
                   />
                 ) : (
-                  materiel.numero_serie || '...'
+                  materiel.numero_serie || "..."
                 )}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                 {editingMaterielId === materiel.id ? (
                   <input
                     type="text"
-                    value={editedMateriel.numero_imei || ''}
-                    onChange={(e) => handleInputChange('numero_imei', e.target.value)}
+                    value={editedMateriel.numero_imei || ""}
+                    onChange={(e) =>
+                      handleInputChange("numero_imei", e.target.value)
+                    }
                     className="p-2 text-black flex-grow border rounded w-full"
-                    onBlur={() => handleSaveMateriel(materiel.id, 'numero_imei')}
+                    onBlur={() =>
+                      handleSaveMateriel(materiel.id, "numero_imei")
+                    }
                   />
                 ) : (
-                  materiel.numero_imei || '...'
+                  materiel.numero_imei || "..."
                 )}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                 {editingMaterielId === materiel.id ? (
                   <input
                     type="date"
-                    value={editedMateriel.date_acquisition || ''}
+                    value={editedMateriel.date_acquisition || ""}
                     onChange={(e) => {
-                      handleInputChange('date_acquisition', e.target.value);
-                      handleSaveMateriel(materiel.id, 'date_acquisition', e.target.value);
+                      handleInputChange("date_acquisition", e.target.value);
+                      handleSaveMateriel(
+                        materiel.id,
+                        "date_acquisition",
+                        e.target.value
+                      );
                     }}
                     className="p-2 text-black flex-grow border rounded w-full"
                   />
                 ) : (
-                  materiel.date_acquisition || '...'
+                  materiel.date_acquisition || "..."
                 )}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.region?.nom || '...'}</td>
-              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">{materiel.responsable?.name || 'Non assigné'}</td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {materiel.region?.nom || "..."}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
+                {materiel.responsable?.name || "Non assigné"}
+              </td>
               <td className="px-4 py-3 text-sm flex items-center justify-center">
                 <div className="flex items-center gap-2 cursor-pointer">
                   <FontAwesomeIcon
@@ -239,11 +337,10 @@ export default function MaterielsTable({ materiels }) {
                         className="text-gray-500 bg-gray-200 p-2 rounded-full cursor-pointer mt-1"
                       />
                     </PopoverTrigger>
-                    <PopoverContent className="w-[400px]" >
+                    <PopoverContent className="w-[400px]">
                       <ShareMateriel materiel={materiel} status="materiel" />
                     </PopoverContent>
                   </Popover>
-
                 </div>
               </td>
             </tr>
@@ -251,5 +348,5 @@ export default function MaterielsTable({ materiels }) {
         </tbody>
       </table>
     </div>
-  )
+  );
 }

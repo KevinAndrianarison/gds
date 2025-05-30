@@ -10,7 +10,8 @@ import {
   faScrewdriverWrench,
   faComputer,
   faFolderTree,
-  faLocationDot
+  faLocationDot,
+  faClockRotateLeft
 } from "@fortawesome/free-solid-svg-icons";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
@@ -148,10 +149,10 @@ export default function UserSection({ toggleMenu, isOpen }) {
                   </SideMenuLink>
                   <SideMenuLink
                     to="/application"
-                    icon={faComputer}
+                    icon={faClockRotateLeft}
                     onClick={() => setSheetOpen(false)}
                   >
-                    Application
+                    Historiques
                   </SideMenuLink>
                 </div>
               </SheetTitle>

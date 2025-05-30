@@ -41,13 +41,14 @@ import ShareMateriel from "./ShareMateriel";
 function SupplyTable({ showFilters, setShowFilters }) {
   const [searchValue, setSearchValue] = useState("");
   const { isACL, isAdmin } = useContext(ShowContext);
-  const [region, setRegion] = useState("");
+  const [region, setRegion] = useState("all");
   const { regions, getAllRegion } = useContext(RegionContext);
-  const { supplies, getAllSupply, getSupplyParIdRegion } = useContext(SupplyContext);
+  const { supplies, getAllSupply } = useContext(SupplyContext);
   const { url } = useContext(UrlContext);
   const [editingSupplyId, setEditingSupplyId] = useState(null);
   const [editedSupply, setEditedSupply] = useState({});
   const [originalSupply, setOriginalSupply] = useState({});
+  const [filteredSupplies, setFilteredSupplies] = useState([]);
 
   const handleEditSupply = (supply) => {
     setEditingSupplyId(supply.id);
@@ -61,6 +62,29 @@ function SupplyTable({ showFilters, setShowFilters }) {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    let filtered = [...supplies];
+
+    if (region && region !== 'all') {
+      filtered = filtered.filter(supply => supply.region.id === region);
+    }
+
+    if (searchValue.trim()) {
+      const searchLower = searchValue.toLowerCase();
+      filtered = filtered.filter(supply => 
+        supply.nom?.toLowerCase().includes(searchLower) ||
+        supply.rubrique?.toLowerCase().includes(searchLower) ||
+        supply.lieu_destination?.toLowerCase().includes(searchLower) ||
+        supply.numero_be?.toLowerCase().includes(searchLower) ||
+        supply.transporteur?.toLowerCase().includes(searchLower) ||
+        supply.observation?.toLowerCase().includes(searchLower) ||
+        supply.receptionnaire?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    setFilteredSupplies(filtered);
+  }, [searchValue, supplies, region]);
 
   const handleInputChange = (field, value) => {
     setEditedSupply((prev) => ({
@@ -169,6 +193,7 @@ function SupplyTable({ showFilters, setShowFilters }) {
                   <SelectValue placeholder="Région" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">Tout</SelectItem>
                   {regions.map((region) => (
                     <SelectItem key={region.id} value={region.id}>
                       {region.nom}
@@ -224,7 +249,7 @@ function SupplyTable({ showFilters, setShowFilters }) {
             </tr>
           </thead>
           <tbody className="bg-white divide-y cursor-pointer divide-gray-200">
-            {supplies.map((supply) => (
+            {filteredSupplies.map((supply) => (
               <tr key={supply.id}>
                 <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
                   {editingSupplyId === supply.id ? (
