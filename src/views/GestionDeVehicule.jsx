@@ -61,7 +61,7 @@ function GestionDeVehiculeContent() {
     // Filtre par recherche
     if (searchValue.trim()) {
       const searchLower = searchValue.toLowerCase();
-      filtered = filtered.filter(vehicule => 
+      filtered = filtered.filter(vehicule =>
         vehicule.type?.nom?.toLowerCase().includes(searchLower) ||
         vehicule.caracteristiques?.toLowerCase().includes(searchLower) ||
         vehicule.categorie?.nom?.toLowerCase().includes(searchLower)
@@ -155,10 +155,10 @@ function GestionDeVehiculeContent() {
                   icon={faCarSide}
                 />
                 <div>
-                  <h1 className="text-lg">
-                    {vehicule.type.nom}
-                    {vehicule.caracteristiques &&
-                      `(${vehicule.caracteristiques})`}
+                  <h1 className="text-lg flex items-center gap-2 font-bold">
+                    <p className="uppercase ">{vehicule.type.nom}</p>
+                    <p className='text-gray-500 text-sm'>{vehicule.caracteristiques &&
+                      `(${vehicule.caracteristiques})`}</p>
                   </h1>
                   <p className="text-xs font-bold uppercase text-gray-500">
                     {vehicule.categorie.nom}

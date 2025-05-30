@@ -99,6 +99,7 @@ export const materielService = {
     },
 
     createMateriel: async (materiel) => {
+        let token = JSON.parse(localStorage.getItem('token'));
         try {
             if (!materielService.validateMateriel(materiel)) {
                 return null;
@@ -111,7 +112,11 @@ export const materielService = {
                 }
             });
 
-            const response = await axios.post(`${API_URL}/materiels`, data);
+            const response = await axios.post(`${API_URL}/materiels`, data, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             Notify.success('Matériel ajouté avec succès');
             return response.data;
         } catch (error) {
@@ -129,6 +134,7 @@ export const materielService = {
     },
 
     updateMateriel: async (id, updateData) => {
+        let token = JSON.parse(localStorage.getItem('token'));
         try {
             // Filtrer les champs pour n'envoyer que les champs définis
             const filteredData = Object.keys(updateData).reduce((acc, key) => {
@@ -143,7 +149,11 @@ export const materielService = {
                 return null;
             }
 
-            const response = await axios.put(`${API_URL}/materiels/${id}`, filteredData);
+            const response = await axios.put(`${API_URL}/materiels/${id}`, filteredData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             Notify.success('Champ mis à jour');
             return response.data;
         } catch (error) {
@@ -161,6 +171,7 @@ export const materielService = {
     },
 
     updateUtilisation: async (id, updateData) => {
+        let token = JSON.parse(localStorage.getItem('token'));
         try {
             const filteredData = Object.keys(updateData).reduce((acc, key) => {
                 if (updateData[key] !== null && updateData[key] !== '') {
@@ -173,7 +184,11 @@ export const materielService = {
                 return null;
             }
 
-            const response = await axios.put(`${API_URL}/vehicules/${id}`, filteredData);
+            const response = await axios.put(`${API_URL}/vehicules/${id}`, filteredData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             Notify.success('Utilisation mise à jour avec succès');
             return response.data;
         } catch (error) {
@@ -184,8 +199,13 @@ export const materielService = {
 
 
     deleteMateriel: async (id) => {
+        let token = JSON.parse(localStorage.getItem('token'));
         try {
-            await axios.delete(`${API_URL}/materiels/${id}`);
+            await axios.delete(`${API_URL}/materiels/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             Notify.success('Matériel supprimé avec succès');
         } catch (error) {
             Notify.failure('Erreur lors de la suppression du matériel');
@@ -194,8 +214,13 @@ export const materielService = {
     },
 
     deleteUtilisation: async (id) => {
+        let token = JSON.parse(localStorage.getItem('token'));
         try {
-            await axios.delete(`${API_URL}/vehicules/${id}`);
+            await axios.delete(`${API_URL}/vehicules/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             Notify.success('Utilisation supprimée avec succès');
         } catch (error) {
             Notify.failure('Erreur lors de la suppression de l\'utilisation');

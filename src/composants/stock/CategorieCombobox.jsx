@@ -91,7 +91,7 @@ export default function CategorieCombobox({
                       value === categorie.id ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {categorie.nom} {categorie.isVehicule && <FontAwesomeIcon icon={faCarSide} className="ml-2 text-blue-500 p-1 rounded-full bg-blue-100" />}
+                  {categorie.nom} {categorie.isVehicule === 1 && <FontAwesomeIcon icon={faCarSide} className="ml-2 text-blue-500 p-1 rounded-full bg-blue-100" />}
                 </CommandItem>
               ))}
             </CommandGroup>

@@ -32,6 +32,7 @@ export default function ShareMateriel({ materiel, status, supply }) {
     }, []);
 
     function requestShareMateriel() {
+        let token = JSON.parse(localStorage.getItem('token'));
         Notiflix.Confirm.show(
             "Confirmation",
             "Voulez-vous vraiment transférer ce matériel à cette région ?",
@@ -46,7 +47,7 @@ export default function ShareMateriel({ materiel, status, supply }) {
                     },
                         {
                             headers: {
-                                'Authorization': `Bearer ${localStorage.getItem("token")}`
+                                'Authorization': `Bearer ${token}`
                             }
                         });
                     const currentRegion = JSON.parse(localStorage.getItem("region"));

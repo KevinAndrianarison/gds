@@ -166,7 +166,7 @@ export default function SupplyForm() {
         <div className="flex flex-col gap-2 w-40">
           <TitreLabel titre="Numéros B.E" />
           <div className="flex items-center flex-wrap gap-2">
-            <InputOn value={numeroBe} type="number" onChange={setNumeroBe} width="w-40" />
+            <InputOn value={numeroBe} onChange={setNumeroBe} width="w-40" />
           </div>
         </div>
         <div className="flex flex-col gap-2 w-40">

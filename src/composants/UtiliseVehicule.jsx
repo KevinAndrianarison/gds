@@ -92,7 +92,7 @@ export default function UtiliseVehicule({ vehicule, status }) {
     }
     return (
         <div onClick={(e) => e.stopPropagation()}>
-            <h1 className="uppercase font-bold">Utilisation de <b className=" text-gray-500">{vehicule.type.nom} {vehicule.caracteristiques}</b> :</h1>
+            <h1 className="font-bold flex items-center gap-2"><p className="uppercase">Utilisation de</p> <b className="text-sm text-gray-500 truncate w-80">{vehicule.type.nom} - {vehicule.caracteristiques}</b> :</h1>
             <div className="flex flex-wrap justify-between gap-2 mt-4">
                 {status === 'assigner' && (
                     <div className="flex flex-col gap-1 w-52">

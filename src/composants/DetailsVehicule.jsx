@@ -151,9 +151,9 @@ function DetailsVehiculeContent() {
         {isLoadingUtilisation ? (
           <div className="h-6 bg-gray-200 w-20 rounded animate-pulse"></div>
         ) : (
-          <div>
+          <div className="flex gap-2 items-center">
             <p className="uppercase text-gray-400">{oneVehicule?.type?.nom}</p>
-            <b>{oneVehicule?.caracteristiques}</b>
+            <b className="text-sm">({oneVehicule?.caracteristiques})</b>
           </div>
         )}
       </div>

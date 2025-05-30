@@ -61,7 +61,7 @@ export default function App() {
                 <Route path="/profil" element={<ProtectedRoute><MainLayout><Profil /></MainLayout></ProtectedRoute>} />
                 <Route path="/regions" element={<ProtectedRoute><MainLayout><Region /></MainLayout></ProtectedRoute>} />
                 <Route path="/utilisateurs" element={<ProtectedRoute><MainLayout><User /></MainLayout></ProtectedRoute>} />
-                <Route path="/application" element={<ProtectedRoute><MainLayout><Application /></MainLayout></ProtectedRoute>} />
+                <Route path="/historiques" element={<ProtectedRoute><MainLayout><Application /></MainLayout></ProtectedRoute>} />
               </Routes>
               </ReferenceProvider>
             </AppartenanceContextProvider>

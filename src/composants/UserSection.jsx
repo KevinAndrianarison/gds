@@ -148,7 +148,7 @@ export default function UserSection({ toggleMenu, isOpen }) {
                     Profil
                   </SideMenuLink>
                   <SideMenuLink
-                    to="/application"
+                    to="/historiques"
                     icon={faClockRotateLeft}
                     onClick={() => setSheetOpen(false)}
                   >
