@@ -14,6 +14,7 @@ import ButtonPdf from "@/composants/ButtonPdf";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";
+import logo from "../images/liste-de-controle.png";
 
 export default function GestionDeStock() {
   return (
@@ -66,139 +67,172 @@ function GestionDeStockContent() {
     }
   }, []);
 
+  
+  
   const exportToPDF = () => {
-    setIsLoadPdf(true);
-    const doc = new jsPDF({ orientation: "landscape" });
-
-    // Ajout des logos
-    const logoWidth = 30;
-    const logoHeight = 30;
-    doc.addImage("./images/logo-unic.png", "PNG", 14, 10, logoWidth, logoHeight);
-    doc.addImage("./images/logo-unic.png", "PNG", doc.internal.pageSize.width - 44, 10, logoWidth, logoHeight);
-
-    // En-tête avec les informations de l'association
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(0, 0, 0);
-    doc.text("ASSOCIATION:", 14, 50);
-    doc.setFont("helvetica", "normal");
-    doc.text("SAHI", 50, 50);
-
-    doc.setFont("helvetica", "bold");
-    doc.text("PROJET:", 14, 57);
-    doc.setFont("helvetica", "normal");
-    doc.text("SAHI MADIO", 50, 57);
-
-    doc.setFont("helvetica", "bold");
-    doc.text("ANNEE:", 14, 64);
-    doc.setFont("helvetica", "normal");
-    doc.text("2022-2023", 50, 64);
-
-    doc.setFont("helvetica", "bold");
-    doc.text("LIEU:", 14, 71);
-    doc.setFont("helvetica", "normal");
-    doc.text("FORT DAUPHIN", 50, 71);
-
-    doc.setFont("helvetica", "bold");
-    doc.text("OBJET:", 14, 78);
-    doc.setFont("helvetica", "normal");
-    doc.text("INVENTAIRE DE MATERIEL INFORMATIQUE", 50, 78);
-
-    // Titre du tableau
-    doc.setFontSize(16);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(0, 0, 0);
-    doc.setFillColor(173, 216, 230); // Couleur bleu clair
-    doc.rect(14, 85, doc.internal.pageSize.width - 28, 10, "F");
-    doc.text("INVENTAIRE DE MATERIEL INFORMATIQUE", doc.internal.pageSize.width / 2, 92, { align: "center" });
-
-    // En-tête du tableau
-    doc.setFontSize(8);
-    const headers = [
-      "N°",
-      "SOURCE",
-      "N° Référence",
-      "CARACTERISTIQUES",
-      "MARQUE",
-      "NUMERO DE SERIE",
-      "NUMERO D'IMEI",
-      "MONTANT en ARIARY",
-      "APPARTE NANCE",
-      "DATE ACQUISI TION",
-      "DATE DE TRANSFER ERT",
-      "LIEU DU AFFECTATION",
-      "RESPONSABLE"
-    ];
-
-    let y = 100;
-    const columnWidths = [10, 20, 25, 25, 20, 20, 20, 20, 20, 20, 20, 20, 20];
-    const rowHeight = 10;
-
-    // Style de l'en-tête du tableau
-    doc.setFillColor(255, 198, 158); // Couleur saumon clair
-    headers.forEach((header, i) => {
-      doc.rect(
-        14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
-        y,
-        columnWidths[i],
-        rowHeight,
-        "FD"
-      );
-      doc.text(
-        header,
-        14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0) + columnWidths[i] / 2,
-        y + 7,
-        { align: "center" }
-      );
-    });
-
-    y += rowHeight;
-
-    // Contenu du tableau
-    materiels.forEach((materiel, index) => {
-      const rowData = [
-        (index + 1).toString(),
-        materiel.source?.nom || "",
-        materiel.numero || "",
-        materiel.caracteristiques || "",
-        materiel.marque || "",
-        materiel.numero_serie || "",
-        materiel.numero_imei || "",
-        materiel.montant?.toString() || "",
-        materiel.appartenance?.nom || "",
-        materiel.date_acquisition || "",
-        "", // Date de transfert (à ajouter si disponible)
-        materiel.region?.nom || "",
-        materiel.responsable?.name || "Non assigné"
+      setIsLoadPdf(true);
+      const doc = new jsPDF({ orientation: "landscape" });
+  
+      // Fonction pour ajouter un logo
+      const addLogo = (src, x, y, width, height) => {
+          const img = new Image();
+          img.src = src;
+          doc.addImage(img, 'PNG', x, y, width, height);
+      };
+  
+      // Ajouter les logos avec des tailles ajustées
+      addLogo(logo, 20, 10, 40, 20); // Logo de gauche
+      addLogo(logo, 230, 10, 40, 20); // Logo de droite
+  
+      // Ajouter les informations de contact
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(75, 85, 99);
+      doc.text("Sehatra Amparihasombintsika Hoan'ny Iom-panitra", 145, 20, { align: "center" });
+      doc.setTextColor(0, 0, 255);
+      doc.text("BP 806 Diego Suarez | Email: sahieahi@gmail.com | Web: sahieassociation.org", 145, 25, { align: "center" });
+      doc.setTextColor(75, 85, 99);
+      doc.text("Tel: +261 32 04 765 02 / +261 34 20 9420 765 04", 145, 30, { align: "center" });
+  
+      // Ajouter les détails du projet
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(75, 85, 99); // couleur gris
+      doc.text("ASSOCIATION: SAHI", 20, 60);
+      doc.text("PROJET: SAHI MADIO", 20, 70);
+      doc.text("ANNEE: 2022-2023", 20, 80);
+      doc.text("LIEU: FORT DAUPHIN", 20, 90);
+      doc.text("OBJET: INVENTAIRE DE MATERIEL INFORMATIQUE", 20, 100);
+  
+      // Ajouter le tableau des matériels
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      const headers = [
+          "N° Référence", "Appartenance", "Type", "Marque", "Caractéristiques",
+          "État", "Montant (Ar)", "N° Série", "N° IMEI", "Date d'acquisition",
+          "Région", "Responsable"
       ];
-
-      rowData.forEach((text, i) => {
-        doc.rect(
-          14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
-          y,
-          columnWidths[i],
-          rowHeight
-        );
-        doc.text(
-          text,
-          14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0) + columnWidths[i] / 2,
-          y + 7,
-          { align: "center" }
-        );
+  
+      let y = 110;
+      const columnWidths = [22, 22, 22, 22, 32, 22, 22, 22, 22, 27, 22, 22];
+      const paddingBottom = 2;
+  
+      const wrapText = (text, maxWidth) => {
+          const words = text.split(" ");
+          const lines = [];
+          let currentLine = words[0];
+  
+          for (let i = 1; i < words.length; i++) {
+              const word = words[i];
+              const lineWidth = doc.getTextWidth(currentLine + " " + word);
+              if (lineWidth < maxWidth) {
+                  currentLine += " " + word;
+              } else {
+                  lines.push(currentLine);
+                  currentLine = word;
+              }
+          }
+          lines.push(currentLine);
+          return lines;
+      };
+  
+      doc.setDrawColor(229, 231, 235);
+      doc.setLineWidth(0.1);
+      headers.forEach((header, i) => {
+          doc.setFillColor(249, 250, 251);
+          doc.rect(14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), y, columnWidths[i], 10, "FD");
+          doc.setTextColor(75, 85, 99);
+          doc.text(header, 16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), y + 7);
       });
-
-      y += rowHeight;
-
-      if (y > doc.internal.pageSize.height - 20) {
-        doc.addPage("landscape");
-        y = 20;
-      }
-    });
-
-    // Sauvegarde du PDF
-    doc.save(`Inventaire_Materiel_Informatique_${new Date().toLocaleDateString()}.pdf`);
-    setIsLoadPdf(false);
+  
+      y += 10;
+  
+      materiels.forEach((materiel) => {
+          const rowData = [
+              materiel.numero || "",
+              materiel.appartenance?.nom || "",
+              materiel.type?.nom || "",
+              materiel.marque || "",
+              materiel.caracteristiques || "",
+              materiel.etat === "Bon état" ? "Bon état" : materiel.etat === "État moyen" ? "État moyen" : materiel.etat === "Mauvais état" ? "Mauvais état" : "Inconnu",
+              materiel.montant || "",
+              materiel.numero_serie || "",
+              materiel.numero_imei || "",
+              materiel.date_acquisition || "",
+              materiel.region?.nom || "",
+              materiel.responsable?.name || "Non assigné",
+          ];
+  
+          let maxLines = 1;
+          const linesArray = rowData.map((data, i) => {
+              const lines = wrapText(data.toString(), columnWidths[i] - 2);
+              if (lines.length > maxLines) {
+                  maxLines = lines.length;
+              }
+              return lines;
+          });
+  
+          const rowHeight = maxLines * 5 + paddingBottom;
+  
+          linesArray.forEach((lines, i) => {
+              lines.forEach((line, j) => {
+                  if (i === 5) {
+                      let color;
+                      switch (line) {
+                          case "Bon état":
+                              color = [34, 197, 94];
+                              break;
+                          case "État moyen":
+                              color = [250, 204, 21];
+                              break;
+                          case "Mauvais état":
+                              color = [248, 113, 113];
+                              break;
+                          default:
+                              color = [156, 163, 175];
+                      }
+                      doc.setFont("helvetica", "bold");
+                      doc.setTextColor(...color);
+                  } else {
+                      doc.setFont("helvetica", "normal");
+                      doc.setTextColor(17, 24, 39);
+                  }
+  
+                  doc.text(
+                      line,
+                      16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
+                      y + 5 + j * 5
+                  );
+              });
+              doc.setDrawColor(229, 231, 235);
+              doc.setLineWidth(0.05);
+              doc.rect(
+                  14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
+                  y,
+                  columnWidths[i],
+                  rowHeight
+              );
+          });
+  
+          y += rowHeight;
+  
+          if (y > 180) {
+              doc.addPage("landscape");
+              y = 20;
+          }
+      });
+  
+      // Ajouter la date d'exportation sous le tableau
+      const exportDate = new Date().toLocaleString();
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(75, 85, 99);
+      doc.text(`Exporté le: ${exportDate}`, 15, y + 5);
+  
+      doc.save(`Liste des materiels ${selectedRegionName} ${selectedCategoryName}.pdf`);
+      setIsLoadPdf(false);
   };
+  
 
   const exportToExcel = () => {
     setIsLoadExcel(true);
