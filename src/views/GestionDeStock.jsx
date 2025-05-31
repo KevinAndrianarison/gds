@@ -70,173 +70,133 @@ function GestionDeStockContent() {
     setIsLoadPdf(true);
     const doc = new jsPDF({ orientation: "landscape" });
 
-    doc.setFontSize(22);
+    // Ajout des logos
+    const logoWidth = 30;
+    const logoHeight = 30;
+    doc.addImage("./images/logo-unic.png", "PNG", 14, 10, logoWidth, logoHeight);
+    doc.addImage("./images/logo-unic.png", "PNG", doc.internal.pageSize.width - 44, 10, logoWidth, logoHeight);
+
+    // En-tête avec les informations de l'association
+    doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(0, 170, 255);
-    doc.text("Détails des matériels", 14, 15);
-
-    doc.setFontSize(10);
-    doc.setTextColor(0);
-    doc.setFont("times", "bolditalic");
-    const exportDate = new Date().toLocaleString();
-    const selectedCategory = selectedCategoryName
-      ? `- Catégorie : ${selectedCategoryName}`
-      : "- Catégorie : Toutes";
-    const selectedRegion = selectedRegionName
-      ? `- Région: ${selectedRegionName}`
-      : "- Région : Toutes";
-
-    doc.text(selectedCategory, 14, 30);
-    doc.text(selectedRegion, 14, 26);
-    doc.setTextColor(77, 77, 77);
+    doc.setTextColor(0, 0, 0);
+    doc.text("ASSOCIATION:", 14, 50);
     doc.setFont("helvetica", "normal");
-    doc.text(`Exporté le: ${exportDate}`, 14, 38);
+    doc.text("SAHI", 50, 50);
 
     doc.setFont("helvetica", "bold");
+    doc.text("PROJET:", 14, 57);
+    doc.setFont("helvetica", "normal");
+    doc.text("SAHI MADIO", 50, 57);
+
+    doc.setFont("helvetica", "bold");
+    doc.text("ANNEE:", 14, 64);
+    doc.setFont("helvetica", "normal");
+    doc.text("2022-2023", 50, 64);
+
+    doc.setFont("helvetica", "bold");
+    doc.text("LIEU:", 14, 71);
+    doc.setFont("helvetica", "normal");
+    doc.text("FORT DAUPHIN", 50, 71);
+
+    doc.setFont("helvetica", "bold");
+    doc.text("OBJET:", 14, 78);
+    doc.setFont("helvetica", "normal");
+    doc.text("INVENTAIRE DE MATERIEL INFORMATIQUE", 50, 78);
+
+    // Titre du tableau
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    doc.setFillColor(173, 216, 230); // Couleur bleu clair
+    doc.rect(14, 85, doc.internal.pageSize.width - 28, 10, "F");
+    doc.text("INVENTAIRE DE MATERIEL INFORMATIQUE", doc.internal.pageSize.width / 2, 92, { align: "center" });
+
+    // En-tête du tableau
     doc.setFontSize(8);
     const headers = [
+      "N°",
+      "SOURCE",
       "N° Référence",
-      "Appartenance",
-      "Type",
-      "Marque",
-      "Caractéristiques",
-      "État",
-      "Montant (Ar)",
-      "N° Série",
-      "N° IMEI",
-      "Date d'acquisition",
-      "Région",
-      "Responsable",
+      "CARACTERISTIQUES",
+      "MARQUE",
+      "NUMERO DE SERIE",
+      "NUMERO D'IMEI",
+      "MONTANT en ARIARY",
+      "APPARTE NANCE",
+      "DATE ACQUISI TION",
+      "DATE DE TRANSFER ERT",
+      "LIEU DU AFFECTATION",
+      "RESPONSABLE"
     ];
 
-    let y = 40;
-    const columnWidths = [22, 22, 22, 22, 32, 22, 22, 22, 22, 27, 22, 22];
-    const paddingBottom = 2;
+    let y = 100;
+    const columnWidths = [10, 20, 25, 25, 20, 20, 20, 20, 20, 20, 20, 20, 20];
+    const rowHeight = 10;
 
-    const wrapText = (text, maxWidth) => {
-      const words = text.split(" ");
-      const lines = [];
-      let currentLine = words[0];
-
-      for (let i = 1; i < words.length; i++) {
-        const word = words[i];
-        const lineWidth = doc.getTextWidth(currentLine + " " + word);
-        if (lineWidth < maxWidth) {
-          currentLine += " " + word;
-        } else {
-          lines.push(currentLine);
-          currentLine = word;
-        }
-      }
-      lines.push(currentLine);
-      return lines;
-    };
-    doc.setDrawColor(0, 170, 255);
-    doc.setLineWidth(0.1);
+    // Style de l'en-tête du tableau
+    doc.setFillColor(255, 198, 158); // Couleur saumon clair
     headers.forEach((header, i) => {
-      doc.setFillColor(0, 170, 255);
       doc.rect(
         14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
         y,
         columnWidths[i],
-        10,
+        rowHeight,
         "FD"
       );
-      doc.setTextColor(255, 255, 255);
       doc.text(
         header,
-        16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
-        y + 7
+        14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0) + columnWidths[i] / 2,
+        y + 7,
+        { align: "center" }
       );
-      doc.setTextColor(0);
     });
 
-    y += 10;
+    y += rowHeight;
 
-    materiels.forEach((materiel) => {
+    // Contenu du tableau
+    materiels.forEach((materiel, index) => {
       const rowData = [
+        (index + 1).toString(),
+        materiel.source?.nom || "",
         materiel.numero || "",
-        materiel.appartenance?.nom || "",
-        materiel.type?.nom || "",
-        materiel.marque || "",
         materiel.caracteristiques || "",
-        materiel.etat === "Bon état"
-          ? "Bon état"
-          : materiel.etat === "État moyen"
-          ? "État moyen"
-          : materiel.etat === "Mauvais état"
-          ? "Mauvais état"
-          : "Inconnu",
-        materiel.montant || "",
+        materiel.marque || "",
         materiel.numero_serie || "",
         materiel.numero_imei || "",
+        materiel.montant?.toString() || "",
+        materiel.appartenance?.nom || "",
         materiel.date_acquisition || "",
+        "", // Date de transfert (à ajouter si disponible)
         materiel.region?.nom || "",
-        materiel.responsable?.name || "Non assigné",
+        materiel.responsable?.name || "Non assigné"
       ];
 
-      let maxLines = 1;
-      const linesArray = rowData.map((data, i) => {
-        const lines = wrapText(data.toString(), columnWidths[i] - 2);
-        if (lines.length > maxLines) {
-          maxLines = lines.length;
-        }
-        return lines;
-      });
-
-      const rowHeight = maxLines * 5 + paddingBottom;
-
-      linesArray.forEach((lines, i) => {
-        lines.forEach((line, j) => {
-          if (i === 5) {
-            let color;
-            switch (line) {
-              case "Bon état":
-                color = [51, 255, 57];
-                break;
-              case "État moyen":
-                color = [51, 119, 255];
-                break;
-              case "Mauvais état":
-                color = [255, 51, 51];
-                break;
-              default:
-                color = [77, 77, 77];
-            }
-            doc.setFont("helvetica", "bold");
-            doc.setTextColor(...color);
-          } else {
-            doc.setFont("helvetica", "normal");
-            doc.setTextColor(0);
-          }
-
-          doc.text(
-            line,
-            16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
-            y + 5 + j * 5
-          );
-        });
-        doc.setDrawColor(51, 187, 255);
-        doc.setLineWidth(0.05);
+      rowData.forEach((text, i) => {
         doc.rect(
           14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
           y,
           columnWidths[i],
           rowHeight
         );
+        doc.text(
+          text,
+          14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0) + columnWidths[i] / 2,
+          y + 7,
+          { align: "center" }
+        );
       });
 
       y += rowHeight;
 
-      if (y > 180) {
+      if (y > doc.internal.pageSize.height - 20) {
         doc.addPage("landscape");
         y = 20;
       }
     });
 
-    doc.save(
-      `Liste des materiels ${selectedRegionName} ${selectedCategoryName}.pdf`
-    );
+    // Sauvegarde du PDF
+    doc.save(`Inventaire_Materiel_Informatique_${new Date().toLocaleDateString()}.pdf`);
     setIsLoadPdf(false);
   };
 
