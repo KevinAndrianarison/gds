@@ -100,9 +100,9 @@ function GestionDeStockContent() {
       doc.setTextColor(75, 85, 99); // couleur gris
       doc.text("ASSOCIATION: SAHI", 20, 60);
       doc.text("PROJET: SAHI MADIO", 20, 70);
-      doc.text("ANNEE: 2022-2023", 20, 80);
-      doc.text("LIEU: FORT DAUPHIN", 20, 90);
-      doc.text("OBJET: INVENTAIRE DE MATERIEL INFORMATIQUE", 20, 100);
+      doc.text(`ANNEE: ${new Date().getFullYear()}`, 20, 80);
+      doc.text(`LIEU: ${selectedRegionName}`, 20, 90);
+      doc.text(`OBJET: INVENTAIRE ${selectedCategoryName}`, 20, 100);
   
       // Ajouter le tableau des matériels
       doc.setFont("helvetica", "bold");
@@ -229,7 +229,7 @@ function GestionDeStockContent() {
       doc.setTextColor(75, 85, 99);
       doc.text(`Exporté le: ${exportDate}`, 15, y + 5);
   
-      doc.save(`Liste des materiels ${selectedRegionName} ${selectedCategoryName}.pdf`);
+      doc.save(`Liste des materiels ${selectedRegionName} ${selectedCategoryName} ${new Date().getFullYear()}.pdf`);
       setIsLoadPdf(false);
   };
   
@@ -247,9 +247,9 @@ function GestionDeStockContent() {
       [""],
       ["ASSOCIATION: SAHI"],
       ["PROJET: SAHI MADIO"],
-      ["ANNEE: 2022-2023"],
-      ["LIEU: FORT DAUPHIN"],
-      ["OBJET: INVENTAIRE DE MATERIEL INFORMATIQUE"],
+      [`ANNEE: ${new Date().getFullYear()}`],
+      [`LIEU: ${selectedRegionName}`],
+      [`OBJET: INVENTAIRE ${selectedCategoryName}`],
       [""]
     ], {origin: "A1"});
 
@@ -356,7 +356,7 @@ function GestionDeStockContent() {
     ws[`A${lastRow + 1}`].s = { font: { color: { rgb: "4B5563" } } };
 
     XLSX.utils.book_append_sheet(wb, ws, "Materiels");
-    XLSX.writeFile(wb, `Liste des materiels ${selectedRegionName} ${selectedCategoryName}.xlsx`);
+    XLSX.writeFile(wb, `Liste des materiels ${selectedRegionName} ${selectedCategoryName} ${new Date().getFullYear()}.xlsx`);
     setIsLoadExcel(false);
   };
 
