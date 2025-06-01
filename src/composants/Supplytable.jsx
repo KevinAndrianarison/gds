@@ -38,7 +38,7 @@ import { ShowContext } from "@/contexte/useShow";
 import ShareMateriel from "./ShareMateriel";
 // Données de test
 
-function SupplyTable({ showFilters, setShowFilters }) {
+function SupplyTable({ showFilters, setShowFilters, setSelectedRegionName }) {
   const [searchValue, setSearchValue] = useState("");
   const { isACL, isAdmin } = useContext(ShowContext);
   const [region, setRegion] = useState("all");
@@ -197,6 +197,9 @@ function SupplyTable({ showFilters, setShowFilters }) {
                 value={region}
                 onValueChange={(value) => {
                   setRegion(value);
+                  setSelectedRegionName(
+                    regions.find((reg) => reg.id === value)?.nom || ""
+                  );
                 }}
               >
                 <SelectTrigger className="focus:outline-none bg-white border-2 border-blue-200 rounded-3xl p-2 w-40 px-4">

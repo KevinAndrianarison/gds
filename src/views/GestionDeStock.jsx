@@ -248,8 +248,8 @@ function GestionDeStockContent() {
       ["ASSOCIATION: SAHI"],
       ["PROJET: SAHI MADIO"],
       [`ANNEE: ${new Date().getFullYear()}`],
-      [`LIEU: ${selectedRegionName}`],
-      [`OBJET: INVENTAIRE ${selectedCategoryName}`],
+      [`LIEU: ${selectedRegionName ? selectedRegionName : "Toutes"}`],
+      [`OBJET: INVENTAIRE ${selectedCategoryName ? selectedCategoryName : "Toutes"}`],
       [""]
     ], {origin: "A1"});
 
