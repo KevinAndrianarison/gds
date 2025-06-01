@@ -236,18 +236,127 @@ function GestionDeStockContent() {
 
   const exportToExcel = () => {
     setIsLoadExcel(true);
-    const ws = XLSX.utils.json_to_sheet(
-      materiels.map((materiel) => ({
-        ID: materiel.id,
-        Nom: materiel.nom,
-        Catégorie: materiel.categorie.nom,
-        État: materiel.etat,
-        Région: materiel.region.nom,
-      }))
-    );
     const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet([]);
+
+    // Ajouter les informations d'en-tête
+    XLSX.utils.sheet_add_aoa(ws, [
+      ["Sehatra Amparihasombintsika Hoan'ny Iom-panitra"],
+      ["BP 806 Diego Suarez | Email: sahieahi@gmail.com | Web: sahieassociation.org"],
+      ["Tel: +261 32 04 765 02 / +261 34 20 9420 765 04"],
+      [""],
+      ["ASSOCIATION: SAHI"],
+      ["PROJET: SAHI MADIO"],
+      ["ANNEE: 2022-2023"],
+      ["LIEU: FORT DAUPHIN"],
+      ["OBJET: INVENTAIRE DE MATERIEL INFORMATIQUE"],
+      [""]
+    ], {origin: "A1"});
+
+    // Style pour les en-têtes (couleur grise)
+    for (let i = 1; i <= 9; i++) {
+      ws[`A${i}`].s = {
+        font: { bold: true, color: { rgb: "4B5563" } },
+        alignment: { horizontal: "left" }
+      };
+    }
+
+    // Ajouter les en-têtes du tableau
+    const headers = [
+      "N° Référence", "Appartenance", "Type", "Marque", "Caractéristiques",
+      "État", "Montant (Ar)", "N° Série", "N° IMEI", "Date d'acquisition",
+      "Région", "Responsable"
+    ];
+
+    XLSX.utils.sheet_add_aoa(ws, [headers], {origin: "A11"});
+
+    // Style pour les en-têtes du tableau
+    const headerRow = 11;
+    for (let i = 0; i < headers.length; i++) {
+      const cell = XLSX.utils.encode_cell({r: headerRow-1, c: i});
+      ws[cell].s = {
+        fill: { fgColor: { rgb: "F9FAFB" } },
+        font: { bold: true, color: { rgb: "4B5563" } },
+        border: {
+          top: { style: "thin", color: { rgb: "E5E7EB" } },
+          bottom: { style: "thin", color: { rgb: "E5E7EB" } },
+          left: { style: "thin", color: { rgb: "E5E7EB" } },
+          right: { style: "thin", color: { rgb: "E5E7EB" } }
+        }
+      };
+    }
+
+    // Ajouter les données
+    const data = materiels.map(materiel => [
+      materiel.numero || "",
+      materiel.appartenance?.nom || "",
+      materiel.type?.nom || "",
+      materiel.marque || "",
+      materiel.caracteristiques || "",
+      materiel.etat === "Bon état" ? "Bon état" : 
+      materiel.etat === "État moyen" ? "État moyen" : 
+      materiel.etat === "Mauvais état" ? "Mauvais état" : "Inconnu",
+      materiel.montant || "",
+      materiel.numero_serie || "",
+      materiel.numero_imei || "",
+      materiel.date_acquisition || "",
+      materiel.region?.nom || "",
+      materiel.responsable?.name || "Non assigné"
+    ]);
+
+    XLSX.utils.sheet_add_aoa(ws, data, {origin: "A12"});
+
+    // Style pour les données
+    data.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({r: rowIndex + 11, c: colIndex});
+        ws[cellRef].s = {
+          font: { color: { rgb: "111827" } },
+          border: {
+            top: { style: "thin", color: { rgb: "E5E7EB" } },
+            bottom: { style: "thin", color: { rgb: "E5E7EB" } },
+            left: { style: "thin", color: { rgb: "E5E7EB" } },
+            right: { style: "thin", color: { rgb: "E5E7EB" } }
+          }
+        };
+
+        // Style spécial pour la colonne "État"
+        if (colIndex === 5) {
+          let color;
+          switch (cell) {
+            case "Bon état":
+              color = "22C55E";
+              break;
+            case "État moyen":
+              color = "FACC15";
+              break;
+            case "Mauvais état":
+              color = "F87171";
+              break;
+            default:
+              color = "9CA3AF";
+          }
+          ws[cellRef].s.font = { bold: true, color: { rgb: color } };
+        }
+      });
+    });
+
+    // Ajuster la largeur des colonnes
+    const wscols = [
+      {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 25},
+      {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 20},
+      {wch: 15}, {wch: 15}
+    ];
+    ws['!cols'] = wscols;
+
+    // Ajouter la date d'exportation
+    const exportDate = new Date().toLocaleString();
+    const lastRow = data.length + 12;
+    XLSX.utils.sheet_add_aoa(ws, [[`Exporté le: ${exportDate}`]], {origin: `A${lastRow + 1}`});
+    ws[`A${lastRow + 1}`].s = { font: { color: { rgb: "4B5563" } } };
+
     XLSX.utils.book_append_sheet(wb, ws, "Materiels");
-    XLSX.writeFile(wb, "Materiels.xlsx");
+    XLSX.writeFile(wb, `Liste des materiels ${selectedRegionName} ${selectedCategoryName}.xlsx`);
     setIsLoadExcel(false);
   };
 
