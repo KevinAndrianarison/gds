@@ -27,6 +27,8 @@ import AppartenaceCombobox from "@/composants/stock/AppartenaceCombobox";
 import ButtonAdd from "@/composants/ButtonAdd";
 import { TypeContext } from "@/contexte/useType";
 import { ShowContext } from "@/contexte/useShow";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export default function AddMaterielModal({ isOpen, onClose }) {
   const [categorie_id, setCategorieId] = useState("");
@@ -48,7 +50,10 @@ export default function AddMaterielModal({ isOpen, onClose }) {
   const { isAdmin, isACL } = useContext(ShowContext);
   const [error, setError] = useState(null);
   const { types, filterTypesByCategorie } = useContext(TypeContext);
-  const { getAllMateriels, getMaterielParIdRegion } = useContext(MaterielContext);
+  const { getAllMateriels, getMaterielParIdRegion } =
+    useContext(MaterielContext);
+  const [files, setFiles] = useState([]);
+  const [filePreviews, setFilePreviews] = useState([]);
 
   useEffect(() => {
     if (isACL) {
@@ -56,6 +61,27 @@ export default function AddMaterielModal({ isOpen, onClose }) {
       setRegionId(storedRegionId);
     }
   }, [isACL]);
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length > 0) {
+      setFiles(selectedFiles);
+
+      const previews = selectedFiles.map((file) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        return new Promise((resolve) => {
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+        });
+      });
+
+      Promise.all(previews).then((results) => {
+        setFilePreviews(results);
+      });
+    }
+  };
 
   const validateForm = () => {
     const formData = {
@@ -106,25 +132,33 @@ export default function AddMaterielModal({ isOpen, onClose }) {
     setError(null);
 
     try {
-      const materielData = {
-        reference_id: parseInt(reference_id),
-        categorie_id: parseInt(categorie_id),
-        type_id: parseInt(type_id),
-        marque,
-        caracteristiques,
-        etat: etat,
-        region_id: parseInt(region_id),
-        responsable_id: parseInt(responsable_id),
-        numero_serie,
-        numero_imei,
-        montant: montant ? parseFloat(montant) : null,
-        date_acquisition,
-        lieu_affectation,
-        source_id: source_id ? parseInt(source_id) : null,
-        appartenance_id: appartenance_id ? parseInt(appartenance_id) : null,
-      };
+      const formData = new FormData();
+      formData.append("reference_id", parseInt(reference_id));
+      formData.append("categorie_id", parseInt(categorie_id));
+      formData.append("type_id", parseInt(type_id));
+      formData.append("marque", marque);
+      formData.append("caracteristiques", caracteristiques);
+      formData.append("etat", etat);
+      formData.append("region_id", parseInt(region_id));
+      formData.append("responsable_id", parseInt(responsable_id));
+      formData.append("numero_serie", numero_serie);
+      formData.append("numero_imei", numero_imei);
+      if (montant) {
+        formData.append("montant", parseFloat(montant));
+      }
+      formData.append("date_acquisition", date_acquisition);
+      formData.append("lieu_affectation", lieu_affectation);
+      if (source_id) {
+        formData.append("source_id", parseInt(source_id));
+      }
+      if (appartenance_id) {
+        formData.append("appartenance_id", parseInt(appartenance_id));
+      }
+      files.forEach((file) => {
+        formData.append("photos[]", file);
+      });
 
-      await materielService.createMateriel(materielData);
+      await materielService.createMateriel(formData);
       onClose();
       if (isAdmin) {
         getAllMateriels();
@@ -312,6 +346,59 @@ export default function AddMaterielModal({ isOpen, onClose }) {
                   onChange={setDateAcquisition}
                 />
               </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 mt-4">
+            <TitreLabel titre="Télécharger des fichiers" />
+            <div className="flex items-center gap-4">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+                id="file-input"
+              />
+              <label
+                htmlFor="file-input"
+                className="cursor-pointer bg-gray-100 text-gray-600 px-4 py-2 rounded"
+              >
+                Choisir des fichiers
+              </label>
+              {filePreviews.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {filePreviews.map((preview, index) => (
+                    <div key={index} className="relative">
+                      {preview.startsWith("data:image") ? (
+                        <img
+                          src={preview}
+                          alt="Preview"
+                          className="w-16 h-16 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 flex items-center justify-center bg-gray-200">
+                          <span className="text-gray-600">
+                            File {index + 1}
+                          </span>
+                        </div>
+                      )}
+                      <button
+                        onClick={() => {
+                          const newFiles = [...files];
+                          const newPreviews = [...filePreviews];
+                          newFiles.splice(index, 1);
+                          newPreviews.splice(index, 1);
+                          setFiles(newFiles);
+                          setFilePreviews(newPreviews);
+                        }}
+                        className="absolute -top-2 cursor-pointer -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                      >
+                        <FontAwesomeIcon icon={faXmark} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

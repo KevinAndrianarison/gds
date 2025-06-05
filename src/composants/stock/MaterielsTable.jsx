@@ -6,6 +6,7 @@ import {
   faPen,
   faShare,
   faCarSide,
+  faImages
 } from "@fortawesome/free-solid-svg-icons";
 import { MaterielContext } from "@/contexte/useMateriel";
 import Notiflix from "notiflix";
@@ -226,15 +227,14 @@ export default function MaterielsTable({ materiels }) {
               </td>
               <td className="px-4 py-3">
                 <span
-                  className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${
-                    materiel.etat === "Bon état"
-                      ? "bg-green-400"
-                      : materiel.etat === "État moyen"
+                  className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${materiel.etat === "Bon état"
+                    ? "bg-green-400"
+                    : materiel.etat === "État moyen"
                       ? "bg-yellow-400"
                       : materiel.etat === "Mauvais état"
-                      ? "bg-red-400"
-                      : "bg-gray-400"
-                  }`}
+                        ? "bg-red-400"
+                        : "bg-gray-400"
+                    }`}
                 >
                   {materiel.etat}
                 </span>
@@ -341,6 +341,13 @@ export default function MaterielsTable({ materiels }) {
                       <ShareMateriel materiel={materiel} status="materiel" />
                     </PopoverContent>
                   </Popover>
+                  {materiel.photos.length !== 0 && (
+                    <FontAwesomeIcon
+                      icon={faImages}
+                      className="text-blue-500 bg-blue-200 p-2 rounded-full cursor-pointer"
+                      onClick={() => handleDeleteMateriel(materiel.id)}
+                    />
+                  )}
                 </div>
               </td>
             </tr>

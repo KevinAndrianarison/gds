@@ -71,6 +71,7 @@ export const materielService = {
     },
 
     validateMateriel: (materiel) => {
+        console.log(materiel);
         const requiredFields = {
             reference_id: 'Référence',
             categorie_id: 'Catégorie',
@@ -98,23 +99,57 @@ export const materielService = {
         return true;
     },
 
-    createMateriel: async (materiel) => {
+    // createMateriel: async (materiel) => {
+    //     let token = localStorage.getItem('token');
+    //     try {
+    //         if (!materielService.validateMateriel(materiel)) {
+    //             return null;
+    //         }
+
+    //         const data = {};
+    //         Object.keys(materiel).forEach(key => {
+    //             if (materiel[key] !== '') {
+    //                 data[key] = materiel[key];
+    //             }
+    //         });
+
+    //         const response = await axios.post(`${API_URL}/materiels`, data, {
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`
+    //             }
+    //         });
+    //         Notify.success('Matériel ajouté avec succès');
+    //         return response.data;
+    //     } catch (error) {
+    //         if (error.response?.status === 422) {
+    //             const errors = error.response.data.errors;
+    //             const errorMessages = Object.values(errors).flat();
+    //             errorMessages.forEach(message => {
+    //                 Notify.warning(message);
+    //             });
+    //         } else {
+    //             Notify.failure('Erreur lors de l\'ajout du matériel');
+    //         }
+    //         throw error;
+    //     }
+    // },
+
+    createMateriel: async (formData) => {
         let token = localStorage.getItem('token');
         try {
+            const materiel = {};
+            formData.forEach((value, key) => {
+                if (key !== "photos[]") {
+                    materiel[key] = value;
+                }
+            });
             if (!materielService.validateMateriel(materiel)) {
                 return null;
             }
-
-            const data = {};
-            Object.keys(materiel).forEach(key => {
-                if (materiel[key] !== '') {
-                    data[key] = materiel[key];
-                }
-            });
-
-            const response = await axios.post(`${API_URL}/materiels`, data, {
+            const response = await axios.post(`${API_URL}/materiels`, formData, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
                 }
             });
             Notify.success('Matériel ajouté avec succès');
@@ -132,6 +167,7 @@ export const materielService = {
             throw error;
         }
     },
+    
 
     updateMateriel: async (id, updateData) => {
         let token = localStorage.getItem('token');
