@@ -71,7 +71,6 @@ export const materielService = {
     },
 
     validateMateriel: (materiel) => {
-        console.log(materiel);
         const requiredFields = {
             reference_id: 'Référence',
             categorie_id: 'Catégorie',

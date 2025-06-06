@@ -2,7 +2,12 @@ import React, { useEffect, useContext } from "react";
 import Entete from "@/composants/Entete";
 import { MaterielContextProvider, useMateriel } from "@/contexte/useMateriel";
 import InputSearch from "@/composants/InputSearch";
-import { faCarSide, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCarSide,
+  faSpinner,
+  faImage,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Empty from "@/composants/Empty";
 import {
@@ -29,13 +34,10 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";
 import logo from "../images/liste-de-controle.png";
+import ListeImage from "@/composants/ListeImage";
 
 function GestionDeVehiculeContent() {
-  const {
-    getAllVehicules,
-    vehicules,
-    isLoadingVehicules,
-  } = useMateriel();
+  const { getAllVehicules, vehicules, isLoadingVehicules } = useMateriel();
   const navigate = useNavigate();
   const [region, setRegion] = useState("all");
   const [searchValue, setSearchValue] = useState("");
@@ -45,12 +47,14 @@ function GestionDeVehiculeContent() {
   const [isLoadPdf, setIsLoadPdf] = useState(false);
   const [isLoadExcel, setIsLoadExcel] = useState(false);
   const [selectedRegionName, setSelectedRegionName] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
     getAllRegion();
     getAllVehicules();
-    if(JSON.parse(localStorage.getItem('user'))?.region_id){
-      const region = JSON.parse(localStorage.getItem('region'));
+    if (JSON.parse(localStorage.getItem("user"))?.region_id) {
+      const region = JSON.parse(localStorage.getItem("region"));
       setSelectedRegionName(region.nom);
     }
   }, []);
@@ -65,9 +69,9 @@ function GestionDeVehiculeContent() {
     let filtered = [...vehicules];
 
     // Filtre par région
-    if (region && region !== 'all') {
-      filtered = filtered.filter(vehicule => vehicule.region.id === region);
-      const selectedRegion = regions.find(r => r.id === region);
+    if (region && region !== "all") {
+      filtered = filtered.filter((vehicule) => vehicule.region.id === region);
+      const selectedRegion = regions.find((r) => r.id === region);
       setSelectedRegionName(selectedRegion ? selectedRegion.nom : "");
     } else {
       setSelectedRegionName("");
@@ -76,10 +80,11 @@ function GestionDeVehiculeContent() {
     // Filtre par recherche
     if (searchValue.trim()) {
       const searchLower = searchValue.toLowerCase();
-      filtered = filtered.filter(vehicule =>
-        vehicule.type?.nom?.toLowerCase().includes(searchLower) ||
-        vehicule.caracteristiques?.toLowerCase().includes(searchLower) ||
-        vehicule.categorie?.nom?.toLowerCase().includes(searchLower)
+      filtered = filtered.filter(
+        (vehicule) =>
+          vehicule.type?.nom?.toLowerCase().includes(searchLower) ||
+          vehicule.caracteristiques?.toLowerCase().includes(searchLower) ||
+          vehicule.categorie?.nom?.toLowerCase().includes(searchLower)
       );
     }
 
@@ -94,7 +99,7 @@ function GestionDeVehiculeContent() {
     const addLogo = (src, x, y, width, height) => {
       const img = new Image();
       img.src = src;
-      doc.addImage(img, 'PNG', x, y, width, height);
+      doc.addImage(img, "PNG", x, y, width, height);
     };
 
     // Ajouter les logos
@@ -105,11 +110,20 @@ function GestionDeVehiculeContent() {
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(75, 85, 99);
-    doc.text("Sehatra Amparihasombintsika Hoan'ny Iom-panitra", 145, 20, { align: "center" });
+    doc.text("Sehatra Amparihasombintsika Hoan'ny Iom-panitra", 145, 20, {
+      align: "center",
+    });
     doc.setTextColor(0, 0, 255);
-    doc.text("BP 806 Diego Suarez | Email: sahieahi@gmail.com | Web: sahieassociation.org", 145, 25, { align: "center" });
+    doc.text(
+      "BP 806 Diego Suarez | Email: sahieahi@gmail.com | Web: sahieassociation.org",
+      145,
+      25,
+      { align: "center" }
+    );
     doc.setTextColor(75, 85, 99);
-    doc.text("Tel: +261 32 04 765 02 / +261 34 20 9420 765 04", 145, 30, { align: "center" });
+    doc.text("Tel: +261 32 04 765 02 / +261 34 20 9420 765 04", 145, 30, {
+      align: "center",
+    });
 
     // Ajouter les détails du projet
     doc.setFontSize(8);
@@ -118,13 +132,23 @@ function GestionDeVehiculeContent() {
     doc.text("ASSOCIATION: SAHI", 20, 60);
     doc.text("PROJET: SAHI MADIO", 20, 70);
     doc.text(`ANNEE: ${new Date().getFullYear()}`, 20, 80);
-    doc.text(`LIEU: ${selectedRegionName ? selectedRegionName : "Toutes"}`, 20, 90);
+    doc.text(
+      `LIEU: ${selectedRegionName ? selectedRegionName : "Toutes"}`,
+      20,
+      90
+    );
     doc.text("OBJET: LISTE DES VEHICULES", 20, 100);
 
     // Ajouter le tableau des véhicules
     const headers = [
-      "Type", "Caractéristiques", "Catégorie", "Région", "État",
-      "Responsable", "Date d'acquisition", "Montant"
+      "Type",
+      "Caractéristiques",
+      "Catégorie",
+      "Région",
+      "État",
+      "Responsable",
+      "Date d'acquisition",
+      "Montant",
     ];
 
     let y = 110;
@@ -154,9 +178,19 @@ function GestionDeVehiculeContent() {
     doc.setLineWidth(0.1);
     headers.forEach((header, i) => {
       doc.setFillColor(249, 250, 251);
-      doc.rect(14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), y, columnWidths[i], 10, "FD");
+      doc.rect(
+        14 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
+        y,
+        columnWidths[i],
+        10,
+        "FD"
+      );
       doc.setTextColor(75, 85, 99);
-      doc.text(header, 16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), y + 7);
+      doc.text(
+        header,
+        16 + columnWidths.slice(0, i).reduce((a, b) => a + b, 0),
+        y + 7
+      );
     });
 
     y += 10;
@@ -170,7 +204,7 @@ function GestionDeVehiculeContent() {
         vehicule.etat || "",
         vehicule.responsable?.name || "Non assigné",
         vehicule.date_acquisition || "",
-        vehicule.montant || ""
+        vehicule.montant || "",
       ];
 
       let maxLines = 1;
@@ -186,7 +220,8 @@ function GestionDeVehiculeContent() {
 
       linesArray.forEach((lines, i) => {
         lines.forEach((line, j) => {
-          if (i === 4) { // Pour la colonne État
+          if (i === 4) {
+            // Pour la colonne État
             let color;
             switch (line) {
               case "Bon état":
@@ -238,7 +273,9 @@ function GestionDeVehiculeContent() {
     doc.setTextColor(75, 85, 99);
     doc.text(`Exporté le: ${exportDate}`, 15, y + 5);
 
-    doc.save(`Liste des vehicules ${selectedRegionName} ${new Date().getFullYear()}.pdf`);
+    doc.save(
+      `Liste des vehicules ${selectedRegionName} ${new Date().getFullYear()}.pdf`
+    );
     setIsLoadPdf(false);
   };
 
@@ -248,31 +285,43 @@ function GestionDeVehiculeContent() {
     const ws = XLSX.utils.aoa_to_sheet([]);
 
     // Ajouter les informations d'en-tête
-    XLSX.utils.sheet_add_aoa(ws, [
-      ["Sehatra Amparihasombintsika Hoan'ny Iom-panitra"],
-      ["BP 806 Diego Suarez | Email: sahieahi@gmail.com | Web: sahieassociation.org"],
-      ["Tel: +261 32 04 765 02 / +261 34 20 9420 765 04"],
-      [""],
-      ["ASSOCIATION: SAHI"],
-      ["PROJET: SAHI MADIO"],
-      [`ANNEE: ${new Date().getFullYear()}`],
-      [`LIEU: ${selectedRegionName ? selectedRegionName : "Toutes"}`],
-      ["OBJET: LISTE DES VEHICULES"],
-      [""]
-    ], { origin: "A1" });
+    XLSX.utils.sheet_add_aoa(
+      ws,
+      [
+        ["Sehatra Amparihasombintsika Hoan'ny Iom-panitra"],
+        [
+          "BP 806 Diego Suarez | Email: sahieahi@gmail.com | Web: sahieassociation.org",
+        ],
+        ["Tel: +261 32 04 765 02 / +261 34 20 9420 765 04"],
+        [""],
+        ["ASSOCIATION: SAHI"],
+        ["PROJET: SAHI MADIO"],
+        [`ANNEE: ${new Date().getFullYear()}`],
+        [`LIEU: ${selectedRegionName ? selectedRegionName : "Toutes"}`],
+        ["OBJET: LISTE DES VEHICULES"],
+        [""],
+      ],
+      { origin: "A1" }
+    );
 
     // Style pour les en-têtes
     for (let i = 1; i <= 9; i++) {
       ws[`A${i}`].s = {
         font: { bold: true, color: { rgb: "4B5563" } },
-        alignment: { horizontal: "left" }
+        alignment: { horizontal: "left" },
       };
     }
 
     // Ajouter les en-têtes du tableau
     const headers = [
-      "Type", "Caractéristiques", "Catégorie", "Région", "État",
-      "Responsable", "Date d'acquisition", "Montant"
+      "Type",
+      "Caractéristiques",
+      "Catégorie",
+      "Région",
+      "État",
+      "Responsable",
+      "Date d'acquisition",
+      "Montant",
     ];
 
     XLSX.utils.sheet_add_aoa(ws, [headers], { origin: "A11" });
@@ -288,13 +337,13 @@ function GestionDeVehiculeContent() {
           top: { style: "thin", color: { rgb: "E5E7EB" } },
           bottom: { style: "thin", color: { rgb: "E5E7EB" } },
           left: { style: "thin", color: { rgb: "E5E7EB" } },
-          right: { style: "thin", color: { rgb: "E5E7EB" } }
-        }
+          right: { style: "thin", color: { rgb: "E5E7EB" } },
+        },
       };
     }
 
     // Ajouter les données
-    const data = filteredVehicules.map(vehicule => [
+    const data = filteredVehicules.map((vehicule) => [
       vehicule.type?.nom || "",
       vehicule.caracteristiques || "",
       vehicule.categorie?.nom || "",
@@ -302,7 +351,7 @@ function GestionDeVehiculeContent() {
       vehicule.etat || "",
       vehicule.responsable?.name || "Non assigné",
       vehicule.date_acquisition || "",
-      vehicule.montant || ""
+      vehicule.montant || "",
     ]);
 
     XLSX.utils.sheet_add_aoa(ws, data, { origin: "A12" });
@@ -310,15 +359,18 @@ function GestionDeVehiculeContent() {
     // Style pour les données
     data.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
-        const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 11, c: colIndex });
+        const cellRef = XLSX.utils.encode_cell({
+          r: rowIndex + 11,
+          c: colIndex,
+        });
         ws[cellRef].s = {
           font: { color: { rgb: "111827" } },
           border: {
             top: { style: "thin", color: { rgb: "E5E7EB" } },
             bottom: { style: "thin", color: { rgb: "E5E7EB" } },
             left: { style: "thin", color: { rgb: "E5E7EB" } },
-            right: { style: "thin", color: { rgb: "E5E7EB" } }
-          }
+            right: { style: "thin", color: { rgb: "E5E7EB" } },
+          },
         };
 
         // Style spécial pour la colonne "État"
@@ -344,19 +396,30 @@ function GestionDeVehiculeContent() {
 
     // Ajuster la largeur des colonnes
     const wscols = [
-      { wch: 20 }, { wch: 30 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
-      { wch: 25 }, { wch: 20 }, { wch: 15 }
+      { wch: 20 },
+      { wch: 30 },
+      { wch: 20 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 25 },
+      { wch: 20 },
+      { wch: 15 },
     ];
-    ws['!cols'] = wscols;
+    ws["!cols"] = wscols;
 
     // Ajouter la date d'exportation
     const exportDate = new Date().toLocaleString();
     const lastRow = data.length + 12;
-    XLSX.utils.sheet_add_aoa(ws, [[`Exporté le: ${exportDate}`]], { origin: `A${lastRow + 1}` });
+    XLSX.utils.sheet_add_aoa(ws, [[`Exporté le: ${exportDate}`]], {
+      origin: `A${lastRow + 1}`,
+    });
     ws[`A${lastRow + 1}`].s = { font: { color: { rgb: "4B5563" } } };
 
     XLSX.utils.book_append_sheet(wb, ws, "Vehicules");
-    XLSX.writeFile(wb, `Liste des vehicules ${selectedRegionName} ${new Date().getFullYear()}.xlsx`);
+    XLSX.writeFile(
+      wb,
+      `Liste des vehicules ${selectedRegionName} ${new Date().getFullYear()}.xlsx`
+    );
     setIsLoadExcel(false);
   };
 
@@ -432,46 +495,68 @@ function GestionDeVehiculeContent() {
           <Empty titre="Aucun véhicule n'a été trouvé" />
         </div>
       ) : (
-        <div className="mt-4 max-h-[500px] overflow-y-auto">
+        <div className="mt-4 max-h-[500px] flex flex-col gap-2 overflow-y-auto">
           {filteredVehicules.map((vehicule) => (
             <div
               key={vehicule.id}
               onDoubleClick={() => {
                 navigate(`/details-vehicule/${vehicule.id}`);
               }}
-              className="shadow-xs cursor-pointer hover:bg-blue-50 hover:border-white bg-gray-50 rounded-md p-2 flex justify-between items-center"
+              className="shadow-xs cursor-pointer hover:bg-blue-50 hover:border-white bg-gray-50 rounded-xl p-2 px-4 flex justify-between items-center"
             >
-              <div className="flex items-center gap-10">
+              <div className="flex items-center gap-5">
                 <FontAwesomeIcon
-                  className="text-blue-500 bg-blue-100 rounded-full p-4"
+                  className="text-blue-500 bg-blue-100 rounded-full p-1"
                   icon={faCarSide}
                 />
                 <div>
                   <h1 className="text-lg flex items-center gap-2 font-bold">
-                    <p className="uppercase ">{vehicule.type.nom}</p>
-                    <p className='text-gray-500 text-sm'>{vehicule.caracteristiques &&
-                      `(${vehicule.caracteristiques})`}</p>
+                    <p className="uppercase text-gray-700 ">
+                      {vehicule.photos && vehicule.photos.length > 0 ? (
+                        <FontAwesomeIcon
+                          icon={faImage}
+                          onClick={() => {
+                            setPhotos(vehicule.photos);
+                            setIsOpen(true);
+                          }}
+                          className="text-xs mr-2 cursor-pointer text-blue-500"
+                        />
+                      ) : (
+                        ""
+                      )}
+                      {vehicule.type.nom}
+                    </p>
+                    <p className="text-gray-500 text-xs truncate max-w-[400px]">
+                      {vehicule.caracteristiques &&
+                        `(${vehicule.caracteristiques})`}
+                    </p>
                   </h1>
-                  <p className="text-xs font-bold uppercase text-gray-500">
+                  <p className="text-xs uppercase text-gray-400">
                     {vehicule.categorie.nom}
                   </p>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-2">
                 <Popover>
-                  <PopoverTrigger onClick={(e) => e.stopPropagation()} className="bg-blue-500 text-white px-8 py-2 rounded cursor-pointer">
+                  <PopoverTrigger
+                    onClick={(e) => e.stopPropagation()}
+                    className="bg-blue-500 text-white px-8 py-2 rounded cursor-pointer"
+                  >
                     Utiliser
                   </PopoverTrigger>
                   <PopoverContent className="w-[500px]">
-                    <UtiliseVehicule vehicule={vehicule} status='utiliser' />
+                    <UtiliseVehicule vehicule={vehicule} status="utiliser" />
                   </PopoverContent>
                 </Popover>
                 <Popover>
-                  <PopoverTrigger onClick={(e) => e.stopPropagation()} className="bg-gray-300 text-black text-gray-700 font-bold px-8 py-2 rounded cursor-pointer">
+                  <PopoverTrigger
+                    onClick={(e) => e.stopPropagation()}
+                    className="bg-gray-300 text-black text-gray-700 font-bold px-8 py-2 rounded cursor-pointer"
+                  >
                     Assigner
                   </PopoverTrigger>
                   <PopoverContent className="w-[500px]">
-                    <UtiliseVehicule vehicule={vehicule} status='assigner' />
+                    <UtiliseVehicule vehicule={vehicule} status="assigner" />
                   </PopoverContent>
                 </Popover>
               </div>
@@ -485,6 +570,26 @@ function GestionDeVehiculeContent() {
           <ButtonExcel isLoading={isLoadExcel} onClick={exportToExcel} />
         </div>
       )}
+            {isOpen && (
+              <div
+                onClick={() => setIsOpen(false)}
+                className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+              >
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-white rounded-sm p-2"
+                >
+                  <div className="flex justify-end">
+                    <FontAwesomeIcon
+                      icon={faXmark}
+                      className="text-gray-700 cursor-pointer"
+                      onClick={() => setIsOpen(false)}
+                    />
+                  </div>
+                  <ListeImage photos={photos} setPhotos={setPhotos} />
+                </div>
+              </div>
+            )}
     </div>
   );
 }

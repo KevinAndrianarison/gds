@@ -350,7 +350,6 @@ export default function MaterielsTable({ materiels }) {
                     <FontAwesomeIcon
                       icon={faImages}
                       onClick={() => {
-                        console.log(materiel.photos);
                         setPhotos(materiel.photos);
                         setIsOpen(true);
                       }}

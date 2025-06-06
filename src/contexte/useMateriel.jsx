@@ -101,7 +101,6 @@ export function MaterielContextProvider({ children }) {
       .getAllMateriels()
       .then((response) => {
         setMateriels(response);
-        console.log(response)
         setMaterielsTemp(response);
         setIsLoading(false);
         nProgress.done();
