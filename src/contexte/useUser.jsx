@@ -18,6 +18,7 @@ export function UserContextProvider({ children }) {
         axios
             .get(`${url}/api/getAllUsers`)
             .then((response) => {
+                console.log(response.data);
                 setUsers(response.data);
                 setIsLoading(false);
                 nProgress.done();

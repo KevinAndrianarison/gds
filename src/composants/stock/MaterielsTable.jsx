@@ -6,7 +6,8 @@ import {
   faPen,
   faShare,
   faCarSide,
-  faImages
+  faImages,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { MaterielContext } from "@/contexte/useMateriel";
 import Notiflix from "notiflix";
@@ -17,6 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import ShareMateriel from "@/composants/ShareMateriel";
+import ListeImage from "@/composants/ListeImage";
 
 export default function MaterielsTable({ materiels }) {
   const {
@@ -28,6 +30,8 @@ export default function MaterielsTable({ materiels }) {
   const [editingMaterielId, setEditingMaterielId] = useState(null);
   const [editedMateriel, setEditedMateriel] = useState({});
   const [originalMateriel, setOriginalMateriel] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [photos, setPhotos] = useState([]);
 
   const handleEditMateriel = (materiel) => {
     setEditingMaterielId(materiel.id);
@@ -227,14 +231,15 @@ export default function MaterielsTable({ materiels }) {
               </td>
               <td className="px-4 py-3">
                 <span
-                  className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${materiel.etat === "Bon état"
-                    ? "bg-green-400"
-                    : materiel.etat === "État moyen"
+                  className={`px-2 py-1 rounded-3xl text-white text-xs font-medium ${
+                    materiel.etat === "Bon état"
+                      ? "bg-green-400"
+                      : materiel.etat === "État moyen"
                       ? "bg-yellow-400"
                       : materiel.etat === "Mauvais état"
-                        ? "bg-red-400"
-                        : "bg-gray-400"
-                    }`}
+                      ? "bg-red-400"
+                      : "bg-gray-400"
+                  }`}
                 >
                   {materiel.etat}
                 </span>
@@ -344,8 +349,12 @@ export default function MaterielsTable({ materiels }) {
                   {materiel.photos.length !== 0 && (
                     <FontAwesomeIcon
                       icon={faImages}
+                      onClick={() => {
+                        console.log(materiel.photos);
+                        setPhotos(materiel.photos);
+                        setIsOpen(true);
+                      }}
                       className="text-blue-500 bg-blue-200 p-2 rounded-full cursor-pointer"
-                      onClick={() => handleDeleteMateriel(materiel.id)}
                     />
                   )}
                 </div>
@@ -354,6 +363,26 @@ export default function MaterielsTable({ materiels }) {
           ))}
         </tbody>
       </table>
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-sm p-2"
+          >
+            <div className="flex justify-end">
+              <FontAwesomeIcon
+                icon={faXmark}
+                className="text-gray-700 cursor-pointer"
+                onClick={() => setIsOpen(false)}
+              />
+            </div>
+            <ListeImage photos={photos} setPhotos={setPhotos} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
