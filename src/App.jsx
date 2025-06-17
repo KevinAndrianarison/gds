@@ -22,6 +22,7 @@ import { SourceProvider } from './contexte/useSource';
 import { ReferenceProvider } from './contexte/useReference';
 import { AppartenanceContextProvider } from './contexte/useAppartenance';
 import DetailsVehicule from './composants/DetailsVehicule';
+import Plannifier from './views/Plannifier';
 
 Notiflix.Confirm.init({
   titleColor: '#3b82f6',
@@ -62,6 +63,7 @@ export default function App() {
                 <Route path="/regions" element={<ProtectedRoute><MainLayout><Region /></MainLayout></ProtectedRoute>} />
                 <Route path="/utilisateurs" element={<ProtectedRoute><MainLayout><User /></MainLayout></ProtectedRoute>} />
                 <Route path="/historiques" element={<ProtectedRoute><MainLayout><Application /></MainLayout></ProtectedRoute>} />
+                <Route path="/plannifier/:id" element={<ProtectedRoute><MainLayout><Plannifier /></MainLayout></ProtectedRoute>} />
               </Routes>
               </ReferenceProvider>
             </AppartenanceContextProvider>

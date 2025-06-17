@@ -36,8 +36,33 @@ import * as XLSX from "xlsx";
 import logo from "../images/liste-de-controle.png";
 import ListeImage from "@/composants/ListeImage";
 
+const getAssuranceStatus = (dateLimiteAssurance) => {
+  if (!dateLimiteAssurance) {
+    return { status: "Pas renseigné", color: "bg-gray-500" };
+  }
+
+  const today = new Date();
+  const limiteDate = new Date(dateLimiteAssurance);
+  const diffTime = limiteDate - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    return { status: "En retard", color: "bg-red-500" };
+  } else if (diffDays <= 30) {
+    return { status: "Bientôt expirer", color: "bg-yellow-500" };
+  } else {
+    return { status: "A jour", color: "bg-green-500" };
+  }
+};
+
 function GestionDeVehiculeContent() {
-  const { getAllVehicules, vehicules, isLoadingVehicules } = useMateriel();
+  const {
+    getAllVehicules,
+    getVehiculesParIdRegion,
+    vehicules,
+    isLoadingVehicules,
+    updateMateriel,
+  } = useMateriel();
   const navigate = useNavigate();
   const [region, setRegion] = useState("all");
   const [searchValue, setSearchValue] = useState("");
@@ -52,9 +77,13 @@ function GestionDeVehiculeContent() {
 
   useEffect(() => {
     getAllRegion();
-    getAllVehicules();
-    if (JSON.parse(localStorage.getItem("user"))?.region_id) {
-      const region = JSON.parse(localStorage.getItem("region"));
+    let region = JSON.parse(localStorage.getItem("region"));
+    if (region) {
+      getVehiculesParIdRegion(region.id);
+    } else {
+      getAllVehicules();
+    }
+    if (region) {
       setSelectedRegionName(region.nom);
     }
   }, []);
@@ -496,72 +525,113 @@ function GestionDeVehiculeContent() {
         </div>
       ) : (
         <div className="mt-4 max-h-[500px] flex flex-col gap-2 overflow-y-auto">
-          {filteredVehicules.map((vehicule) => (
-            <div
-              key={vehicule.id}
-              onDoubleClick={() => {
-                navigate(`/details-vehicule/${vehicule.id}`);
-              }}
-              className="shadow-xs cursor-pointer hover:bg-blue-50 hover:border-white bg-gray-50 rounded-xl p-2 px-4 flex justify-between items-center"
-            >
-              <div className="flex items-center gap-5">
-                <FontAwesomeIcon
-                  className="text-blue-500 bg-blue-100 rounded-full p-1"
-                  icon={faCarSide}
-                />
-                <div>
-                  <h1 className="text-lg flex items-center gap-2 font-bold">
-                    <p className="uppercase text-gray-700 ">
-                      {vehicule.photos && vehicule.photos.length > 0 ? (
-                        <FontAwesomeIcon
-                          icon={faImage}
-                          onClick={() => {
-                            setPhotos(vehicule.photos);
-                            setIsOpen(true);
-                          }}
-                          className="text-xs mr-2 cursor-pointer text-blue-500"
+          {filteredVehicules.map((vehicule) => {
+            const { status, color } = getAssuranceStatus(
+              vehicule.datelimiteassurance
+            );
+            return (
+              <div
+                key={vehicule.id}
+                onDoubleClick={() => {
+                  navigate(`/details-vehicule/${vehicule.id}`);
+                }}
+                className="shadow-xs cursor-pointer hover:bg-blue-50 hover:border-white bg-gray-50 rounded-xl p-2 px-4 flex justify-between items-center"
+              >
+                <div className="flex items-center gap-5">
+                  <FontAwesomeIcon
+                    className="text-blue-500 bg-blue-100 rounded-full p-1"
+                    icon={faCarSide}
+                  />
+                  <div>
+                    <h1 className="text-lg flex items-center gap-2 font-bold">
+                      <p className="uppercase text-gray-700 ">
+                        {vehicule.photos && vehicule.photos.length > 0 ? (
+                          <FontAwesomeIcon
+                            icon={faImage}
+                            onClick={() => {
+                              setPhotos(vehicule.photos);
+                              setIsOpen(true);
+                            }}
+                            className="text-xs mr-2 cursor-pointer text-blue-500"
+                          />
+                        ) : (
+                          ""
+                        )}
+                        {vehicule.type.nom}
+                      </p>
+                      <p className="text-gray-500 text-xs truncate max-w-[400px]">
+                        {vehicule.caracteristiques &&
+                          `(${vehicule.caracteristiques})`}
+                      </p>
+                    </h1>
+                    <p className="text-xs uppercase text-gray-400">
+                      {vehicule.categorie.nom}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-40">
+                  <div className="flex flex-col gap-2">
+                    <h1>Date limite de l'assurance :</h1>
+                    <div className="flex gap-2 text-xs text-white font-bold">
+                      <p className={`${color} rounded-xl px-2`}>{status}</p>
+                    </div>
+                    <input
+                      className="border-2 border-blue-200 rounded px-3 py-1"
+                      type="date"
+                      onChange={async (e) => {
+                        await updateMateriel(vehicule.id, {
+                          datelimiteassurance: e.target.value,
+                        });
+                        let region = JSON.parse(localStorage.getItem("region"));
+                        if (region) {
+                          getVehiculesParIdRegion(region.id);
+                        } else {
+                          getAllVehicules();
+                        }
+                      }}
+                      value={vehicule.datelimiteassurance || ""}
+                    />
+                  </div>
+                  <div className="flex flex-col items-center ">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/plannifier/${vehicule.id}`);
+                      }}
+                      className="bg-blue-500 text-white px-4 py-1 w-28 cursor-pointer rounded-t-sm"
+                    >
+                      Plannification
+                    </button>
+                    <Popover>
+                      <PopoverTrigger className="bg-blue-900 text-white px-4 py-1 w-28 cursor-pointer">
+                        Utiliser
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[500px]">
+                        <UtiliseVehicule
+                          vehicule={vehicule}
+                          status="utiliser"
                         />
-                      ) : (
-                        ""
-                      )}
-                      {vehicule.type.nom}
-                    </p>
-                    <p className="text-gray-500 text-xs truncate max-w-[400px]">
-                      {vehicule.caracteristiques &&
-                        `(${vehicule.caracteristiques})`}
-                    </p>
-                  </h1>
-                  <p className="text-xs uppercase text-gray-400">
-                    {vehicule.categorie.nom}
-                  </p>
+                      </PopoverContent>
+                    </Popover>
+                    <Popover>
+                      <PopoverTrigger
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-gray-300 text-black text-gray-700  font-bold px-4 py-1 w-28 rounded-b-sm cursor-pointer"
+                      >
+                        Assigner
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[500px]">
+                        <UtiliseVehicule
+                          vehicule={vehicule}
+                          status="assigner"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col items-center gap-2">
-                <Popover>
-                  <PopoverTrigger
-                    onClick={(e) => e.stopPropagation()}
-                    className="bg-blue-500 text-white px-8 py-2 rounded cursor-pointer"
-                  >
-                    Utiliser
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[500px]">
-                    <UtiliseVehicule vehicule={vehicule} status="utiliser" />
-                  </PopoverContent>
-                </Popover>
-                <Popover>
-                  <PopoverTrigger
-                    onClick={(e) => e.stopPropagation()}
-                    className="bg-gray-300 text-black text-gray-700 font-bold px-8 py-2 rounded cursor-pointer"
-                  >
-                    Assigner
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[500px]">
-                    <UtiliseVehicule vehicule={vehicule} status="assigner" />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
       {filteredVehicules.length > 0 && (
@@ -570,26 +640,26 @@ function GestionDeVehiculeContent() {
           <ButtonExcel isLoading={isLoadExcel} onClick={exportToExcel} />
         </div>
       )}
-            {isOpen && (
-              <div
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-sm p-2"
+          >
+            <div className="flex justify-end">
+              <FontAwesomeIcon
+                icon={faXmark}
+                className="text-gray-700 cursor-pointer"
                 onClick={() => setIsOpen(false)}
-                className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-              >
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  className="bg-white rounded-sm p-2"
-                >
-                  <div className="flex justify-end">
-                    <FontAwesomeIcon
-                      icon={faXmark}
-                      className="text-gray-700 cursor-pointer"
-                      onClick={() => setIsOpen(false)}
-                    />
-                  </div>
-                  <ListeImage photos={photos} setPhotos={setPhotos} />
-                </div>
-              </div>
-            )}
+              />
+            </div>
+            <ListeImage photos={photos} setPhotos={setPhotos} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

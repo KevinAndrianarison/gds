@@ -115,9 +115,9 @@ export default function UserSection({ toggleMenu, isOpen }) {
             <SheetHeader>
               <SheetTitle>
                 <div className=" flex justify-center items-center">
-                  <div className="logoLogin h-20 w-40"></div>
+                  <div className="logoLogin h-12 w-24"></div>
                 </div>
-                <p className="flex items-center gap-2 text-xs py-2">
+                <p className="flex items-center gap-2 text-xs py-2 mt-4">
                   <FontAwesomeIcon icon={faFolderTree} /> GESTION DES{" "}
                 </p>
                 <div className="mt-2 font-light text-md flex flex-col gap-1">

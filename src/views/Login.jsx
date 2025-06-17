@@ -15,7 +15,7 @@ export default function Login() {
         <div className='h-[100vh]  flex items-center justify-center bg-gray-100 p-10'>
             <div className='bg-white max-sm:w-[400px] rounded-3xl p-16 py-10 flex flex-col items-center'>
                 <div className='flex items-center'>
-                    <div className='logoLogin h-20 w-40'></div>
+                    <div className='logoLogin h-10 w-20'></div>
                 </div>
                 {isConnexion && (
                     <LoginComponent />

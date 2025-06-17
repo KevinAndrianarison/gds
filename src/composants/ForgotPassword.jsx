@@ -13,7 +13,7 @@ export default function ForgotPassword() {
         setIsConnexion(true)
     }
     return (
-        <div>
+        <div className='mt-10'>
             <p className='font-medium text-sm text-gray-700 mt-4 text-center max-sm:w-[350px] mx-auto w-[400px]'>Veuillez entrer votre adresse e-mail afin que nous puissions vous envoyer un lien pour réinitialiser votre mot de passe</p>
             <div className='flex flex-col  gap-2 mt-4'>
                 <InputemailForgot />

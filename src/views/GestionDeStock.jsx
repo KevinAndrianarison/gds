@@ -421,7 +421,7 @@ function GestionDeStockContent() {
 
   return (
     <div className="w-[80vw] mx-auto" onClick={() => setShowFilters(false)}>
-      <Entete titre="stocks" description="gérez vos matériels et équipements" />
+      <Entete titre="matériel" description="gérez vos matériels et équipements" />
 
       <StatsCards
         materielsGroupes={materielsGroupes}

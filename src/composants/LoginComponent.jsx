@@ -23,7 +23,7 @@ export default function LoginComponent() {
     };
 
     return (
-        <form onSubmit={handleLogin}>
+        <form className='mt-10' onSubmit={handleLogin}>
             <p className='font-medium text-lg text-gray-700 text-center'>Bienvenue, connectez-vous !</p>
             <div className='flex flex-col gap-2 mt-4'>
                 <Inputtext 
