@@ -53,7 +53,7 @@ export default function App() {
               <Routes>
                 <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
-                <Route path="/" element={<Navigate to="/gestion-de-stock" />} />
+                <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/gestion-de-stock" element={<ProtectedRoute><MainLayout><GestionDeStock /></MainLayout></ProtectedRoute>} />
                 <Route path="/gestion-supply" element={<ProtectedRoute><MainLayout><GestionSupply /></MainLayout></ProtectedRoute>} />
                 <Route path="/gestion-de-vehicule" element={<ProtectedRoute><MainLayout><GestionDeVehicule /></MainLayout></ProtectedRoute>} />
