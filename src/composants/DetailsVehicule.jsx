@@ -2,12 +2,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
-  faSpinner,
   faFilter,
   faExchangeAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { MaterielContextProvider, useMateriel } from "@/contexte/useMateriel";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TitreLabel from "@/composants/TitreLabel";
 import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 import Notiflix from "notiflix";

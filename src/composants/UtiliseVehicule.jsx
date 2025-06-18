@@ -61,7 +61,7 @@ export default function UtiliseVehicule({ vehicule, status }) {
             Notiflix.Notify.warning("Veuillez remplir tous les champs");
         } else {
             let formData = {
-                chef_missionnaire: chefMissionnaire,
+                chef_missionnaire: chefMissionnaire || user.name,
                 lieu: lieu,
                 activite: activite,
                 carburant: carburant,

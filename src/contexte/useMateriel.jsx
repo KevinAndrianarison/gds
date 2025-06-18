@@ -11,27 +11,49 @@ export function MaterielContextProvider({ children }) {
   const [materiels, setMateriels] = useState([]);
   const [materielsTemp, setMaterielsTemp] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingPlanning, setIsLoadingPlanning] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [vehicules, setVehicules] = useState([]);
   const [isLoadingVehicules, setIsLoadingVehicules] = useState(false);
-  const [oneVehicule, setOneVehicule] = useState('');
+  const [oneVehicule, setOneVehicule] = useState("");
+  const [onePlanning, setOnePlanning] = useState([]);
   const [isLoadingUtilisation, setisLoadingUtilisation] = useState(false);
   const { url } = useContext(UrlContext);
 
-
   function getOneUtilisation(id) {
     nProgress.start();
-    setisLoadingUtilisation(true)
-    axios.get(`${url}/api/materiels/${id}`)
+    setisLoadingUtilisation(true);
+    axios
+      .get(`${url}/api/materiels/${id}`)
       .then((response) => {
-        setOneVehicule(response.data)
-        setisLoadingUtilisation(false)
+        setOneVehicule(response.data);
+        setisLoadingUtilisation(false);
         nProgress.done();
       })
       .catch((err) => {
         console.error(err);
         Notiflix.Notify.failure("Erreur lors du chargement des utilisations");
-        setisLoadingUtilisation(false)
+        setisLoadingUtilisation(false);
+        nProgress.done();
+      });
+  }
+
+  function getPlanningByIdVehicule(id) {
+    nProgress.start();
+    setIsLoadingPlanning(true);
+    axios
+      .get(`${url}/api/vehicules/plannification/${id}`)
+      .then((response) => {
+        setOnePlanning(response.data);
+        setIsLoadingPlanning(false);
+        nProgress.done();
+      })
+      .catch((err) => {
+        console.error(err);
+        Notiflix.Notify.failure(
+          "Erreur lors du chargement des plannifications"
+        );
+        setIsLoadingPlanning(false);
         nProgress.done();
       });
   }
@@ -144,16 +166,18 @@ export function MaterielContextProvider({ children }) {
         // Mettre à jour la liste locale en supprimant l'utilisation
         setOneVehicule((prev) => ({
           ...prev,
-          utilisations: prev.utilisations.filter((u) => u.id !== id)
+          utilisations: prev.utilisations.filter((u) => u.id !== id),
         }));
         getOneUtilisation(oneVehicule.id);
         return true;
       })
       .catch((err) => {
         console.error(err);
-        Notiflix.Notify.failure("Erreur lors de la suppression de l'utilisation");
+        Notiflix.Notify.failure(
+          "Erreur lors de la suppression de l'utilisation"
+        );
         throw err;
-      });   
+      });
   }
 
   function createMateriel(materielData) {
@@ -202,10 +226,12 @@ export function MaterielContextProvider({ children }) {
       })
       .catch((err) => {
         console.error(err);
-        Notiflix.Notify.failure("Erreur lors de la mise à jour de l'utilisation");
+        Notiflix.Notify.failure(
+          "Erreur lors de la mise à jour de l'utilisation"
+        );
         throw err;
       });
-  } 
+  }
 
   function closeModal() {
     setIsModalOpen(false);
@@ -221,8 +247,13 @@ export function MaterielContextProvider({ children }) {
         isLoadingVehicules,
         vehicules,
         oneVehicule,
-        setisLoadingUtilisation,
         isLoadingUtilisation,
+        isLoadingPlanning,
+        onePlanning,
+        setOnePlanning,
+        setisLoadingUtilisation,
+        getPlanningByIdVehicule,
+        setIsLoadingPlanning,
         deleteUtilisation,
         getOneUtilisation,
         setMateriels,
