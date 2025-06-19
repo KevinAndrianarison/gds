@@ -133,7 +133,8 @@ export default function Application() {
                   src={
                     !historique.user?.photo_url
                       ? "https://hwchamber.co.uk/wp-content/uploads/2022/04/avatar-placeholder.gif"
-                      : `${url}/storage/${historique.user?.photo_url}`
+                      // : `${url}/storage/${historique.user?.photo_url}`
+                      : `${url}/storage/app/public/${historique.user?.photo_url}`
                   }
                   alt="user avatar"
                   className="inline-block relative object-cover object-center !rounded-full w-full h-full m-auto shadow-md"

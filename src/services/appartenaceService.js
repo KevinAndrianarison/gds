@@ -2,7 +2,8 @@ import axios from 'axios';
 import NProgress from 'nprogress';
 import { Notify } from 'notiflix';
 
-const API_URL = 'http://localhost:8000/api';
+// const API_URL = 'http://localhost:8000/api';
+const API_URL = 'https://gds.ongsahi.org/api';
 
 axios.interceptors.request.use((config) => {
   NProgress.start();

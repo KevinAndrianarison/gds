@@ -7,7 +7,6 @@ import {
   faUser,
   faChevronDown,
   faChevronUp,
-  faCarOn,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import TitreLabel from "./TitreLabel";
@@ -67,7 +66,7 @@ function PlannifierComp({ selectedMonth, selectedYear }) {
 
   const getMonthAndYearFromDate = (dateString) => {
     const date = new Date(dateString);
-    const month = date.toLocaleString('default', { month: 'long' });
+    const month = date.toLocaleString("default", { month: "long" });
     const year = date.getFullYear();
     return { month, year };
   };
@@ -317,31 +316,42 @@ function PlannifierComp({ selectedMonth, selectedYear }) {
             />
           </div>
         )}
-        {onePlanning.filter(item => {
-        const { month, year } = getMonthAndYearFromDate(item.date);
-        return month === selectedMonth.toLowerCase() && year === selectedYear;
-        })
-        .map(item => (
-        <OnePlanning key={item.id} item={item} />
-        ))}
+        {onePlanning
+          .filter((item) => {
+            const { month, year } = getMonthAndYearFromDate(item.date);
+            return (
+              month === selectedMonth.toLowerCase() && year === selectedYear
+            );
+          })
+          .map((item) => (
+            <OnePlanning key={item.id} item={item} />
+          ))}
         {isLoadingPlanning && (
-          <FontAwesomeIcon icon={faSpinner} className="text-blue-500 text-2xl py-10" pulse />
+          <FontAwesomeIcon
+            icon={faSpinner}
+            className="text-blue-500 text-2xl py-10"
+            pulse
+          />
         )}
       </div>
       <div className="w-[35%] border-l-4 border-blue-500 p-2 px-4">
         <h1 className="text-sm font-bold uppercase">Activités :</h1>
         {oneVehicule?.utilisations
-        ?.filter(item => {
-        const { month, year } = getMonthAndYearFromDate(item.date);
-        console.log(month, year);
-        console.log(selectedMonth, selectedYear);
-        return month === selectedMonth.toLowerCase() && year === selectedYear;
-        })
-        ?.map(item => (
-        <OnePlanning key={item.id} item={item} />
-        ))}
+          ?.filter((item) => {
+            const { month, year } = getMonthAndYearFromDate(item.date);
+            return (
+              month === selectedMonth.toLowerCase() && year === selectedYear
+            );
+          })
+          ?.map((item) => (
+            <OnePlanning key={item.id} item={item} />
+          ))}
         {isLoadingUtilisation && (
-          <FontAwesomeIcon icon={faSpinner} className="text-blue-500 text-2xl py-5" pulse />
+          <FontAwesomeIcon
+            icon={faSpinner}
+            className="text-blue-500 text-2xl py-5"
+            pulse
+          />
         )}
       </div>
     </div>
@@ -351,7 +361,10 @@ function PlannifierComp({ selectedMonth, selectedYear }) {
 export default function PlannifierContent({ selectedMonth, selectedYear }) {
   return (
     <MaterielContextProvider>
-      <PlannifierComp selectedMonth={selectedMonth} selectedYear={selectedYear} />
+      <PlannifierComp
+        selectedMonth={selectedMonth}
+        selectedYear={selectedYear}
+      />
     </MaterielContextProvider>
   );
 }

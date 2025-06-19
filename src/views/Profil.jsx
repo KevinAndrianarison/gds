@@ -8,10 +8,7 @@ import axios from "axios";
 import nProgress from "nprogress";
 import { Notify } from "notiflix";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUser,
-  faCrown,
-} from "@fortawesome/free-solid-svg-icons";
+import { faUser, faCrown } from "@fortawesome/free-solid-svg-icons";
 
 export default function Profil() {
   const { url } = useContext(UrlContext);
@@ -59,7 +56,8 @@ export default function Profil() {
       const user = response.data.user;
       setUserData(user);
       if (user.photo_url) {
-        setPhotoPreview(`${url}/storage/${user.photo_url}`);
+        // setPhotoPreview(`${url}/storage/${user.photo_url}`);
+        setPhotoPreview(`${url}/storage/app/public/${user.photo_url}`);
       }
     } catch (error) {
       Notify.failure("Erreur lors du chargement des données");
@@ -107,7 +105,8 @@ export default function Profil() {
 
         setPhotoPreview(
           updatedUser.photo_url
-            ? `${url}/storage/${updatedUser.photo_url}`
+          // ? `${url}/storage/${updatedUser.photo_url}`
+            ? `${url}/storage/app/public/${updatedUser.photo_url}`
             : null
         );
         setPhoto(null);
@@ -115,7 +114,10 @@ export default function Profil() {
       } catch (error) {
         Notify.failure("Erreur lors de la mise à jour de la photo");
         setPhotoPreview(
-          userData.photo_url ? `${url}/storage/${userData.photo_url}` : null
+          userData.photo_url
+          // ? `${url}/storage/${userData.photo_url}`
+            ? `${url}/storage/app/public/${userData.photo_url}`
+            : null
         );
       } finally {
         nProgress.done();
@@ -163,7 +165,8 @@ export default function Profil() {
 
       setUserData(updatedUser);
       if (updatedUser.photo_url) {
-        setPhotoPreview(`${url}/storage/${updatedUser.photo_url}`);
+        // setPhotoPreview(`${url}/storage/${updatedUser.photo_url}`);
+        setPhotoPreview(`${url}/storage/app/public/${updatedUser.photo_url}`);
       }
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
