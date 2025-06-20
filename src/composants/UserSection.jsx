@@ -73,8 +73,8 @@ export default function UserSection({ toggleMenu, isOpen }) {
       >
         {user?.photo_url ? (
           <img
-            //src={`${url}/storage/${user.photo_url}`}
-            src={`${url}/storage/app/public/${user.photo_url}`}
+            src={`${url}/storage/${user.photo_url}`}
+            //src={`${url}/storage/app/public/${user.photo_url}`}
             alt={user.name}
             className="h-10 w-10 rounded-full object-cover"
           />

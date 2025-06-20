@@ -82,6 +82,7 @@ export function MaterielContextProvider({ children }) {
     return materielService
       .getAllVehicules()
       .then((response) => {
+
         setVehicules(response);
         setIsLoadingVehicules(false);
         return response;

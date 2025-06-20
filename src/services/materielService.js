@@ -2,8 +2,8 @@ import axios from 'axios';
 import NProgress from 'nprogress';
 import { Notify } from 'notiflix';
 
-// const API_URL = 'http://localhost:8000/api';
-const API_URL = 'https://gds.ongsahi.org/api';
+const API_URL = 'http://localhost:8000/api';
+//const API_URL = 'https://gds.ongsahi.org/api';
 
 // Intercepteur pour montrer la progression
 axios.interceptors.request.use((config) => {

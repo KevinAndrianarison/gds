@@ -54,8 +54,8 @@ export default function UserBlock({ user }) {
         <div className="flex gap-2 items-center  justify-between bg-blue-50 w-68 p-5 hover:bg-blue-300/20 cursor-pointer rounded-3xl">
           {user.photo_url ? (
             <img
-              //src={`${url}/storage/${user.photo_url}`}
-              src={`${url}/storage/app/public/${user.photo_url}`}
+              src={`${url}/storage/${user.photo_url}`}
+              //src={`${url}/storage/app/public/${user.photo_url}`}
               alt={user.name}
               className="w-20 h-20 rounded-full object-cover"
             />

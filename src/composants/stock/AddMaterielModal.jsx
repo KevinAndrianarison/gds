@@ -49,6 +49,7 @@ export default function AddMaterielModal({ isOpen, onClose }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, isACL } = useContext(ShowContext);
   const [error, setError] = useState(null);
+  const [taux_amortissement, setTauxAmortissement] = useState("");
   const { types, filterTypesByCategorie } = useContext(TypeContext);
   const { getAllMateriels, getMaterielParIdRegion } =
     useContext(MaterielContext);
@@ -143,6 +144,8 @@ export default function AddMaterielModal({ isOpen, onClose }) {
       formData.append("responsable_id", parseInt(responsable_id));
       formData.append("numero_serie", numero_serie);
       formData.append("numero_imei", numero_imei);
+      formData.append("taux_amortissement", parseFloat(taux_amortissement));
+      formData.append("valeur_net", parseFloat(montant - (montant * taux_amortissement / 100)));
       if (montant) {
         formData.append("montant", parseFloat(montant));
       }
@@ -336,6 +339,16 @@ export default function AddMaterielModal({ isOpen, onClose }) {
                   onChange={setMontant}
                 />
               </div>
+              <div className="space-y-2">
+                <TitreLabel titre="Taux d'amortissement (%)" />
+                <InputOn
+                  width="w-full"
+                  type="number"
+                  value={taux_amortissement}
+                  onChange={setTauxAmortissement}
+                />
+              </div>
+              <p className="text-sm">Valeur nette : <b className="text-blue-500">{montant-(montant*taux_amortissement/100)} Ar</b></p>
 
               <div className="space-y-2">
                 <TitreLabel titre="Date d'acquisition" />

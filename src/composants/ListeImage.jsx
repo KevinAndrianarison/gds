@@ -24,8 +24,8 @@ export default function ListeImage({ photos }) {
               <div className="w-full h-[100vh]">
                 <img
                   className="w-full h-full  object-center"
-                  //src={`${url}/storage/materiels_photos/${photo.chemin}`}
-                  src={`${url}/storage/app/public/materiels_photos/${photo.chemin}`}
+                  src={`${url}/storage/materiels_photos/${photo.chemin}`}
+                  //src={`${url}/storage/app/public/materiels_photos/${photo.chemin}`}
                 />
               </div>
             </CarouselItem>

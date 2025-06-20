@@ -259,7 +259,17 @@ export default function MaterielsTable({ materiels }) {
                     onBlur={() => handleSaveMateriel(materiel.id, "montant")}
                   />
                 ) : (
-                  materiel.montant || "..."
+                  <div>
+                    <p>
+                      {materiel.montant}{" "}
+                      <b className="text-blue-500 text-xs">
+                        {materiel.taux_amortissement && (
+                          <span>({materiel.taux_amortissement}%)</span>
+                        )}
+                      </b>
+                    </p>
+                    {materiel.valeur_net && <p>Net : {materiel.valeur_net}</p>}
+                  </div>
                 )}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px]">
