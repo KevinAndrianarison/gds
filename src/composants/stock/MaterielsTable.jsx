@@ -184,7 +184,8 @@ export default function MaterielsTable({ materiels }) {
                 )}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900 truncate min-w-[150px] flex items-center gap-2">
-                {materiel.categorie.isVehicule ? (
+                {(materiel.categorie.isVehicule === 1 ||
+                materiel.categorie.isVehicule === "1") ? (
                   <FontAwesomeIcon
                     icon={faCarSide}
                     className="text-blue-500 bg-blue-200 p-1 rounded-full"

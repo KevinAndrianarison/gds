@@ -55,7 +55,7 @@ export default function UserBlock({ user }) {
           {user.photo_url ? (
             <img
               src={`${url}/storage/${user.photo_url}`}
-              //src={`${url}/storage/app/public/${user.photo_url}`}
+              // src={`${url}/storage/app/public/${user.photo_url}`}
               alt={user.name}
               className="w-20 h-20 rounded-full object-cover"
             />
